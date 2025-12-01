@@ -55,14 +55,6 @@ jobs:
             | jq -r '.body')
           printf 'notes<<__EOF__\n%s\n__EOF__\n' "$notes" >> "$GITHUB_OUTPUT"
 
-      - name: Create sync branch
-        id: branch
-        run: |
-          BRANCH="sync-main-to-dev-${{ steps.tag.outputs.tag }}-${{ github.run_id }}"
-          git checkout -B "$BRANCH"
-          git push origin "$BRANCH" --force
-          echo "name=$BRANCH" >> "$GITHUB_OUTPUT"
-
       - name: Ensure automation label exists
         env:
           GH_TOKEN: ${{ secrets.ACTIONS_PAT }}
@@ -76,11 +68,11 @@ jobs:
           GH_TOKEN: ${{ secrets.ACTIONS_PAT }}
           TAG: ${{ steps.tag.outputs.tag }}
           NOTES: ${{ steps.notes.outputs.notes }}
-          BRANCH: ${{ steps.branch.outputs.name }}
         run: |
+          # Check if PR already exists
           PR_NUMBER=$(gh pr list \
             --base dev \
-            --head "$BRANCH" \
+            --head main \
             --json number \
             --jq '.[0].number')
 
@@ -101,13 +93,13 @@ jobs:
 
             gh pr create \
               --base dev \
-              --head "$BRANCH" \
+              --head main \
               --title "🔄 Sync main → dev after release $TAG" \
               --body-file pr_body.txt \
               --label automation \
               --label sync 
 
-            PR_NUMBER=$(gh pr view "$BRANCH" --json number --jq '.number')
+            PR_NUMBER=$(gh pr list --base dev --head main --json number --jq '.[0].number')
           fi
 
           echo "number=$PR_NUMBER" >> "$GITHUB_OUTPUT"
