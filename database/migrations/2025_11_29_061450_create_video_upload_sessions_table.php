@@ -10,24 +10,27 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('role_user', function (Blueprint $table): void {
+        Schema::create('video_upload_sessions', function (Blueprint $table): void {
             $table->id();
-            $table->foreignId('role_id')
-                ->constrained('roles')
+            $table->foreignId('center_id')
+                ->constrained('centers')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
-            $table->foreignId('user_id')
+            $table->foreignId('uploaded_by')
                 ->constrained('users')
                 ->cascadeOnUpdate()
                 ->cascadeOnDelete();
+            $table->string('bunny_upload_id');
+            $table->tinyInteger('upload_status'); // 0 pending, 1 uploading, 2 uploaded, 3 processing, 4 ready, 5 failed
+            $table->unsignedInteger('progress_percent')->default(0);
+            $table->text('error_message')->nullable();
             $table->timestamps();
             $table->softDeletes();
-            $table->unique(['role_id', 'user_id']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('role_user');
+        Schema::dropIfExists('video_upload_sessions');
     }
 };
