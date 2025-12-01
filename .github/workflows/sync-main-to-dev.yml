@@ -1,11 +1,11 @@
-# yamllint disable rule:line-length rule:truthy
 ---
+# yamllint disable rule:line-length rule:truthy
 name: Sync main to dev
 
 on:
   push:
     tags:
-      - 'v*.*.*'
+      - "v*.*.*"
   workflow_run:
     workflows:
       - "Create Release Tag"
@@ -46,13 +46,14 @@ jobs:
 
       - name: Get release notes
         id: notes
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           notes=$(curl -s \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Authorization: token $GH_TOKEN" \
             "https://api.github.com/repos/${{ github.repository }}/releases/tags/${{ steps.tag.outputs.tag }}" \
             | jq -r '.body')
-
-          printf "notes<<EOF\n%s\nEOF\n" "$notes" >> "$GITHUB_OUTPUT"
+          printf 'notes<<__EOF__\n%s\n__EOF__\n' "$notes" >> "$GITHUB_OUTPUT"
 
       - name: Create sync branch
         id: branch
@@ -66,9 +67,10 @@ jobs:
         id: pr
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.tag.outputs.tag }}
+          NOTES: ${{ steps.notes.outputs.notes }}
+          BRANCH: ${{ steps.branch.outputs.name }}
         run: |
-          BRANCH="${{ steps.branch.outputs.name }}"
-
           PR_NUMBER=$(gh pr list \
             --base dev \
             --head "$BRANCH" \
@@ -76,24 +78,21 @@ jobs:
             --jq '.[0].number')
 
           if [ -z "$PR_NUMBER" ]; then
-            cat > pr_body.txt <<'EOF'
-            ## 🔄 Automated Sync PR
-            **Release:** `${{ steps.tag.outputs.tag }}`
-
-            ### 📦 Release Notes
-            ${{ steps.notes.outputs.notes }}
-
-            ---
-            This PR ensures **dev** stays ahead of **main** after a release.
-            EOF
+            PR_BODY=$(printf '%s\n%s\n\n%s\n%s\n\n%s\n%s\n' \
+              '## 🔄 Automated Sync PR' \
+              "**Release:** \`$TAG\`" \
+              '### 📦 Release Notes' \
+              "$NOTES" \
+              '---' \
+              'This PR ensures **dev** stays ahead of **main** after a release.')
             PR_NUMBER=$(gh pr create \
               --base dev \
               --head "$BRANCH" \
-              --title "🔄 Sync main → dev after release ${{ steps.tag.outputs.tag }}" \
-              --body-file pr_body.txt \
+              --title "🔄 Sync main → dev after release $TAG" \
+              --body "$PR_BODY" \
               --label automation \
               --label sync \
-              --label "${{ steps.tag.outputs.tag }}" \
+              --label "$TAG" \
               --json number \
               --jq '.number')
           fi
@@ -118,12 +117,12 @@ jobs:
         if: ${{ steps.pr.outputs.number }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: ${{ steps.branch.outputs.name }}
+          PR_NUMBER: ${{ steps.pr.outputs.number }}
         run: |
           sleep 10
-          BRANCH="${{ steps.branch.outputs.name }}"
-          STATUS=$(gh pr view "${{ steps.pr.outputs.number }}" --json state --jq '.state')
-
-          if [ "$STATUS" = "CLOSED" ]; then
+          STATE=$(gh pr view "$PR_NUMBER" --json state --jq '.state')
+          if [ "$STATE" = "CLOSED" ]; then
             git push origin --delete "$BRANCH" || true
           else
             echo "PR not closed yet, skipping branch delete."
