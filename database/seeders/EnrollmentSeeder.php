@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Models\Center;
 use App\Models\Course;
 use App\Models\Enrollment;
-use App\Models\Center;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
