@@ -24,6 +24,7 @@ class AuditLog extends Model
 {
     /** @use HasFactory<\Database\Factories\AuditLogFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
     protected $fillable = [
