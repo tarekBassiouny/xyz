@@ -22,7 +22,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class AuditLog extends Model
 {
-    use HasFactory, SoftDeletes;
+    /** @use HasFactory<\Database\Factories\AuditLogFactory> */
+    use HasFactory;
+    use SoftDeletes;
 
     protected $fillable = [
         'user_id',
@@ -36,13 +38,13 @@ class AuditLog extends Model
         'metadata' => 'array',
     ];
 
-    /** @return BelongsTo<User, AuditLog> */
+    /** @return BelongsTo<User, self> */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    /** @return MorphTo<Model, AuditLog> */
+    /** @return MorphTo<Model, self> */
     public function entity(): MorphTo
     {
         return $this->morphTo(
