@@ -10,18 +10,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('system_settings', function (Blueprint $table): void {
+        Schema::create('video_settings', function (Blueprint $table): void {
             $table->id();
-            $table->string('key')->unique();
-            $table->json('value')->nullable();
-            $table->boolean('is_public')->default(false);
+            $table->foreignId('video_id')
+                ->constrained('videos')
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+            $table->json('settings');
             $table->timestamps();
             $table->softDeletes();
+            $table->unique('video_id');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('system_settings');
+        Schema::dropIfExists('video_settings');
     }
 };

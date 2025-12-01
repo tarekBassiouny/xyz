@@ -10,18 +10,21 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('system_settings', function (Blueprint $table): void {
+        Schema::create('course_settings', function (Blueprint $table): void {
             $table->id();
-            $table->string('key')->unique();
-            $table->json('value')->nullable();
-            $table->boolean('is_public')->default(false);
+            $table->foreignId('course_id')
+                ->constrained('courses')
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+            $table->json('settings');
             $table->timestamps();
             $table->softDeletes();
+            $table->unique('course_id');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('system_settings');
+        Schema::dropIfExists('course_settings');
     }
 };
