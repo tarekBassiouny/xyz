@@ -27,8 +27,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Pdf extends Model
 {
     /** @use HasFactory<\Database\Factories\PdfFactory> */
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'title_translations',

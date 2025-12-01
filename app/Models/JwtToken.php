@@ -24,8 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class JwtToken extends Model
 {
     /** @use HasFactory<\Database\Factories\JwtTokenFactory> */
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'user_id',

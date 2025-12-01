@@ -32,8 +32,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Center extends Model
 {
     /** @use HasFactory<\Database\Factories\CenterFactory> */
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'slug',

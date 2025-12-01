@@ -24,8 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Enrollment extends Model
 {
     /** @use HasFactory<\Database\Factories\EnrollmentFactory> */
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'user_id',

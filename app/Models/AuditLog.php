@@ -23,9 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class AuditLog extends Model
 {
     /** @use HasFactory<\Database\Factories\AuditLogFactory> */
-    use HasFactory;
-
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'user_id',

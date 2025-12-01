@@ -13,9 +13,6 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class JwtMiddleware
 {
-    /**
-     * @param  Closure(Request): Response|JsonResponse  $next
-     */
     public function handle(Request $request, Closure $next): Response|JsonResponse
     {
         try {

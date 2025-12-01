@@ -24,8 +24,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Section extends Model
 {
     /** @use HasFactory<\Database\Factories\SectionFactory> */
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'course_id',

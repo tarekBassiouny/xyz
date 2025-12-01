@@ -26,8 +26,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class UserDevice extends Model
 {
     /** @use HasFactory<\Database\Factories\UserDeviceFactory> */
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'user_id',
