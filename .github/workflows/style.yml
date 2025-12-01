@@ -1,0 +1,51 @@
+name: Style Checks
+
+on:
+  # Run on PRs to main/dev and allow manual runs
+  pull_request:
+    branches: [main, dev]
+  workflow_dispatch:
+
+jobs:
+  style:
+    name: PHPCS & Pint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Cache vendor to speed up installs
+      - name: Cache Composer packages
+        uses: actions/cache@v3
+        with:
+          path: vendor
+          key: composer-${{ hashFiles('composer.lock') }}
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+          coverage: none
+          tools: composer
+
+      - name: Install dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHPCS
+        run: vendor/bin/phpcs -p --standard=phpcs.xml | tee phpcs.log
+
+      - name: Run Pint (test mode)
+        run: vendor/bin/pint --test | tee pint.log
+
+      - name: Upload PHPCS log
+        uses: actions/upload-artifact@v4
+        with:
+          name: phpcs-log
+          path: phpcs.log
+
+      - name: Upload Pint log
+        uses: actions/upload-artifact@v4
+        with:
+          name: pint-log
+          path: pint.log
