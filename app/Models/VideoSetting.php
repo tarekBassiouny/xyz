@@ -18,8 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class VideoSetting extends Model
 {
     /** @use HasFactory<\Database\Factories\VideoSettingFactory> */
-    use HasFactory;
-    use SoftDeletes;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'video_id',
