@@ -24,9 +24,6 @@ jobs:
         options: >-
           --health-cmd="mysqladmin ping --silent" --health-interval=5s --health-timeout=3s --health-retries=10
 
-    env:
-      APP_ENVIRONMENT_FILE: .env.test
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -50,6 +47,11 @@ jobs:
       # Ensure ParaTest is available for Laravel parallel testing (Collision 8.x requirement)
       - name: Install ParaTest
         run: composer require --dev brianium/paratest:^7.0 --no-interaction --no-progress
+
+      - name: Prepare environment for Laravel
+        run: |
+          cp .env.test .env
+          php artisan key:generate --force
 
       - name: Confirm .env.test present
         run: ls -la .env.test
