@@ -12,7 +12,7 @@ class CourseSeeder extends Seeder
     {
         Center::all()->each(function (Center $center): void {
             Course::factory()
-                ->count(10)
+                ->count(3)
                 ->create(['center_id' => $center->id])
                 ->each(function (Course $course): void {
                     // For each course, attach settings
