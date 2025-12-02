@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Controllers;
 
+use App\Models\User;
 use App\Services\Contracts\OtpServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
@@ -16,6 +17,10 @@ class OtpControllerTest extends TestCase
 
     public function test_send_returns_token(): void
     {
+        User::factory()->create([
+            'phone' => '+201234567890',
+        ]);
+
         /** @var MockInterface&OtpServiceInterface $otp */
         $otp = Mockery::mock(OtpServiceInterface::class);
         /** @phpstan-ignore-next-line Mockery dynamic expectation */
