@@ -176,6 +176,9 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTadmin-courses--course--sections">
                                 <a href="#endpoints-POSTadmin-courses--course--sections">POST admin/courses/{course}/sections</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-PUTadmin-courses--course_id--sections-reorder">
+                                <a href="#endpoints-PUTadmin-courses--course_id--sections-reorder">PUT admin/courses/{course_id}/sections/reorder</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETadmin-courses--course_id--sections--section_id-">
                                 <a href="#endpoints-GETadmin-courses--course_id--sections--section_id-">GET admin/courses/{course_id}/sections/{section_id}</a>
                             </li>
@@ -188,8 +191,8 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTadmin-courses--course--sections--section_id--restore">
                                 <a href="#endpoints-POSTadmin-courses--course--sections--section_id--restore">POST admin/courses/{course}/sections/{section_id}/restore</a>
                             </li>
-                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTadmin-courses--course_id--sections--section_id--reorder">
-                                <a href="#endpoints-POSTadmin-courses--course_id--sections--section_id--reorder">POST admin/courses/{course_id}/sections/{section_id}/reorder</a>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-PATCHadmin-courses--course_id--sections--section_id--visibility">
+                                <a href="#endpoints-PATCHadmin-courses--course_id--sections--section_id--visibility">PATCH admin/courses/{course_id}/sections/{section_id}/visibility</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTadmin-courses--course--sections-structure">
                                 <a href="#endpoints-POSTadmin-courses--course--sections-structure">POST admin/courses/{course}/sections/structure</a>
@@ -253,7 +256,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: December 7, 2025</li>
+        <li>Last updated: December 8, 2025</li>
     </ul>
 </div>
 
@@ -6139,6 +6142,171 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
+                    <h2 id="endpoints-PUTadmin-courses--course_id--sections-reorder">PUT admin/courses/{course_id}/sections/reorder</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-PUTadmin-courses--course_id--sections-reorder">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request PUT \
+    "http://xyz-lms.test/admin/courses/1/sections/reorder" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en" \
+    --data "{
+    \"sections\": [
+        16
+    ]
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/admin/courses/1/sections/reorder"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+let body = {
+    "sections": [
+        16
+    ]
+};
+
+fetch(url, {
+    method: "PUT",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-PUTadmin-courses--course_id--sections-reorder">
+</span>
+<span id="execution-results-PUTadmin-courses--course_id--sections-reorder" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-PUTadmin-courses--course_id--sections-reorder"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-PUTadmin-courses--course_id--sections-reorder"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-PUTadmin-courses--course_id--sections-reorder" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-PUTadmin-courses--course_id--sections-reorder">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-PUTadmin-courses--course_id--sections-reorder" data-method="PUT"
+      data-path="admin/courses/{course_id}/sections/reorder"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('PUTadmin-courses--course_id--sections-reorder', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-PUTadmin-courses--course_id--sections-reorder"
+                    onclick="tryItOut('PUTadmin-courses--course_id--sections-reorder');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-PUTadmin-courses--course_id--sections-reorder"
+                    onclick="cancelTryOut('PUTadmin-courses--course_id--sections-reorder');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-PUTadmin-courses--course_id--sections-reorder"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-darkblue">PUT</small>
+            <b><code>admin/courses/{course_id}/sections/reorder</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="PUTadmin-courses--course_id--sections-reorder"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="PUTadmin-courses--course_id--sections-reorder"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="PUTadmin-courses--course_id--sections-reorder"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="course_id"                data-endpoint="PUTadmin-courses--course_id--sections-reorder"
+               value="1"
+               data-component="url">
+    <br>
+<p>The ID of the course. Example: <code>1</code></p>
+            </div>
+                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>sections</code></b>&nbsp;&nbsp;
+<small>integer[]</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="sections[0]"                data-endpoint="PUTadmin-courses--course_id--sections-reorder"
+               data-component="body">
+        <input type="number" style="display: none"
+               name="sections[1]"                data-endpoint="PUTadmin-courses--course_id--sections-reorder"
+               data-component="body">
+    <br>
+<p>The <code>id</code> of an existing record in the sections table.</p>
+        </div>
+        </form>
+
                     <h2 id="endpoints-GETadmin-courses--course_id--sections--section_id-">GET admin/courses/{course_id}/sections/{section_id}</h2>
 
 <p>
@@ -6785,32 +6953,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </div>
                     </form>
 
-                    <h2 id="endpoints-POSTadmin-courses--course_id--sections--section_id--reorder">POST admin/courses/{course_id}/sections/{section_id}/reorder</h2>
+                    <h2 id="endpoints-PATCHadmin-courses--course_id--sections--section_id--visibility">PATCH admin/courses/{course_id}/sections/{section_id}/visibility</h2>
 
 <p>
 </p>
 
 
 
-<span id="example-requests-POSTadmin-courses--course_id--sections--section_id--reorder">
+<span id="example-requests-PATCHadmin-courses--course_id--sections--section_id--visibility">
 <blockquote>Example request:</blockquote>
 
 
 <div class="bash-example">
-    <pre><code class="language-bash">curl --request POST \
-    "http://xyz-lms.test/admin/courses/1/sections/1/reorder" \
+    <pre><code class="language-bash">curl --request PATCH \
+    "http://xyz-lms.test/admin/courses/1/sections/1/visibility" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
-    --header "X-Locale: en" \
-    --data "{
-    \"new_index\": 0
-}"
-</code></pre></div>
+    --header "X-Locale: en"</code></pre></div>
 
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/admin/courses/1/sections/1/reorder"
+    "http://xyz-lms.test/admin/courses/1/sections/1/visibility"
 );
 
 const headers = {
@@ -6819,65 +6983,60 @@ const headers = {
     "X-Locale": "en",
 };
 
-let body = {
-    "new_index": 0
-};
-
 fetch(url, {
-    method: "POST",
+    method: "PATCH",
     headers,
-    body: JSON.stringify(body),
 }).then(response =&gt; response.json());</code></pre></div>
 
 </span>
 
-<span id="example-responses-POSTadmin-courses--course_id--sections--section_id--reorder">
+<span id="example-responses-PATCHadmin-courses--course_id--sections--section_id--visibility">
 </span>
-<span id="execution-results-POSTadmin-courses--course_id--sections--section_id--reorder" hidden>
+<span id="execution-results-PATCHadmin-courses--course_id--sections--section_id--visibility" hidden>
     <blockquote>Received response<span
-                id="execution-response-status-POSTadmin-courses--course_id--sections--section_id--reorder"></span>:
+                id="execution-response-status-PATCHadmin-courses--course_id--sections--section_id--visibility"></span>:
     </blockquote>
-    <pre class="json"><code id="execution-response-content-POSTadmin-courses--course_id--sections--section_id--reorder"
+    <pre class="json"><code id="execution-response-content-PATCHadmin-courses--course_id--sections--section_id--visibility"
       data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
 </span>
-<span id="execution-error-POSTadmin-courses--course_id--sections--section_id--reorder" hidden>
+<span id="execution-error-PATCHadmin-courses--course_id--sections--section_id--visibility" hidden>
     <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-POSTadmin-courses--course_id--sections--section_id--reorder">
+    <pre><code id="execution-error-message-PATCHadmin-courses--course_id--sections--section_id--visibility">
 
 Tip: Check that you&#039;re properly connected to the network.
 If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
 You can check the Dev Tools console for debugging information.</code></pre>
 </span>
-<form id="form-POSTadmin-courses--course_id--sections--section_id--reorder" data-method="POST"
-      data-path="admin/courses/{course_id}/sections/{section_id}/reorder"
+<form id="form-PATCHadmin-courses--course_id--sections--section_id--visibility" data-method="PATCH"
+      data-path="admin/courses/{course_id}/sections/{section_id}/visibility"
       data-authed="0"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('POSTadmin-courses--course_id--sections--section_id--reorder', this);">
+      onsubmit="event.preventDefault(); executeTryOut('PATCHadmin-courses--course_id--sections--section_id--visibility', this);">
     <h3>
         Request&nbsp;&nbsp;&nbsp;
                     <button type="button"
                     style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-POSTadmin-courses--course_id--sections--section_id--reorder"
-                    onclick="tryItOut('POSTadmin-courses--course_id--sections--section_id--reorder');">Try it out ⚡
+                    id="btn-tryout-PATCHadmin-courses--course_id--sections--section_id--visibility"
+                    onclick="tryItOut('PATCHadmin-courses--course_id--sections--section_id--visibility');">Try it out ⚡
             </button>
             <button type="button"
                     style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-POSTadmin-courses--course_id--sections--section_id--reorder"
-                    onclick="cancelTryOut('POSTadmin-courses--course_id--sections--section_id--reorder');" hidden>Cancel 🛑
+                    id="btn-canceltryout-PATCHadmin-courses--course_id--sections--section_id--visibility"
+                    onclick="cancelTryOut('PATCHadmin-courses--course_id--sections--section_id--visibility');" hidden>Cancel 🛑
             </button>&nbsp;&nbsp;
             <button type="submit"
                     style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-POSTadmin-courses--course_id--sections--section_id--reorder"
+                    id="btn-executetryout-PATCHadmin-courses--course_id--sections--section_id--visibility"
                     data-initial-text="Send Request 💥"
                     data-loading-text="⏱ Sending..."
                     hidden>Send Request 💥
             </button>
             </h3>
             <p>
-            <small class="badge badge-black">POST</small>
-            <b><code>admin/courses/{course_id}/sections/{section_id}/reorder</code></b>
+            <small class="badge badge-purple">PATCH</small>
+            <b><code>admin/courses/{course_id}/sections/{section_id}/visibility</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
@@ -6886,7 +7045,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTadmin-courses--course_id--sections--section_id--reorder"
+                              name="Content-Type"                data-endpoint="PATCHadmin-courses--course_id--sections--section_id--visibility"
                value="application/json"
                data-component="header">
     <br>
@@ -6898,7 +7057,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="POSTadmin-courses--course_id--sections--section_id--reorder"
+                              name="Accept"                data-endpoint="PATCHadmin-courses--course_id--sections--section_id--visibility"
                value="application/json"
                data-component="header">
     <br>
@@ -6910,7 +7069,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="POSTadmin-courses--course_id--sections--section_id--reorder"
+                              name="X-Locale"                data-endpoint="PATCHadmin-courses--course_id--sections--section_id--visibility"
                value="en"
                data-component="header">
     <br>
@@ -6923,7 +7082,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="course_id"                data-endpoint="POSTadmin-courses--course_id--sections--section_id--reorder"
+               step="any"               name="course_id"                data-endpoint="PATCHadmin-courses--course_id--sections--section_id--visibility"
                value="1"
                data-component="url">
     <br>
@@ -6935,26 +7094,13 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
-               step="any"               name="section_id"                data-endpoint="POSTadmin-courses--course_id--sections--section_id--reorder"
+               step="any"               name="section_id"                data-endpoint="PATCHadmin-courses--course_id--sections--section_id--visibility"
                value="1"
                data-component="url">
     <br>
 <p>The ID of the section. Example: <code>1</code></p>
             </div>
-                            <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
-        <div style=" padding-left: 28px;  clear: unset;">
-            <b style="line-height: 2;"><code>new_index</code></b>&nbsp;&nbsp;
-<small>integer</small>&nbsp;
- &nbsp;
- &nbsp;
-                <input type="number" style="display: none"
-               step="any"               name="new_index"                data-endpoint="POSTadmin-courses--course_id--sections--section_id--reorder"
-               value="0"
-               data-component="body">
-    <br>
-<p>Zero-based target index to move the section to. Must be at least 0. Example: <code>0</code></p>
-        </div>
-        </form>
+                    </form>
 
                     <h2 id="endpoints-POSTadmin-courses--course--sections-structure">POST admin/courses/{course}/sections/structure</h2>
 

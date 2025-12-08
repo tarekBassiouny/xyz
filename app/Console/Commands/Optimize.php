@@ -22,6 +22,7 @@ class Optimize extends Command
         $this->runArtisan('optimize:clear');
         $this->runArtisan('migrate', ['--force' => true]);
         $this->shell(['composer', 'dump-autoload']);
+        $this->runArtisan('scribe:generate', ['--force' => true]);
 
         return self::SUCCESS;
     }

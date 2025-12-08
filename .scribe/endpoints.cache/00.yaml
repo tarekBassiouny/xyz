@@ -2332,6 +2332,64 @@ endpoints:
   -
     custom: []
     httpMethods:
+      - PUT
+    uri: 'admin/courses/{course_id}/sections/reorder'
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: en
+    urlParameters:
+      course_id:
+        custom: []
+        name: course_id
+        description: 'The ID of the course.'
+        required: true
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanUrlParameters:
+      course_id: 1
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      sections:
+        custom: []
+        name: sections
+        description: 'The <code>id</code> of an existing record in the sections table.'
+        required: false
+        example:
+          - 16
+        type: 'integer[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      sections:
+        - 16
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
       - GET
     uri: 'admin/courses/{course_id}/sections/{section_id}'
     metadata:
@@ -2592,8 +2650,8 @@ endpoints:
   -
     custom: []
     httpMethods:
-      - POST
-    uri: 'admin/courses/{course_id}/sections/{section_id}/reorder'
+      - PATCH
+    uri: 'admin/courses/{course_id}/sections/{section_id}/visibility'
     metadata:
       custom: []
       groupName: Endpoints
@@ -2636,20 +2694,8 @@ endpoints:
       section_id: 1
     queryParameters: []
     cleanQueryParameters: []
-    bodyParameters:
-      new_index:
-        custom: []
-        name: new_index
-        description: 'Zero-based target index to move the section to. Must be at least 0.'
-        required: true
-        example: 0
-        type: integer
-        enumValues: []
-        exampleWasSpecified: false
-        nullable: false
-        deprecated: false
-    cleanBodyParameters:
-      new_index: 0
+    bodyParameters: []
+    cleanBodyParameters: []
     fileParameters: []
     responses: []
     responseFields: []
