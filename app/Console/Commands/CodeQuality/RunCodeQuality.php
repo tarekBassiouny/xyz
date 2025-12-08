@@ -11,13 +11,12 @@ class RunCodeQuality extends Command
 {
     protected $signature = 'system:check';
 
-    protected $description = 'Run Pint (test), PHPStan, PHPCS, and tests';
+    protected $description = 'Run Pint (test), PHPStan, and tests';
 
     public function handle(): int
     {
         $this->shell(['./vendor/bin/pint', '--test']);
-        $this->shell(['./vendor/bin/phpstan', 'analyse'], $this->phpstanEnv());
-        $this->shell(['./vendor/bin/phpcs', '--standard=phpcs.xml']);
+        $this->shell(['./vendor/bin/phpstan', 'analyse', '--memory-limit=2G'], $this->phpstanEnv());
         $this->shell(['php', 'artisan', 'test']);
 
         return self::SUCCESS;

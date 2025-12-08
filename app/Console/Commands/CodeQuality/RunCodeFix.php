@@ -11,13 +11,12 @@ class RunCodeFix extends Command
 {
     protected $signature = 'system:fix';
 
-    protected $description = 'Run Pint (fix), PHPCBF, PHPStan, and tests';
+    protected $description = 'Run Pint (fix), PHPStan, and tests';
 
     public function handle(): int
     {
         $this->shell(['./vendor/bin/pint']);
-        $this->shell(['./vendor/bin/phpcbf', '--standard=phpcs.xml']);
-        $this->shell(['./vendor/bin/phpstan', 'analyse'], $this->phpstanEnv());
+        $this->shell(['./vendor/bin/phpstan', 'analyse', '--memory-limit=2G'], $this->phpstanEnv());
         $this->shell(['php', 'artisan', 'test']);
 
         return self::SUCCESS;

@@ -24,6 +24,9 @@ class RunAllCommands extends Command
         // $this->runArtisan('queue:restart');
         $this->shell(['composer', 'dump-autoload']);
         // $this->shell(['npm', 'run', 'build']);
+        $this->shell(['./vendor/bin/pint', '--test']);
+        $this->shell(['./vendor/bin/phpstan', 'analyse', '--memory-limit=2G']);
+        $this->shell(['php', 'artisan', 'test']);
 
         return self::SUCCESS;
     }

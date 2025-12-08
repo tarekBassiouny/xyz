@@ -80,13 +80,19 @@ class User extends Authenticatable implements JWTSubject
     /** @return BelongsToMany<Center, self> */
     public function centers(): BelongsToMany
     {
-        return $this->belongsToMany(Center::class, 'user_centers');
+        return $this->belongsToMany(Center::class, 'user_centers')
+            ->using(\App\Models\Pivots\UserCenter::class)
+            ->withTimestamps()
+            ->wherePivotNull('deleted_at');
     }
 
     /** @return BelongsToMany<Role, self> */
     public function roles(): BelongsToMany
     {
-        return $this->belongsToMany(Role::class, 'role_user');
+        return $this->belongsToMany(Role::class, 'role_user')
+            ->using(\App\Models\Pivots\RoleUser::class)
+            ->withTimestamps()
+            ->wherePivotNull('deleted_at');
     }
 
     /** @return HasMany<UserDevice, self> */

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -34,6 +35,7 @@ class Center extends Model
     /** @use HasFactory<\Database\Factories\CenterFactory> */
     use HasFactory;
 
+    use HasTranslations;
     use SoftDeletes;
 
     protected $fillable = [
@@ -56,6 +58,11 @@ class Center extends Model
         'pdf_download_permission' => 'boolean',
         'default_view_limit' => 'integer',
         'device_limit' => 'integer',
+    ];
+
+    protected array $translatable = [
+        'name',
+        'description',
     ];
 
     /** @return BelongsToMany<User, self> */

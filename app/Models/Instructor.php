@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use App\Models\Concerns\HasTranslations;
 use App\Models\Pivots\CourseInstructor;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -31,6 +32,7 @@ class Instructor extends Model
     /** @use HasFactory<\Database\Factories\InstructorFactory> */
     use HasFactory;
 
+    use HasTranslations;
     use SoftDeletes;
 
     protected $fillable = [
@@ -50,6 +52,12 @@ class Instructor extends Model
         'bio_translations' => 'array',
         'title_translations' => 'array',
         'social_links' => 'array',
+    ];
+
+    protected array $translatable = [
+        'name',
+        'bio',
+        'title',
     ];
 
     /** @return BelongsTo<Center, self> */
