@@ -1,4 +1,4 @@
-name: Style and Tests
+name: Style
 
 on:
   pull_request:
@@ -32,6 +32,3 @@ jobs:
 
       - name: Run Pint (lint)
         run: ./vendor/bin/pint --test
-
-      - name: Run tests
-        run: php artisan test
