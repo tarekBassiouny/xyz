@@ -48,11 +48,8 @@ jobs:
 
       - name: Prepare environment for Laravel
         run: |
-          cp .env.test .env
+          cp .env.testing .env
           php artisan key:generate --force
-
-      - name: Confirm .env.test present
-        run: ls -la .env.test
 
       - name: Wait for MySQL (40 attempts)
         run: |
