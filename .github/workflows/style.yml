@@ -8,7 +8,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  Style:
+  style:
+    name: Run Laravel Pint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
