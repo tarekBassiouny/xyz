@@ -7,8 +7,8 @@ use App\Models\Enrollment;
 use App\Models\Pivots\CourseVideo;
 use App\Models\PlaybackSession;
 use App\Models\User;
-use App\Models\UserDevice;
 use App\Models\Video;
+use App\Services\Devices\Contracts\DeviceServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class)->group('playback', 'api');
@@ -18,17 +18,15 @@ beforeEach(function (): void {
     $this->asApiUser($student);
 });
 
-function makeApprovedDevice(User $user, string $uuid = 'device-123'): UserDevice
+function makeApprovedDevice(User $user, string $uuid = 'device-123')
 {
-    /** @var UserDevice $device */
-    $device = UserDevice::factory()->create([
-        'user_id' => $user->id,
-        'device_id' => $uuid,
-        'status' => 0,
-        'approved_at' => now(),
-    ]);
+    /** @var DeviceServiceInterface $service */
+    $service = app(DeviceServiceInterface::class);
 
-    return $device;
+    return $service->register($user, $uuid, [
+        'device_name' => 'Test Device',
+        'device_os' => 'Test OS',
+    ]);
 }
 
 function attachVideoToCourse(Course $course): Video
@@ -115,6 +113,25 @@ it('blocks playback for unapproved device', function (): void {
 
     $response = $this->apiPost("/api/v1/courses/{$course->id}/videos/{$video->id}/playback/authorize", [
         'device_id' => 'unknown-device',
+    ]);
+
+    $response->assertStatus(403)->assertJsonPath('success', false);
+});
+
+it('blocks playback when device does not match active binding', function (): void {
+    $student = $this->apiUser;
+    $device = makeApprovedDevice($student, 'device-1');
+    $course = Course::factory()->create(['status' => 3, 'is_published' => true]);
+    $video = attachVideoToCourse($course);
+    Enrollment::factory()->create([
+        'user_id' => $student->id,
+        'course_id' => $course->id,
+        'center_id' => $course->center_id,
+        'status' => Enrollment::STATUS_ACTIVE,
+    ]);
+
+    $response = $this->apiPost("/api/v1/courses/{$course->id}/videos/{$video->id}/playback/authorize", [
+        'device_id' => 'device-2',
     ]);
 
     $response->assertStatus(403)->assertJsonPath('success', false);
