@@ -15,6 +15,7 @@ use App\Models\UserDevice;
 use App\Models\Video;
 use App\Models\VideoSetting;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
+use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Carbon;
 
@@ -78,7 +79,7 @@ class PlaybackAuthorizationService
         }
     }
 
-    private function assertVideoAttached(Course $course, Video $video): \Illuminate\Database\Eloquent\Relations\Pivot
+    private function assertVideoAttached(Course $course, Video $video): Pivot
     {
         $attached = $course->videos()
             ->where('videos.id', $video->id)
@@ -89,7 +90,7 @@ class PlaybackAuthorizationService
             $this->deny('VIDEO_NOT_IN_COURSE', 'Video not available in this course.', 404);
         }
 
-        /** @var \Illuminate\Database\Eloquent\Relations\Pivot $pivot */
+        /** @var Pivot $pivot */
         $pivot = $attached->pivot;
 
         $visible = $pivot->getAttribute('visible');
@@ -184,7 +185,8 @@ class PlaybackAuthorizationService
             return (int) $centerLimit;
         }
 
-        $centerDefault = $course->center?->default_view_limit;
+        $center = $course->center;
+        $centerDefault = $center?->default_view_limit;
 
         return is_numeric($centerDefault) ? (int) $centerDefault : null;
     }
