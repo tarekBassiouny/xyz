@@ -24,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     require __DIR__.'/../routes/api/v1/auth.php';
 
                     Route::middleware(['jwt.mobile'])->group(function (): void {
+                        require __DIR__.'/../routes/api/v1/enrollments.php';
                         require __DIR__.'/../routes/api/v1/courses.php';
                         require __DIR__.'/../routes/api/v1/sections.php';
                         require __DIR__.'/../routes/api/v1/videos.php';
@@ -38,6 +39,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     require __DIR__.'/../routes/admin/auth.php';
 
                     Route::middleware(['jwt.admin'])->group(function (): void {
+                        require __DIR__.'/../routes/admin/enrollments.php';
                         require __DIR__.'/../routes/admin/courses.php';
                         require __DIR__.'/../routes/admin/sections.php';
                         require __DIR__.'/../routes/admin/videos.php';
@@ -70,6 +72,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'jwt.mobile' => JwtMobileMiddleware::class,
             'jwt.admin' => JwtAdminMiddleware::class,
             'setlocale' => SetRequestLocale::class,
+            'enrollment.active' => \App\Http\Middleware\EnsureActiveEnrollment::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
