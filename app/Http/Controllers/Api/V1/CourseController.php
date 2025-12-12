@@ -42,9 +42,7 @@ class CourseController extends Controller
                     ->from('enrollments')
                     ->whereNull('deleted_at')
                     ->where('status', Enrollment::STATUS_ACTIVE)
-                    ->when($user !== null, function ($inner) use ($user): void {
-                        $inner->where('user_id', $user?->id);
-                    });
+                    ->where('user_id', $user->id);
             })
             ->paginate($perPage);
 

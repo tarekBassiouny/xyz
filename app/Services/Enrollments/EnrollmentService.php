@@ -127,6 +127,9 @@ class EnrollmentService implements EnrollmentServiceInterface
         }
     }
 
+    /**
+     * @param  array<string, mixed>  $metadata
+     */
     private function log(string $action, ?User $actor, ?Course $course, Enrollment $enrollment, array $metadata = []): void
     {
         AuditLog::create([
