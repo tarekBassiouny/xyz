@@ -29,6 +29,7 @@ return Application::configure(basePath: dirname(__DIR__))
                         require __DIR__.'/../routes/api/v1/sections.php';
                         require __DIR__.'/../routes/api/v1/videos.php';
                         require __DIR__.'/../routes/api/v1/pdfs.php';
+                        require __DIR__.'/../routes/api/v1/playback.php';
                     });
                 });
 
