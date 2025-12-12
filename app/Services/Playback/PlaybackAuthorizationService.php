@@ -15,6 +15,7 @@ use App\Models\UserDevice;
 use App\Models\Video;
 use App\Models\VideoSetting;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
+use App\Services\Devices\Contracts\DeviceServiceInterface;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Carbon;
@@ -23,7 +24,8 @@ class PlaybackAuthorizationService
 {
     public function __construct(
         private readonly EnrollmentServiceInterface $enrollmentService,
-        private readonly PlaybackSessionService $sessionService
+        private readonly PlaybackSessionService $sessionService,
+        private readonly DeviceServiceInterface $deviceService
     ) {}
 
     /**
@@ -103,21 +105,7 @@ class PlaybackAuthorizationService
 
     private function assertDeviceApproved(User $user, string $deviceId): UserDevice
     {
-        /** @var UserDevice|null $device */
-        $device = $user->devices()
-            ->where('device_id', $deviceId)
-            ->whereNull('deleted_at')
-            ->first();
-
-        if ($device === null) {
-            $this->deny('DEVICE_NOT_APPROVED', 'Device is not approved for playback.', 403);
-        }
-
-        if ((int) $device->status !== 0 || $device->approved_at === null) {
-            $this->deny('DEVICE_NOT_APPROVED', 'Device is not approved for playback.', 403);
-        }
-
-        return $device;
+        return $this->deviceService->assertActiveDevice($user, $deviceId);
     }
 
     private function assertConcurrencyFree(User $user): void
