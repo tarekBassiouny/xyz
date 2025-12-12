@@ -88,6 +88,6 @@ class JwtService implements JwtServiceInterface
             $record->update(['revoked_at' => now()]);
         }
 
-        JWTAuth::invalidate($token, true);
+        JWTAuth::invalidate(true);
     }
 }
