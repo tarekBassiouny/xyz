@@ -12,6 +12,8 @@ use App\Services\Courses\Contracts\CourseInstructorServiceInterface;
 use App\Services\Courses\CourseInstructorService;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use App\Services\Devices\DeviceService;
+use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
+use App\Services\Enrollments\EnrollmentService;
 use App\Services\Instructors\Contracts\InstructorServiceInterface;
 use App\Services\Instructors\InstructorService;
 use App\Services\Sections\Contracts\SectionServiceInterface;
@@ -33,6 +35,7 @@ class AppServiceProvider extends ServiceProvider
             InstructorServiceInterface::class => InstructorService::class,
             CourseInstructorServiceInterface::class => CourseInstructorService::class,
             SectionServiceInterface::class => SectionService::class,
+            EnrollmentServiceInterface::class => EnrollmentService::class,
         ];
 
         foreach ($bindings as $abstract => $implementation) {
