@@ -16,6 +16,8 @@ use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Enrollments\EnrollmentService;
 use App\Services\Instructors\Contracts\InstructorServiceInterface;
 use App\Services\Instructors\InstructorService;
+use App\Services\Playback\PlaybackAuthorizationService;
+use App\Services\Playback\PlaybackSessionService;
 use App\Services\Sections\Contracts\SectionServiceInterface;
 use App\Services\Sections\SectionService;
 use Illuminate\Support\ServiceProvider;
@@ -41,6 +43,9 @@ class AppServiceProvider extends ServiceProvider
         foreach ($bindings as $abstract => $implementation) {
             $this->app->bind($abstract, $implementation);
         }
+
+        $this->app->singleton(PlaybackSessionService::class);
+        $this->app->singleton(PlaybackAuthorizationService::class);
     }
 
     /**
