@@ -10,11 +10,11 @@ use App\Http\Resources\Courses\CourseResource;
 use App\Http\Resources\Courses\CourseSummaryResource;
 use App\Http\Resources\PdfResource;
 use App\Http\Resources\VideoResource;
-use App\Models\Enrollment;
 use App\Models\Course;
+use App\Models\Enrollment;
 use App\Models\Pdf;
-use App\Models\Video;
 use App\Models\User;
+use App\Models\Video;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
