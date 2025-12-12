@@ -1,7 +1,6 @@
 name: Static Analysis
 
 on:
-  # PRs to dev/main and manual runs
   pull_request:
     branches: [main]
   workflow_dispatch:

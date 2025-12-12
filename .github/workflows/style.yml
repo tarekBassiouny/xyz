@@ -2,9 +2,7 @@ name: Style
 
 on:
   pull_request:
-    branches: [main, dev]
-  push:
-    branches: [main, dev]
+    branches: [dev, main]
   workflow_dispatch:
 
 jobs:
