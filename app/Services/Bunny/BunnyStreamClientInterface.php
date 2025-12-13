@@ -19,4 +19,10 @@ interface BunnyStreamClientInterface
     public function pullZone(): ?string;
 
     public function drmEnabled(): bool;
+
+    /**
+     * @param  array<string, mixed>  $payload
+     * @return array{id:string, upload_url:string, raw:array<string, mixed>}
+     */
+    public function createVideo(array $payload = []): array;
 }

@@ -51,4 +51,32 @@ class BunnyStreamApiClient implements BunnyStreamClientInterface
     {
         return $this->drmEnabledValue;
     }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     * @return array{id:string, upload_url:string, raw:array<string, mixed>}
+     */
+    public function createVideo(array $payload = []): array
+    {
+        $libraryId = $this->libraryId();
+        if ($libraryId === null) {
+            throw new \RuntimeException('Missing Bunny library ID.');
+        }
+
+        $response = $this->request('POST', "library/{$libraryId}/videos", $payload);
+        $id = $response['guid'] ?? $response['id'] ?? null;
+
+        if (! is_string($id) || $id === '') {
+            throw new \RuntimeException('Failed to create Bunny video.');
+        }
+
+        $uploadUrl = $response['upload_url']
+            ?? $this->baseUrl."/library/{$libraryId}/videos/{$id}";
+
+        return [
+            'id' => $id,
+            'upload_url' => $uploadUrl,
+            'raw' => $response,
+        ];
+    }
 }

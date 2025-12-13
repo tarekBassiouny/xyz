@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "XYZ LMS API (v2)",
-    "_postman_id": "3153fdac-2d09-42c9-9b8d-8fa798cd2e3b",
+    "_postman_id": "929b715d-f5a7-45d0-947a-ac7cd4c98736",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -2490,7 +2490,7 @@
                 {
                   "id": "deviceChangeRequest_id",
                   "key": "deviceChangeRequest_id",
-                  "value": "16",
+                  "value": "10",
                   "description": "The ID of the deviceChangeRequest."
                 }
               ]

@@ -34,4 +34,22 @@ class FakeBunnyStreamClient implements BunnyStreamClientInterface
     {
         return false;
     }
+
+    /**
+     * @param  array<string, mixed>  $payload
+     * @return array{id:string, upload_url:string, raw:array<string, mixed>}
+     */
+    public function createVideo(array $payload = []): array
+    {
+        $id = 'fake-video-'.(string) \Illuminate\Support\Str::uuid();
+
+        return [
+            'id' => $id,
+            'upload_url' => 'https://fake.bunnycdn.test/upload/'.$id,
+            'raw' => [
+                'id' => $id,
+                'payload' => $payload,
+            ],
+        ];
+    }
 }
