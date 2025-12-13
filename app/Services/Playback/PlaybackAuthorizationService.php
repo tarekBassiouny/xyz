@@ -4,9 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Playback;
 
-use App\Models\CenterSetting;
 use App\Models\Course;
-use App\Models\CourseSetting;
 use App\Models\Enrollment;
 use App\Models\Section;
 use App\Models\User;
@@ -14,7 +12,6 @@ use App\Models\UserDevice;
 use App\Models\Video;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
-use App\Services\Playback\ViewLimitService;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Carbon;
