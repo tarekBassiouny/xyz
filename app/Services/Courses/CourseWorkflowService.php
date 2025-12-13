@@ -10,11 +10,14 @@ use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
 use App\Models\Section;
 use App\Services\Courses\Contracts\CourseWorkflowServiceInterface;
+use App\Services\Videos\VideoPublishingService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class CourseWorkflowService implements CourseWorkflowServiceInterface
 {
+    public function __construct(private readonly VideoPublishingService $videoPublishingService) {}
+
     public function publishCourse(Course $course): Course
     {
         $course->loadMissing(['sections', 'videos']);
@@ -31,14 +34,8 @@ class CourseWorkflowService implements CourseWorkflowServiceInterface
             ]);
         }
 
-        $hasUnreadyVideos = $course->videos->contains(function ($video): bool {
-            return (int) $video->lifecycle_status < 2;
-        });
-
-        if ($hasUnreadyVideos) {
-            throw ValidationException::withMessages([
-                'videos' => ['All videos must be ready before publishing.'],
-            ]);
+        foreach ($course->videos as $video) {
+            $this->videoPublishingService->ensurePublishable($video);
         }
 
         $course->status = 3;
