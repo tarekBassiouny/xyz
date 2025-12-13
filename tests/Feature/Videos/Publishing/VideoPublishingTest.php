@@ -13,7 +13,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class)->group('videos');
 
-function attachVideoToCourse(Course $course, Video $video): void
+function attachVideoToCourseForPublishing(Course $course, Video $video): void
 {
     CourseVideo::create([
         'course_id' => $course->id,
@@ -37,7 +37,7 @@ it('blocks publishing when any video is not ready', function (): void {
         'lifecycle_status' => 1,
         'created_by' => $admin->id,
     ]);
-    attachVideoToCourse($course, $video);
+    attachVideoToCourseForPublishing($course, $video);
 
     $response = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/courses/{$course->id}/publish");
 
@@ -64,7 +64,7 @@ it('allows publishing when videos are ready and latest session ready', function 
         'upload_session_id' => $session->id,
         'created_by' => $admin->id,
     ]);
-    attachVideoToCourse($course, $video);
+    attachVideoToCourseForPublishing($course, $video);
 
     $response = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/courses/{$course->id}/publish");
 
