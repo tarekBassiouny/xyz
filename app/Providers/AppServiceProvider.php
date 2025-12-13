@@ -20,10 +20,10 @@ use App\Services\Instructors\Contracts\InstructorServiceInterface;
 use App\Services\Instructors\InstructorService;
 use App\Services\Playback\PlaybackAuthorizationService;
 use App\Services\Playback\PlaybackSessionService;
-use App\Services\Settings\CenterSettingsService;
-use App\Services\Settings\Contracts\CenterSettingsServiceInterface;
 use App\Services\Sections\Contracts\SectionServiceInterface;
 use App\Services\Sections\SectionService;
+use App\Services\Settings\CenterSettingsService;
+use App\Services\Settings\Contracts\CenterSettingsServiceInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
