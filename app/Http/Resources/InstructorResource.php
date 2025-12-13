@@ -31,6 +31,7 @@ class InstructorResource extends JsonResource
             'email' => $instructor->email,
             'phone' => $instructor->phone,
             'social_links' => $instructor->social_links,
+            'metadata' => $instructor->metadata,
         ];
     }
 }
