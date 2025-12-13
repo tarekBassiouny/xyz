@@ -1851,7 +1851,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=architecto"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpugkekcsrdmb95mmuR1m" </code></pre></div>
+    --form "avatar=@/tmp/php478qo10spes1aaADvFL" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -2045,7 +2045,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpugkekcsrdmb95mmuR1m</code></p>
+<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php478qo10spes1aaADvFL</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -2265,7 +2265,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=architecto"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/php09cs8ah4ken815NdLca" </code></pre></div>
+    --form "avatar=@/tmp/php7dr4hnol4q313Xx78pz" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -2475,7 +2475,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php09cs8ah4ken815NdLca</code></p>
+<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php7dr4hnol4q313Xx78pz</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -13959,7 +13959,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/php8fupsauqanii93tX6SA" </code></pre></div>
+    --form "file=@/tmp/php5qbijpablkir46hlArM" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14110,7 +14110,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/php8fupsauqanii93tX6SA</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/php5qbijpablkir46hlArM</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
@@ -23862,7 +23862,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/phpkteksdstbiul0o1LTaX" </code></pre></div>
+    --form "file=@/tmp/php9829bpb09gnu8py5YYj" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -24013,7 +24013,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpkteksdstbiul0o1LTaX</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/php9829bpb09gnu8py5YYj</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
@@ -25385,7 +25385,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://xyz-lms.test/admin/device-change-requests/16/reject" \
+    "http://xyz-lms.test/admin/device-change-requests/10/reject" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en" \
@@ -25397,7 +25397,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/admin/device-change-requests/16/reject"
+    "http://xyz-lms.test/admin/device-change-requests/10/reject"
 );
 
 const headers = {
@@ -25511,10 +25511,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="deviceChangeRequest_id"                data-endpoint="POSTadmin-device-change-requests--deviceChangeRequest_id--reject"
-               value="16"
+               value="10"
                data-component="url">
     <br>
-<p>The ID of the deviceChangeRequest. Example: <code>16</code></p>
+<p>The ID of the deviceChangeRequest. Example: <code>10</code></p>
             </div>
                             <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
         <div style=" padding-left: 28px;  clear: unset;">
