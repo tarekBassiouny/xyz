@@ -8,6 +8,9 @@ use App\Services\Auth\Contracts\JwtServiceInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
 use App\Services\Auth\JwtService;
 use App\Services\Auth\OtpService;
+use App\Services\Bunny\BunnyStreamApiClient;
+use App\Services\Bunny\BunnyStreamClientInterface;
+use App\Services\Bunny\FakeBunnyStreamClient;
 use App\Services\Centers\CenterService;
 use App\Services\Centers\Contracts\CenterServiceInterface;
 use App\Services\Courses\Contracts\CourseInstructorServiceInterface;
@@ -18,9 +21,6 @@ use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Enrollments\EnrollmentService;
 use App\Services\Instructors\Contracts\InstructorServiceInterface;
 use App\Services\Instructors\InstructorService;
-use App\Services\Bunny\BunnyStreamApiClient;
-use App\Services\Bunny\BunnyStreamClientInterface;
-use App\Services\Bunny\FakeBunnyStreamClient;
 use App\Services\Playback\ConcurrencyService;
 use App\Services\Playback\PlaybackAuthorizationService;
 use App\Services\Playback\PlaybackSessionService;
@@ -85,7 +85,7 @@ class AppServiceProvider extends ServiceProvider
                 );
             }
 
-            return new FakeBunnyStreamClient();
+            return new FakeBunnyStreamClient;
         });
     }
 
