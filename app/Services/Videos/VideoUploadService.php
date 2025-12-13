@@ -28,21 +28,27 @@ class VideoUploadService
 
     public function initializeUpload(User $admin, Center $center, string $originalFilename, ?Video $video = null): VideoUploadSession
     {
-        $bunnyId = $this->generateBunnyUploadId();
+        $created = $this->bunnyClient->createVideo(['title' => $originalFilename]);
+        $bunnyId = $created['id'];
 
         $session = VideoUploadSession::create([
             'center_id' => $center->id,
             'uploaded_by' => $admin->id,
             'bunny_upload_id' => $bunnyId,
-            'upload_status' => self::STATUS_PENDING,
+            'upload_status' => self::STATUS_UPLOADING,
             'progress_percent' => 0,
         ]);
 
         if ($video !== null) {
             $video->upload_session_id = $session->id;
             $video->original_filename = $originalFilename;
-            $this->applyVideoState($video, self::STATUS_PENDING, []);
+            $video->source_provider = $video->source_provider ?: 'bunny';
+            $video->source_type = $video->source_type ?: 1;
+            $video->source_id = $bunnyId;
+            $this->applyVideoState($video, self::STATUS_UPLOADING, []);
         }
+
+        $session->setAttribute('upload_url', $created['upload_url']);
 
         return $session;
     }
@@ -73,13 +79,6 @@ class VideoUploadService
         }
 
         return $session->fresh() ?? $session;
-    }
-
-    private function generateBunnyUploadId(): string
-    {
-        $library = $this->bunnyClient->libraryId();
-
-        return ($library ? 'lib-'.$library.'-' : '').Str::uuid()->toString();
     }
 
     private function statusFromLabel(string $label): int

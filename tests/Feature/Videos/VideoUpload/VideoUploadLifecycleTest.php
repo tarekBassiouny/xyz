@@ -22,7 +22,8 @@ it('initializes an upload session for admin', function (): void {
     ]);
 
     $response->assertCreated()
-        ->assertJsonPath('data.upload_status', VideoUploadService::STATUS_PENDING);
+        ->assertJsonPath('data.upload_status', VideoUploadService::STATUS_UPLOADING)
+        ->assertJsonPath('data.upload_url', fn ($url) => ! empty($url));
 
     $this->assertDatabaseHas('video_upload_sessions', [
         'center_id' => $center->id,

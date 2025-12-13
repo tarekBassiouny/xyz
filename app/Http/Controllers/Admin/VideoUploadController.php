@@ -44,6 +44,7 @@ class VideoUploadController extends Controller
                 'bunny_upload_id' => $session->bunny_upload_id,
                 'upload_status' => $session->upload_status,
                 'progress_percent' => $session->progress_percent,
+                'upload_url' => $session->getAttribute('upload_url'),
             ],
         ], 201);
     }
