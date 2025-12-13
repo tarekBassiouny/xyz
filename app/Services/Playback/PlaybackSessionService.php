@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services\Playback;
 
-use App\Models\PlaybackSession;
 use App\Models\Enrollment;
+use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Models\Video;
-use Illuminate\Support\Carbon;
 use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Carbon;
 
 class PlaybackSessionService
 {
