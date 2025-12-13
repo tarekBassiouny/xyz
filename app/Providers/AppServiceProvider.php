@@ -11,6 +11,7 @@ use App\Services\Auth\OtpService;
 use App\Services\Bunny\BunnyStreamApiClient;
 use App\Services\Bunny\BunnyStreamClientInterface;
 use App\Services\Bunny\FakeBunnyStreamClient;
+use App\Services\Bunny\BunnyWebhookVerifier;
 use App\Services\Centers\CenterService;
 use App\Services\Centers\Contracts\CenterServiceInterface;
 use App\Services\Courses\Contracts\CourseInstructorServiceInterface;
@@ -87,6 +88,8 @@ class AppServiceProvider extends ServiceProvider
 
             return new FakeBunnyStreamClient;
         });
+
+        $this->app->singleton(BunnyWebhookVerifier::class);
     }
 
     /**
