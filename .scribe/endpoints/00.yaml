@@ -5082,9 +5082,9 @@ endpoints:
       center_id:
         custom: []
         name: center_id
-        description: 'The <code>id</code> of an existing record in the centers table.'
+        description: 'Center ID to associate the upload with. The <code>id</code> of an existing record in the centers table.'
         required: true
-        example: 16
+        example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -5093,9 +5093,9 @@ endpoints:
       video_id:
         custom: []
         name: video_id
-        description: 'The <code>id</code> of an existing record in the videos table.'
+        description: 'Optional existing video to attach this upload session to. The <code>id</code> of an existing record in the videos table.'
         required: false
-        example: 16
+        example: 10
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -5104,18 +5104,18 @@ endpoints:
       original_filename:
         custom: []
         name: original_filename
-        description: 'Must not be greater than 255 characters.'
+        description: 'Original filename of the uploaded video. Must not be greater than 255 characters.'
         required: true
-        example: 'n'
+        example: lecture-1.mp4
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      center_id: 16
-      video_id: 16
-      original_filename: 'n'
+      center_id: 1
+      video_id: 10
+      original_filename: lecture-1.mp4
     fileParameters: []
     responses: []
     responseFields: []
@@ -5162,9 +5162,9 @@ endpoints:
       status:
         custom: []
         name: status
-        description: ''
+        description: 'New upload status (PENDING, UPLOADING, PROCESSING, READY, FAILED).'
         required: true
-        example: UPLOADING
+        example: READY
         type: string
         enumValues:
           - PENDING
@@ -5178,9 +5178,9 @@ endpoints:
       progress_percent:
         custom: []
         name: progress_percent
-        description: 'Must be at least 0. Must not be greater than 100.'
+        description: 'Optional progress indicator between 0 and 100. Must be at least 0. Must not be greater than 100.'
         required: false
-        example: 1
+        example: 75
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -5189,9 +5189,9 @@ endpoints:
       source_id:
         custom: []
         name: source_id
-        description: 'Must not be greater than 255 characters.'
+        description: 'Optional Bunny video identifier when READY. Must not be greater than 255 characters.'
         required: false
-        example: 'n'
+        example: bunny-video-id
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -5200,9 +5200,9 @@ endpoints:
       source_url:
         custom: []
         name: source_url
-        description: 'Must not be greater than 2048 characters.'
+        description: 'Optional playback/source URL when READY. Must not be greater than 2048 characters.'
         required: false
-        example: 'http://crooks.biz/et-fugiat-sunt-nihil-accusantium'
+        example: 'https://example.com/video.mp4'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -5211,9 +5211,9 @@ endpoints:
       duration_seconds:
         custom: []
         name: duration_seconds
-        description: 'Must be at least 1.'
+        description: 'Optional duration in seconds when READY. Must be at least 1.'
         required: false
-        example: 2
+        example: 180
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -5222,21 +5222,21 @@ endpoints:
       error_message:
         custom: []
         name: error_message
-        description: 'Must not be greater than 2000 characters.'
+        description: 'Optional error details when FAILED. Must not be greater than 2000 characters.'
         required: false
-        example: i
+        example: 'Transcode failed due to invalid codec'
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: true
         deprecated: false
     cleanBodyParameters:
-      status: UPLOADING
-      progress_percent: 1
-      source_id: 'n'
-      source_url: 'http://crooks.biz/et-fugiat-sunt-nihil-accusantium'
-      duration_seconds: 2
-      error_message: i
+      status: READY
+      progress_percent: 75
+      source_id: bunny-video-id
+      source_url: 'https://example.com/video.mp4'
+      duration_seconds: 180
+      error_message: 'Transcode failed due to invalid codec'
     fileParameters: []
     responses: []
     responseFields: []
@@ -9201,9 +9201,9 @@ endpoints:
       center_id:
         custom: []
         name: center_id
-        description: 'The <code>id</code> of an existing record in the centers table.'
+        description: 'Center ID to associate the upload with. The <code>id</code> of an existing record in the centers table.'
         required: true
-        example: 16
+        example: 1
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -9212,9 +9212,9 @@ endpoints:
       video_id:
         custom: []
         name: video_id
-        description: 'The <code>id</code> of an existing record in the videos table.'
+        description: 'Optional existing video to attach this upload session to. The <code>id</code> of an existing record in the videos table.'
         required: false
-        example: 16
+        example: 10
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -9223,18 +9223,18 @@ endpoints:
       original_filename:
         custom: []
         name: original_filename
-        description: 'Must not be greater than 255 characters.'
+        description: 'Original filename of the uploaded video. Must not be greater than 255 characters.'
         required: true
-        example: 'n'
+        example: lecture-1.mp4
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
         deprecated: false
     cleanBodyParameters:
-      center_id: 16
-      video_id: 16
-      original_filename: 'n'
+      center_id: 1
+      video_id: 10
+      original_filename: lecture-1.mp4
     fileParameters: []
     responses: []
     responseFields: []
@@ -9281,9 +9281,9 @@ endpoints:
       status:
         custom: []
         name: status
-        description: ''
+        description: 'New upload status (PENDING, UPLOADING, PROCESSING, READY, FAILED).'
         required: true
-        example: PENDING
+        example: READY
         type: string
         enumValues:
           - PENDING
@@ -9297,9 +9297,9 @@ endpoints:
       progress_percent:
         custom: []
         name: progress_percent
-        description: 'Must be at least 0. Must not be greater than 100.'
+        description: 'Optional progress indicator between 0 and 100. Must be at least 0. Must not be greater than 100.'
         required: false
-        example: 1
+        example: 75
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -9308,9 +9308,9 @@ endpoints:
       source_id:
         custom: []
         name: source_id
-        description: 'Must not be greater than 255 characters.'
+        description: 'Optional Bunny video identifier when READY. Must not be greater than 255 characters.'
         required: false
-        example: 'n'
+        example: bunny-video-id
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -9319,9 +9319,9 @@ endpoints:
       source_url:
         custom: []
         name: source_url
-        description: 'Must not be greater than 2048 characters.'
+        description: 'Optional playback/source URL when READY. Must not be greater than 2048 characters.'
         required: false
-        example: 'http://crooks.biz/et-fugiat-sunt-nihil-accusantium'
+        example: 'https://example.com/video.mp4'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -9330,9 +9330,9 @@ endpoints:
       duration_seconds:
         custom: []
         name: duration_seconds
-        description: 'Must be at least 1.'
+        description: 'Optional duration in seconds when READY. Must be at least 1.'
         required: false
-        example: 2
+        example: 180
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -9341,21 +9341,21 @@ endpoints:
       error_message:
         custom: []
         name: error_message
-        description: 'Must not be greater than 2000 characters.'
+        description: 'Optional error details when FAILED. Must not be greater than 2000 characters.'
         required: false
-        example: i
+        example: 'Transcode failed due to invalid codec'
         type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: true
         deprecated: false
     cleanBodyParameters:
-      status: PENDING
-      progress_percent: 1
-      source_id: 'n'
-      source_url: 'http://crooks.biz/et-fugiat-sunt-nihil-accusantium'
-      duration_seconds: 2
-      error_message: i
+      status: READY
+      progress_percent: 75
+      source_id: bunny-video-id
+      source_url: 'https://example.com/video.mp4'
+      duration_seconds: 180
+      error_message: 'Transcode failed due to invalid codec'
     fileParameters: []
     responses: []
     responseFields: []

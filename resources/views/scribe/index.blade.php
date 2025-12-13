@@ -1851,7 +1851,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=architecto"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpuu90cpolqddbc1bOPlw" </code></pre></div>
+    --form "avatar=@/tmp/phpfhp8chrpm9er5rfpRv0" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -2045,7 +2045,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpuu90cpolqddbc1bOPlw</code></p>
+<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpfhp8chrpm9er5rfpRv0</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -2265,7 +2265,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=architecto"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpfsl8dhh6uddc822FCWu" </code></pre></div>
+    --form "avatar=@/tmp/php8uoa38jfk5mudA4HEE2" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -2475,7 +2475,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpfsl8dhh6uddc822FCWu</code></p>
+<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/php8uoa38jfk5mudA4HEE2</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -13227,9 +13227,9 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: en" \
     --data "{
-    \"center_id\": 16,
-    \"video_id\": 16,
-    \"original_filename\": \"n\"
+    \"center_id\": 1,
+    \"video_id\": 10,
+    \"original_filename\": \"lecture-1.mp4\"
 }"
 </code></pre></div>
 
@@ -13246,9 +13246,9 @@ const headers = {
 };
 
 let body = {
-    "center_id": 16,
-    "video_id": 16,
-    "original_filename": "n"
+    "center_id": 1,
+    "video_id": 10,
+    "original_filename": "lecture-1.mp4"
 };
 
 fetch(url, {
@@ -13352,10 +13352,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="center_id"                data-endpoint="POSTapi-v1-admin-video-uploads"
-               value="16"
+               value="1"
                data-component="body">
     <br>
-<p>The <code>id</code> of an existing record in the centers table. Example: <code>16</code></p>
+<p>Center ID to associate the upload with. The <code>id</code> of an existing record in the centers table. Example: <code>1</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>video_id</code></b>&nbsp;&nbsp;
@@ -13364,10 +13364,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="video_id"                data-endpoint="POSTapi-v1-admin-video-uploads"
-               value="16"
+               value="10"
                data-component="body">
     <br>
-<p>The <code>id</code> of an existing record in the videos table. Example: <code>16</code></p>
+<p>Optional existing video to attach this upload session to. The <code>id</code> of an existing record in the videos table. Example: <code>10</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>original_filename</code></b>&nbsp;&nbsp;
@@ -13376,10 +13376,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="original_filename"                data-endpoint="POSTapi-v1-admin-video-uploads"
-               value="n"
+               value="lecture-1.mp4"
                data-component="body">
     <br>
-<p>Must not be greater than 255 characters. Example: <code>n</code></p>
+<p>Original filename of the uploaded video. Must not be greater than 255 characters. Example: <code>lecture-1.mp4</code></p>
         </div>
         </form>
 
@@ -13401,12 +13401,12 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: en" \
     --data "{
-    \"status\": \"UPLOADING\",
-    \"progress_percent\": 1,
-    \"source_id\": \"n\",
-    \"source_url\": \"http:\\/\\/crooks.biz\\/et-fugiat-sunt-nihil-accusantium\",
-    \"duration_seconds\": 2,
-    \"error_message\": \"i\"
+    \"status\": \"READY\",
+    \"progress_percent\": 75,
+    \"source_id\": \"bunny-video-id\",
+    \"source_url\": \"https:\\/\\/example.com\\/video.mp4\",
+    \"duration_seconds\": 180,
+    \"error_message\": \"Transcode failed due to invalid codec\"
 }"
 </code></pre></div>
 
@@ -13423,12 +13423,12 @@ const headers = {
 };
 
 let body = {
-    "status": "UPLOADING",
-    "progress_percent": 1,
-    "source_id": "n",
-    "source_url": "http:\/\/crooks.biz\/et-fugiat-sunt-nihil-accusantium",
-    "duration_seconds": 2,
-    "error_message": "i"
+    "status": "READY",
+    "progress_percent": 75,
+    "source_id": "bunny-video-id",
+    "source_url": "https:\/\/example.com\/video.mp4",
+    "duration_seconds": 180,
+    "error_message": "Transcode failed due to invalid codec"
 };
 
 fetch(url, {
@@ -13545,10 +13545,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="status"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
-               value="UPLOADING"
+               value="READY"
                data-component="body">
     <br>
-<p>Example: <code>UPLOADING</code></p>
+<p>New upload status (PENDING, UPLOADING, PROCESSING, READY, FAILED). Example: <code>READY</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>PENDING</code></li> <li><code>UPLOADING</code></li> <li><code>PROCESSING</code></li> <li><code>READY</code></li> <li><code>FAILED</code></li></ul>
         </div>
@@ -13559,10 +13559,10 @@ Must be one of:
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="progress_percent"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
-               value="1"
+               value="75"
                data-component="body">
     <br>
-<p>Must be at least 0. Must not be greater than 100. Example: <code>1</code></p>
+<p>Optional progress indicator between 0 and 100. Must be at least 0. Must not be greater than 100. Example: <code>75</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>source_id</code></b>&nbsp;&nbsp;
@@ -13571,10 +13571,10 @@ Must be one of:
  &nbsp;
                 <input type="text" style="display: none"
                               name="source_id"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
-               value="n"
+               value="bunny-video-id"
                data-component="body">
     <br>
-<p>Must not be greater than 255 characters. Example: <code>n</code></p>
+<p>Optional Bunny video identifier when READY. Must not be greater than 255 characters. Example: <code>bunny-video-id</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>source_url</code></b>&nbsp;&nbsp;
@@ -13583,10 +13583,10 @@ Must be one of:
  &nbsp;
                 <input type="text" style="display: none"
                               name="source_url"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
-               value="http://crooks.biz/et-fugiat-sunt-nihil-accusantium"
+               value="https://example.com/video.mp4"
                data-component="body">
     <br>
-<p>Must not be greater than 2048 characters. Example: <code>http://crooks.biz/et-fugiat-sunt-nihil-accusantium</code></p>
+<p>Optional playback/source URL when READY. Must not be greater than 2048 characters. Example: <code>https://example.com/video.mp4</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>duration_seconds</code></b>&nbsp;&nbsp;
@@ -13595,10 +13595,10 @@ Must be one of:
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="duration_seconds"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
-               value="2"
+               value="180"
                data-component="body">
     <br>
-<p>Must be at least 1. Example: <code>2</code></p>
+<p>Optional duration in seconds when READY. Must be at least 1. Example: <code>180</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>error_message</code></b>&nbsp;&nbsp;
@@ -13607,10 +13607,10 @@ Must be one of:
  &nbsp;
                 <input type="text" style="display: none"
                               name="error_message"                data-endpoint="PATCHapi-v1-admin-video-uploads--videoUploadSession_id-"
-               value="i"
+               value="Transcode failed due to invalid codec"
                data-component="body">
     <br>
-<p>Must not be greater than 2000 characters. Example: <code>i</code></p>
+<p>Optional error details when FAILED. Must not be greater than 2000 characters. Example: <code>Transcode failed due to invalid codec</code></p>
         </div>
         </form>
 
@@ -13959,7 +13959,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/phpuijah1h7do7j1LKlCWM" </code></pre></div>
+    --form "file=@/tmp/phpb4en5olc8h6s8Wplc2g" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14110,7 +14110,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpuijah1h7do7j1LKlCWM</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpb4en5olc8h6s8Wplc2g</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
@@ -23130,9 +23130,9 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: en" \
     --data "{
-    \"center_id\": 16,
-    \"video_id\": 16,
-    \"original_filename\": \"n\"
+    \"center_id\": 1,
+    \"video_id\": 10,
+    \"original_filename\": \"lecture-1.mp4\"
 }"
 </code></pre></div>
 
@@ -23149,9 +23149,9 @@ const headers = {
 };
 
 let body = {
-    "center_id": 16,
-    "video_id": 16,
-    "original_filename": "n"
+    "center_id": 1,
+    "video_id": 10,
+    "original_filename": "lecture-1.mp4"
 };
 
 fetch(url, {
@@ -23255,10 +23255,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="center_id"                data-endpoint="POSTadmin-video-uploads"
-               value="16"
+               value="1"
                data-component="body">
     <br>
-<p>The <code>id</code> of an existing record in the centers table. Example: <code>16</code></p>
+<p>Center ID to associate the upload with. The <code>id</code> of an existing record in the centers table. Example: <code>1</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>video_id</code></b>&nbsp;&nbsp;
@@ -23267,10 +23267,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="video_id"                data-endpoint="POSTadmin-video-uploads"
-               value="16"
+               value="10"
                data-component="body">
     <br>
-<p>The <code>id</code> of an existing record in the videos table. Example: <code>16</code></p>
+<p>Optional existing video to attach this upload session to. The <code>id</code> of an existing record in the videos table. Example: <code>10</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>original_filename</code></b>&nbsp;&nbsp;
@@ -23279,10 +23279,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="original_filename"                data-endpoint="POSTadmin-video-uploads"
-               value="n"
+               value="lecture-1.mp4"
                data-component="body">
     <br>
-<p>Must not be greater than 255 characters. Example: <code>n</code></p>
+<p>Original filename of the uploaded video. Must not be greater than 255 characters. Example: <code>lecture-1.mp4</code></p>
         </div>
         </form>
 
@@ -23304,12 +23304,12 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: en" \
     --data "{
-    \"status\": \"PENDING\",
-    \"progress_percent\": 1,
-    \"source_id\": \"n\",
-    \"source_url\": \"http:\\/\\/crooks.biz\\/et-fugiat-sunt-nihil-accusantium\",
-    \"duration_seconds\": 2,
-    \"error_message\": \"i\"
+    \"status\": \"READY\",
+    \"progress_percent\": 75,
+    \"source_id\": \"bunny-video-id\",
+    \"source_url\": \"https:\\/\\/example.com\\/video.mp4\",
+    \"duration_seconds\": 180,
+    \"error_message\": \"Transcode failed due to invalid codec\"
 }"
 </code></pre></div>
 
@@ -23326,12 +23326,12 @@ const headers = {
 };
 
 let body = {
-    "status": "PENDING",
-    "progress_percent": 1,
-    "source_id": "n",
-    "source_url": "http:\/\/crooks.biz\/et-fugiat-sunt-nihil-accusantium",
-    "duration_seconds": 2,
-    "error_message": "i"
+    "status": "READY",
+    "progress_percent": 75,
+    "source_id": "bunny-video-id",
+    "source_url": "https:\/\/example.com\/video.mp4",
+    "duration_seconds": 180,
+    "error_message": "Transcode failed due to invalid codec"
 };
 
 fetch(url, {
@@ -23448,10 +23448,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="status"                data-endpoint="PATCHadmin-video-uploads--videoUploadSession_id-"
-               value="PENDING"
+               value="READY"
                data-component="body">
     <br>
-<p>Example: <code>PENDING</code></p>
+<p>New upload status (PENDING, UPLOADING, PROCESSING, READY, FAILED). Example: <code>READY</code></p>
 Must be one of:
 <ul style="list-style-type: square;"><li><code>PENDING</code></li> <li><code>UPLOADING</code></li> <li><code>PROCESSING</code></li> <li><code>READY</code></li> <li><code>FAILED</code></li></ul>
         </div>
@@ -23462,10 +23462,10 @@ Must be one of:
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="progress_percent"                data-endpoint="PATCHadmin-video-uploads--videoUploadSession_id-"
-               value="1"
+               value="75"
                data-component="body">
     <br>
-<p>Must be at least 0. Must not be greater than 100. Example: <code>1</code></p>
+<p>Optional progress indicator between 0 and 100. Must be at least 0. Must not be greater than 100. Example: <code>75</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>source_id</code></b>&nbsp;&nbsp;
@@ -23474,10 +23474,10 @@ Must be one of:
  &nbsp;
                 <input type="text" style="display: none"
                               name="source_id"                data-endpoint="PATCHadmin-video-uploads--videoUploadSession_id-"
-               value="n"
+               value="bunny-video-id"
                data-component="body">
     <br>
-<p>Must not be greater than 255 characters. Example: <code>n</code></p>
+<p>Optional Bunny video identifier when READY. Must not be greater than 255 characters. Example: <code>bunny-video-id</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>source_url</code></b>&nbsp;&nbsp;
@@ -23486,10 +23486,10 @@ Must be one of:
  &nbsp;
                 <input type="text" style="display: none"
                               name="source_url"                data-endpoint="PATCHadmin-video-uploads--videoUploadSession_id-"
-               value="http://crooks.biz/et-fugiat-sunt-nihil-accusantium"
+               value="https://example.com/video.mp4"
                data-component="body">
     <br>
-<p>Must not be greater than 2048 characters. Example: <code>http://crooks.biz/et-fugiat-sunt-nihil-accusantium</code></p>
+<p>Optional playback/source URL when READY. Must not be greater than 2048 characters. Example: <code>https://example.com/video.mp4</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>duration_seconds</code></b>&nbsp;&nbsp;
@@ -23498,10 +23498,10 @@ Must be one of:
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="duration_seconds"                data-endpoint="PATCHadmin-video-uploads--videoUploadSession_id-"
-               value="2"
+               value="180"
                data-component="body">
     <br>
-<p>Must be at least 1. Example: <code>2</code></p>
+<p>Optional duration in seconds when READY. Must be at least 1. Example: <code>180</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>error_message</code></b>&nbsp;&nbsp;
@@ -23510,10 +23510,10 @@ Must be one of:
  &nbsp;
                 <input type="text" style="display: none"
                               name="error_message"                data-endpoint="PATCHadmin-video-uploads--videoUploadSession_id-"
-               value="i"
+               value="Transcode failed due to invalid codec"
                data-component="body">
     <br>
-<p>Must not be greater than 2000 characters. Example: <code>i</code></p>
+<p>Optional error details when FAILED. Must not be greater than 2000 characters. Example: <code>Transcode failed due to invalid codec</code></p>
         </div>
         </form>
 
@@ -23862,7 +23862,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/phps6j0b86bf1u38fGYIor" </code></pre></div>
+    --form "file=@/tmp/phpdcvocd16pkfhfpaTi2Y" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -24013,7 +24013,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phps6j0b86bf1u38fGYIor</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpdcvocd16pkfhfpaTi2Y</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
