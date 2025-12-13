@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $email
  * @property string|null $phone
  * @property array<string, mixed>|null $social_links
+ * @property array<string, mixed>|null $metadata
  * @property int $created_by
  * @property-read Center|null $center
  * @property-read User $creator
@@ -44,6 +45,7 @@ class Instructor extends Model
         'email',
         'phone',
         'social_links',
+        'metadata',
         'created_by',
     ];
 
@@ -52,6 +54,7 @@ class Instructor extends Model
         'bio_translations' => 'array',
         'title_translations' => 'array',
         'social_links' => 'array',
+        'metadata' => 'array',
     ];
 
     /** @var array<int, string> */
