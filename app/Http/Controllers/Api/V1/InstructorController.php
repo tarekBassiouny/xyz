@@ -55,6 +55,7 @@ class InstructorController extends Controller
         /** @var array<string, mixed> $data */
         $data = $request->validated();
         $data['created_by'] = (int) $request->user()->id;
+        $data['avatar'] = $request->file('avatar');
 
         $instructor = $this->createAction->execute($data);
 
@@ -80,6 +81,7 @@ class InstructorController extends Controller
     {
         /** @var array<string, mixed> $data */
         $data = $request->validated();
+        $data['avatar'] = $request->file('avatar');
         $updated = $this->updateAction->execute($instructor, $data);
 
         return response()->json([
