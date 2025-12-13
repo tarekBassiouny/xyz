@@ -5,6 +5,21 @@ declare(strict_types=1);
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\AuditLog;
+use App\Models\Category;
+use App\Models\Center;
+use App\Models\Course;
+use App\Models\DeviceChangeRequest;
+use App\Models\Enrollment;
+use App\Models\ExtraViewRequest;
+use App\Models\JwtToken;
+use App\Models\PlaybackSession;
+use App\Models\Pivots\UserRole;
+use App\Models\Pivots\UserRoleCenter;
+use App\Models\Role;
+use App\Models\StudentSetting;
+use App\Models\UserDevice;
+use App\Models\VideoUploadSession;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -39,6 +54,7 @@ use PHPOpenSourceSaver\JWTAuth\Contracts\JWTSubject;
  * @property-read StudentSetting|null $studentSetting
  * @property-read \Illuminate\Database\Eloquent\Collection<int, AuditLog> $auditLogs
  * @property-read \Illuminate\Database\Eloquent\Collection<int, ExtraViewRequest> $extraViewRequests
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, DeviceChangeRequest> $deviceChangeRequests
  *
  * @use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\UserFactory>
  */
@@ -130,6 +146,12 @@ class User extends Authenticatable implements JWTSubject
     public function extraViewRequests(): HasMany
     {
         return $this->hasMany(ExtraViewRequest::class);
+    }
+
+    /** @return HasMany<DeviceChangeRequest, self> */
+    public function deviceChangeRequests(): HasMany
+    {
+        return $this->hasMany(DeviceChangeRequest::class);
     }
 
     /** @return HasOne<StudentSetting, self> */
