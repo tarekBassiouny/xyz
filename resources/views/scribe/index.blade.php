@@ -1839,7 +1839,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=architecto"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpgfri8ijembc3ciZ1err" </code></pre></div>
+    --form "avatar=@/tmp/phpjalo5jfe3jpp6cY4aEG" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -2033,7 +2033,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpgfri8ijembc3ciZ1err</code></p>
+<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpjalo5jfe3jpp6cY4aEG</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -2253,7 +2253,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=architecto"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phplb52ejj95p9e4hwH988" </code></pre></div>
+    --form "avatar=@/tmp/phplao0o1urci3rfMECjMu" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -2463,7 +2463,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phplb52ejj95p9e4hwH988</code></p>
+<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phplao0o1urci3rfMECjMu</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -13542,7 +13542,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/phpp95p0qs2nd093j5TrkF" </code></pre></div>
+    --form "file=@/tmp/phpcf6qp1ssl79odnbknCl" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13693,7 +13693,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpp95p0qs2nd093j5TrkF</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpcf6qp1ssl79odnbknCl</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
@@ -23040,7 +23040,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/phpfa60ia10m0ng9mFFMF0" </code></pre></div>
+    --form "file=@/tmp/phpmdrc710p8fqp1isdEa7" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -23191,7 +23191,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpfa60ia10m0ng9mFFMF0</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phpmdrc710p8fqp1isdEa7</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;

@@ -8,6 +8,9 @@ use App\Services\Auth\Contracts\JwtServiceInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
 use App\Services\Auth\JwtService;
 use App\Services\Auth\OtpService;
+use App\Services\Bunny\BunnyStreamApiClient;
+use App\Services\Bunny\BunnyStreamClientInterface;
+use App\Services\Bunny\FakeBunnyStreamClient;
 use App\Services\Centers\CenterService;
 use App\Services\Centers\Contracts\CenterServiceInterface;
 use App\Services\Courses\Contracts\CourseInstructorServiceInterface;
@@ -29,6 +32,7 @@ use App\Services\Settings\Contracts\CenterSettingsServiceInterface;
 use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
 use App\Services\Settings\SettingsResolverService;
 use Illuminate\Support\ServiceProvider;
+use RuntimeException;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -59,6 +63,30 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(PlaybackAuthorizationService::class);
         $this->app->singleton(ViewLimitService::class);
         $this->app->singleton(ConcurrencyService::class);
+
+        $this->app->singleton(BunnyStreamClientInterface::class, function ($app) {
+            $config = $app['config']->get('bunny', []);
+            $env = (string) $app['config']->get('app.env', 'local');
+            $driver = $config['driver'] ?? null;
+            $driver = $driver ?: ($config['environments'][$env] ?? 'fake');
+
+            if ($env === 'production' && $driver === 'fake') {
+                throw new RuntimeException('Fake Bunny client is not allowed in production.');
+            }
+
+            if ($driver === 'api') {
+                $apiConfig = $config['api'] ?? [];
+
+                return new BunnyStreamApiClient(
+                    apiKey: (string) ($apiConfig['api_key'] ?? ''),
+                    libraryIdValue: $apiConfig['library_id'] ?? null,
+                    pullZoneValue: $apiConfig['pull_zone'] ?? null,
+                    drmEnabledValue: (bool) ($apiConfig['drm_enabled'] ?? false),
+                );
+            }
+
+            return new FakeBunnyStreamClient;
+        });
     }
 
     /**
