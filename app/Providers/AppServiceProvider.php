@@ -18,6 +18,9 @@ use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Enrollments\EnrollmentService;
 use App\Services\Instructors\Contracts\InstructorServiceInterface;
 use App\Services\Instructors\InstructorService;
+use App\Services\Bunny\BunnyStreamApiClient;
+use App\Services\Bunny\BunnyStreamClientInterface;
+use App\Services\Bunny\FakeBunnyStreamClient;
 use App\Services\Playback\ConcurrencyService;
 use App\Services\Playback\PlaybackAuthorizationService;
 use App\Services\Playback\PlaybackSessionService;
@@ -29,6 +32,7 @@ use App\Services\Settings\Contracts\CenterSettingsServiceInterface;
 use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
 use App\Services\Settings\SettingsResolverService;
 use Illuminate\Support\ServiceProvider;
+use RuntimeException;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -59,6 +63,30 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(PlaybackAuthorizationService::class);
         $this->app->singleton(ViewLimitService::class);
         $this->app->singleton(ConcurrencyService::class);
+
+        $this->app->singleton(BunnyStreamClientInterface::class, function ($app) {
+            $config = $app['config']->get('bunny', []);
+            $env = (string) $app['config']->get('app.env', 'local');
+            $driver = $config['driver'] ?? null;
+            $driver = $driver ?: ($config['environments'][$env] ?? 'fake');
+
+            if ($env === 'production' && $driver === 'fake') {
+                throw new RuntimeException('Fake Bunny client is not allowed in production.');
+            }
+
+            if ($driver === 'api') {
+                $apiConfig = $config['api'] ?? [];
+
+                return new BunnyStreamApiClient(
+                    apiKey: (string) ($apiConfig['api_key'] ?? ''),
+                    libraryIdValue: $apiConfig['library_id'] ?? null,
+                    pullZoneValue: $apiConfig['pull_zone'] ?? null,
+                    drmEnabledValue: (bool) ($apiConfig['drm_enabled'] ?? false),
+                );
+            }
+
+            return new FakeBunnyStreamClient();
+        });
     }
 
     /**
