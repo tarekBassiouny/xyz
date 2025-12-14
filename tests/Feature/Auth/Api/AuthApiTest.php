@@ -54,3 +54,30 @@ test('verify otp issues tokens', function (): void {
         'tokens' => ['access_token', 'refresh_token'],
     ]);
 });
+
+test('otp cannot be reused after consumption', function (): void {
+    /** @var User $user */
+    $user = User::factory()->create(['phone' => '5555555555', 'country_code' => '+20']);
+    $otp = OtpCode::factory()->create([
+        'user_id' => $user->id,
+        'phone' => '5555555555',
+        'country_code' => '+20',
+        'otp_code' => '654321',
+        'token' => 'tok-reuse',
+    ]);
+
+    $this->postJson('/api/v1/auth/verify', [
+        'otp' => '654321',
+        'token' => 'tok-reuse',
+        'device_uuid' => 'device-reuse',
+    ])->assertOk();
+
+    $otp->refresh();
+    expect($otp->consumed_at)->not->toBeNull();
+
+    $this->postJson('/api/v1/auth/verify', [
+        'otp' => '654321',
+        'token' => 'tok-reuse',
+        'device_uuid' => 'device-reuse',
+    ])->assertStatus(422);
+});
