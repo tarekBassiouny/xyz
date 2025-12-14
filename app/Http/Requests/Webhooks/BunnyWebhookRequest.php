@@ -41,7 +41,7 @@ class BunnyWebhookRequest extends FormRequest
             ],
             'Status' => [
                 'description' => 'Bunny video status.',
-                'example' => 3,
+                'example' => '3',
             ],
         ];
     }
