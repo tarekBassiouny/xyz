@@ -19,6 +19,7 @@ class VideoUploadSessionFactory extends Factory
         return [
             'center_id' => Center::factory(),
             'uploaded_by' => User::factory(),
+            'library_id' => (int) (config('bunny.api.library_id') ?? 1),
             'bunny_upload_id' => Str::uuid()->toString(),
             'upload_status' => $this->faker->numberBetween(0, 5),
             'progress_percent' => $this->faker->numberBetween(0, 100),

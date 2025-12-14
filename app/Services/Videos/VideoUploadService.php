@@ -29,10 +29,13 @@ class VideoUploadService
     {
         $created = $this->bunnyClient->createVideo(['title' => $originalFilename]);
         $bunnyId = $created['id'];
+        $libraryId = $this->bunnyClient->libraryId();
+        $libraryIdValue = is_numeric($libraryId) ? (int) $libraryId : null;
 
         $session = VideoUploadSession::create([
             'center_id' => $center->id,
             'uploaded_by' => $admin->id,
+            'library_id' => $libraryIdValue,
             'bunny_upload_id' => $bunnyId,
             'upload_status' => self::STATUS_PENDING,
             'progress_percent' => 0,
@@ -44,6 +47,7 @@ class VideoUploadService
             $video->source_provider = $video->source_provider ?: 'bunny';
             $video->source_type = $video->source_type ?: 1;
             $video->source_id = $bunnyId;
+            $video->library_id = $video->library_id ?? $libraryIdValue;
             $this->applyVideoState($video, self::STATUS_PENDING, []);
         }
 
