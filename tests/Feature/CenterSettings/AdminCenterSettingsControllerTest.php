@@ -20,7 +20,7 @@ it('returns center settings', function (): void {
     ]);
 
     $this->asAdmin();
-    $response = $this->getJson("/admin/centers/{$center->id}/settings", $this->adminHeaders());
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/settings", $this->adminHeaders());
 
     $response
         ->assertOk()
@@ -40,7 +40,7 @@ it('updates center settings with partial payload', function (): void {
     ]);
 
     $this->asAdmin();
-    $response = $this->patchJson("/admin/centers/{$center->id}/settings", [
+    $response = $this->patchJson("/api/v1/admin/centers/{$center->id}/settings", [
         'settings' => [
             'pdf_download_permission' => true,
         ],
@@ -60,7 +60,7 @@ it('rejects unsupported setting keys', function (): void {
     $center = Center::factory()->create();
 
     $this->asAdmin();
-    $response = $this->patchJson("/admin/centers/{$center->id}/settings", [
+    $response = $this->patchJson("/api/v1/admin/centers/{$center->id}/settings", [
         'settings' => [
             'unknown_key' => 5,
         ],
@@ -72,7 +72,7 @@ it('rejects unsupported setting keys', function (): void {
 it('requires authentication', function (): void {
     $center = Center::factory()->create();
 
-    $response = $this->getJson("/admin/centers/{$center->id}/settings");
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/settings");
 
     $response->assertStatus(401);
 });

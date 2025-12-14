@@ -12,6 +12,7 @@ uses(Tests\TestCase::class, Illuminate\Foundation\Testing\RefreshDatabase::class
 
 test('admin can create instructor', function (): void {
     $admin = $this->asAdmin();
+    $this->actingAs($admin, 'admin');
     $center = Center::factory()->create();
 
     $payload = [
@@ -25,7 +26,7 @@ test('admin can create instructor', function (): void {
         'social_links' => ['facebook' => 'https://fb.com/jane'],
     ];
 
-    $response = $this->postJson('/api/v1/instructors', $payload);
+    $response = $this->postJson('/api/v1/admin/instructors', $payload);
 
     $response->assertCreated()
         ->assertJsonFragment([
@@ -47,7 +48,8 @@ test('admin can update instructor', function (): void {
         'email' => 'old@example.com',
     ]);
 
-    $response = $this->putJson('/api/v1/instructors/'.$instructor->id, [
+    $this->actingAs($admin, 'admin');
+    $response = $this->putJson('/api/v1/admin/instructors/'.$instructor->id, [
         'name_translations' => ['en' => 'Updated Name'],
         'email' => 'new@example.com',
     ]);
@@ -71,7 +73,8 @@ test('admin can delete instructor', function (): void {
         'created_by' => $admin->id,
     ]);
 
-    $response = $this->deleteJson('/api/v1/instructors/'.$instructor->id);
+    $this->actingAs($admin, 'admin');
+    $response = $this->deleteJson('/api/v1/admin/instructors/'.$instructor->id);
 
     $response->assertOk()
         ->assertJsonFragment([
@@ -83,9 +86,10 @@ test('admin can delete instructor', function (): void {
 });
 
 test('validation errors', function (): void {
-    $this->asAdmin();
+    $admin = $this->asAdmin();
+    $this->actingAs($admin, 'admin');
 
-    $response = $this->postJson('/api/v1/instructors', [
+    $response = $this->postJson('/api/v1/admin/instructors', [
         'email' => 'not-an-email',
     ]);
 
@@ -98,6 +102,7 @@ test('validation errors', function (): void {
 
 test('soft deleted instructors not listed', function (): void {
     $admin = $this->asAdmin();
+    $this->actingAs($admin, 'admin');
     Instructor::factory()->create([
         'created_by' => $admin->id,
         'email' => 'keep@example.com',
@@ -107,9 +112,9 @@ test('soft deleted instructors not listed', function (): void {
         'email' => 'remove@example.com',
     ]);
 
-    $this->deleteJson('/api/v1/instructors/'.$deleted->id)->assertOk();
+    $this->deleteJson('/api/v1/admin/instructors/'.$deleted->id)->assertOk();
 
-    $response = $this->getJson('/api/v1/instructors');
+    $response = $this->getJson('/api/v1/admin/instructors');
 
     $response->assertOk()
         ->assertJsonPath('meta.total', 1);
@@ -119,11 +124,12 @@ test('soft deleted instructors not listed', function (): void {
 
 test('list with pagination', function (): void {
     $admin = $this->asAdmin();
+    $this->actingAs($admin, 'admin');
     Instructor::factory()->count(3)->create([
         'created_by' => $admin->id,
     ]);
 
-    $response = $this->getJson('/api/v1/instructors?per_page=2');
+    $response = $this->getJson('/api/v1/admin/instructors?per_page=2');
 
     $response->assertOk()
         ->assertJsonPath('meta.per_page', 2)
@@ -137,12 +143,13 @@ test('list with pagination', function (): void {
 
 test('show instructor details', function (): void {
     $admin = $this->asAdmin();
+    $this->actingAs($admin, 'admin');
     $instructor = Instructor::factory()->create([
         'created_by' => $admin->id,
         'email' => 'show@example.com',
     ]);
 
-    $response = $this->getJson('/api/v1/instructors/'.$instructor->id);
+    $response = $this->getJson('/api/v1/admin/instructors/'.$instructor->id);
 
     $response->assertOk()
         ->assertJsonFragment([

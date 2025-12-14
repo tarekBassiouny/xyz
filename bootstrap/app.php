@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',
         commands: __DIR__.'/../routes/console.php',
+        api: __DIR__.'/../routes/webhooks.php',
         health: '/up',
         then: function (): void {
             // Mobile API (JWT)
@@ -45,6 +46,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     require __DIR__.'/../routes/admin/courses.php';
                     require __DIR__.'/../routes/admin/sections.php';
                     require __DIR__.'/../routes/admin/videos.php';
+                    require __DIR__.'/../routes/admin/instructors.php';
                     require __DIR__.'/../routes/admin/pdfs.php';
                     require __DIR__.'/../routes/admin/center-settings.php';
                     require __DIR__.'/../routes/admin/settings.php';
@@ -55,10 +57,6 @@ return Application::configure(basePath: dirname(__DIR__))
             };
 
             Route::prefix('api/v1/admin')
-                ->middleware(['api'])
-                ->group($adminRoutes);
-
-            Route::prefix('admin')
                 ->middleware(['api'])
                 ->group($adminRoutes);
         }

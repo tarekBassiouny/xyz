@@ -109,7 +109,7 @@ it('admin approves and allowance affects view limit', function (): void {
         'password' => 'secret123',
         'is_student' => false,
     ]);
-    $approve = $this->postJson("/admin/extra-view-requests/{$requestId}/approve", [
+    $approve = $this->postJson("/api/v1/admin/extra-view-requests/{$requestId}/approve", [
         'granted_views' => 1,
     ], $this->adminHeaders());
 
@@ -141,7 +141,7 @@ it('admin can reject pending requests', function (): void {
         'password' => 'secret123',
         'is_student' => false,
     ]);
-    $reject = $this->postJson("/admin/extra-view-requests/{$requestId}/reject", [
+    $reject = $this->postJson("/api/v1/admin/extra-view-requests/{$requestId}/reject", [
         'decision_reason' => 'Not eligible',
     ], $this->adminHeaders());
 
