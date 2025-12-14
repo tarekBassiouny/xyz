@@ -26,7 +26,7 @@ class BunnyWebhookRequest extends FormRequest
     }
 
     /**
-     * @return array<string, array<string, string>>
+     * @return array<string, array<string, string|int>>
      */
     public function bodyParameters(): array
     {
@@ -41,7 +41,7 @@ class BunnyWebhookRequest extends FormRequest
             ],
             'Status' => [
                 'description' => 'Bunny video status.',
-                'example' => '3',
+                'example' => 3,
             ],
         ];
     }
