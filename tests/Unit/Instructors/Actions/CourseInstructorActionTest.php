@@ -16,13 +16,14 @@ uses(TestCase::class, RefreshDatabase::class, AdminTestHelper::class)->group('in
 
 test('assign instructor to course', function (): void {
     $admin = $this->asAdmin();
+    $this->actingAs($admin, 'admin');
     $course = Course::factory()->create();
     $instructor = Instructor::factory()->create([
         'center_id' => $course->center_id,
         'created_by' => $admin->id,
     ]);
 
-    $response = $this->postJson('/api/v1/courses/'.$course->id.'/instructors', [
+    $response = $this->postJson('/api/v1/admin/courses/'.$course->id.'/instructors', [
         'instructor_id' => $instructor->id,
         'role' => 'lead',
     ]);
@@ -40,6 +41,7 @@ test('assign instructor to course', function (): void {
 
 test('remove instructor from course and update primary', function (): void {
     $admin = $this->asAdmin();
+    $this->actingAs($admin, 'admin');
     $course = Course::factory()->create();
     $lead = Instructor::factory()->create([
         'center_id' => $course->center_id,
@@ -63,7 +65,7 @@ test('remove instructor from course and update primary', function (): void {
 
     $course->update(['primary_instructor_id' => $lead->id]);
 
-    $response = $this->deleteJson('/api/v1/courses/'.$course->id.'/instructors/'.$lead->id);
+    $response = $this->deleteJson('/api/v1/admin/courses/'.$course->id.'/instructors/'.$lead->id);
 
     $response->assertOk()
         ->assertJsonPath('success', true);
@@ -78,10 +80,11 @@ test('remove instructor from course and update primary', function (): void {
 });
 
 test('cannot assign non existing instructor', function (): void {
-    $this->asAdmin();
+    $admin = $this->asAdmin();
+    $this->actingAs($admin, 'admin');
     $course = Course::factory()->create();
 
-    $response = $this->postJson('/api/v1/courses/'.$course->id.'/instructors', [
+    $response = $this->postJson('/api/v1/admin/courses/'.$course->id.'/instructors', [
         'instructor_id' => 999999,
     ]);
 
@@ -92,13 +95,14 @@ test('cannot assign non existing instructor', function (): void {
 
 test('course response includes instructors', function (): void {
     $admin = $this->asAdmin();
+    $this->actingAs($admin, 'admin');
     $course = Course::factory()->create();
     $instructor = Instructor::factory()->create([
         'center_id' => $course->center_id,
         'created_by' => $admin->id,
     ]);
 
-    $response = $this->postJson('/api/v1/courses/'.$course->id.'/instructors', [
+    $response = $this->postJson('/api/v1/admin/courses/'.$course->id.'/instructors', [
         'instructor_id' => $instructor->id,
     ]);
 
@@ -108,6 +112,7 @@ test('course response includes instructors', function (): void {
 
 test('primary instructor is set on first assignment', function (): void {
     $admin = $this->asAdmin();
+    $this->actingAs($admin, 'admin');
     $course = Course::factory()->create([
         'primary_instructor_id' => null,
     ]);
@@ -116,7 +121,7 @@ test('primary instructor is set on first assignment', function (): void {
         'created_by' => $admin->id,
     ]);
 
-    $this->postJson('/api/v1/courses/'.$course->id.'/instructors', [
+    $this->postJson('/api/v1/admin/courses/'.$course->id.'/instructors', [
         'instructor_id' => $instructor->id,
     ])->assertCreated();
 

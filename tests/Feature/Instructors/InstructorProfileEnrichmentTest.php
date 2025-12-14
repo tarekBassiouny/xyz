@@ -4,36 +4,26 @@ declare(strict_types=1);
 
 use App\Models\Instructor;
 use App\Models\User;
+use Tests\Helpers\AdminTestHelper;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 
-uses(RefreshDatabase::class)->group('instructors');
+uses(RefreshDatabase::class, AdminTestHelper::class)->group('instructors');
 
 beforeEach(function (): void {
     Config::set('filesystems.default', 'public');
     Storage::fake('public');
 });
 
-function makeInstructorUser(): User
-{
-    /** @var User $user */
-    $user = User::factory()->create([
-        'is_student' => true,
-        'password' => 'secret123',
-    ]);
-
-    return $user;
-}
-
 it('allows creating instructor with avatar and metadata', function (): void {
-    $user = makeInstructorUser();
-    $this->actingAs($user, 'api');
+    $admin = $this->asAdmin();
+    $this->actingAs($admin, 'admin');
 
     $avatar = UploadedFile::fake()->image('avatar.jpg');
 
-    $response = $this->post('/api/v1/instructors', [
+    $response = $this->post('/api/v1/admin/instructors', [
         'name_translations' => ['en' => 'John Doe'],
         'bio_translations' => ['en' => 'Bio'],
         'metadata' => [
@@ -55,10 +45,10 @@ it('allows creating instructor with avatar and metadata', function (): void {
 });
 
 it('rejects unknown metadata keys', function (): void {
-    $user = makeInstructorUser();
-    $this->actingAs($user, 'api');
+    $admin = $this->asAdmin();
+    $this->actingAs($admin, 'admin');
 
-    $response = $this->post('/api/v1/instructors', [
+    $response = $this->post('/api/v1/admin/instructors', [
         'name_translations' => ['en' => 'Jane Doe'],
         'metadata' => [
             'unknown_key' => 'value',
@@ -69,15 +59,15 @@ it('rejects unknown metadata keys', function (): void {
 });
 
 it('updates instructor bio and metadata', function (): void {
-    $user = makeInstructorUser();
-    $this->actingAs($user, 'api');
+    $admin = $this->asAdmin();
+    $this->actingAs($admin, 'admin');
 
     /** @var Instructor $instructor */
     $instructor = Instructor::factory()->create([
         'name_translations' => ['en' => 'Old Name'],
     ]);
 
-    $response = $this->put("/api/v1/instructors/{$instructor->id}", [
+    $response = $this->put("/api/v1/admin/instructors/{$instructor->id}", [
         'name_translations' => ['en' => 'New Name'],
         'bio_translations' => ['en' => 'New Bio'],
         'metadata' => ['specialization' => 'Math'],
