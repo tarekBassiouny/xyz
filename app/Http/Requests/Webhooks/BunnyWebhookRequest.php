@@ -19,10 +19,30 @@ class BunnyWebhookRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'Event' => ['required', 'string'],
+            'VideoLibraryId' => ['required', 'string'],
             'VideoGuid' => ['required', 'string'],
-            'LibraryId' => ['required', 'string'],
-            'ErrorMessage' => ['sometimes', 'nullable', 'string'],
+            'Status' => ['required', 'numeric'],
+        ];
+    }
+
+    /**
+     * @return array<string, array<string, string|int>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'VideoLibraryId' => [
+                'description' => 'Bunny library identifier sending the webhook',
+                'example' => '12345',
+            ],
+            'VideoGuid' => [
+                'description' => 'Bunny video GUID associated with the upload session.',
+                'example' => 'abcd-1234',
+            ],
+            'Status' => [
+                'description' => 'Bunny video status.',
+                'example' => 3,
+            ],
         ];
     }
 }

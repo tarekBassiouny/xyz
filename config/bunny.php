@@ -30,11 +30,10 @@ return [
     */
     'api' => [
         'api_url' => env('BUNNY_API_URL', 'https://video.bunnycdn.com'),
-        'api_key' => env('BUNNY_API_KEY'),
+        'api_key' => env('BUNNY_STREAM_API_KEY'),
         'library_id' => env('BUNNY_LIBRARY_ID'),
         'pull_zone' => env('BUNNY_PULL_ZONE'),
         'drm_enabled' => (bool) env('BUNNY_DRM_ENABLED', false),
-        'webhook_secret' => env('BUNNY_WEBHOOK_SECRET'),
     ],
 
     /*

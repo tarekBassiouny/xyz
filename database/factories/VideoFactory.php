@@ -37,6 +37,7 @@ class VideoFactory extends Factory
                 'type' => 'intro',
             ],
             'created_by' => User::factory(),
+            'library_id' => (int) (config('bunny.api.library_id') ?? 1),
             'upload_session_id' => VideoUploadSession::factory(),
             'original_filename' => 'video.mp4',
             'encoding_status' => 1,

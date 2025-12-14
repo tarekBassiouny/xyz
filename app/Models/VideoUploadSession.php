@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $center_id
  * @property int $uploaded_by
  * @property string $bunny_upload_id
+ * @property int|null $library_id
  * @property int $upload_status
  * @property int $progress_percent
  * @property string|null $error_message
@@ -32,6 +33,7 @@ class VideoUploadSession extends Model
     protected $fillable = [
         'center_id',
         'uploaded_by',
+        'library_id',
         'bunny_upload_id',
         'upload_status',
         'progress_percent',
@@ -41,6 +43,7 @@ class VideoUploadSession extends Model
     protected $casts = [
         'upload_status' => 'integer',
         'progress_percent' => 'integer',
+        'library_id' => 'integer',
     ];
 
     /** @return BelongsTo<Center, self> */

@@ -23,4 +23,17 @@ class ReorderSectionsRequest extends FormRequest
             'sections.*' => ['integer', 'exists:sections,id'],
         ];
     }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'sections' => [
+                'description' => 'Ordered list of section IDs for the course.',
+                'example' => '[1,2,3]',
+            ],
+        ];
+    }
 }

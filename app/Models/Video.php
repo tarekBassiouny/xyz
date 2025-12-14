@@ -20,6 +20,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property array<string, string>|null $description_translations
  * @property int $source_type
  * @property string $source_provider
+ * @property int|null $library_id
  * @property string|null $source_id
  * @property string|null $source_url
  * @property int|null $duration_seconds
@@ -52,6 +53,7 @@ class Video extends Model
         'source_provider',
         'source_id',
         'source_url',
+        'library_id',
         'duration_seconds',
         'lifecycle_status',
         'tags',
@@ -71,6 +73,7 @@ class Video extends Model
         'lifecycle_status' => 'integer',
         'source_type' => 'integer',
         'encoding_status' => 'integer',
+        'library_id' => 'integer',
         'thumbnail_urls' => 'array',
     ];
 

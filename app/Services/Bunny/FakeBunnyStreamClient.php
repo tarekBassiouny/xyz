@@ -22,7 +22,7 @@ class FakeBunnyStreamClient implements BunnyStreamClientInterface
 
     public function libraryId(): ?string
     {
-        return 'fake-library';
+        return '999';
     }
 
     public function pullZone(): ?string

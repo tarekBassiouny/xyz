@@ -41,4 +41,25 @@ class AddSectionRequest extends FormRequest
             'description_translations' => ['sometimes', 'array'],
         ];
     }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'title' => [
+                'description' => 'Section title (defaults to en translation if translations not provided).',
+                'example' => 'Introduction',
+            ],
+            'description' => [
+                'description' => 'Optional section description.',
+                'example' => 'Overview of the course.',
+            ],
+            'order_index' => [
+                'description' => 'Optional order within the course.',
+                'example' => '1',
+            ],
+        ];
+    }
 }
