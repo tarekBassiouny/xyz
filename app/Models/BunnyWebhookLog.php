@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class BunnyWebhookLog extends Model
 {
+    /** @use HasFactory<\Database\Factories\BunnyWebhookLogFactory> */
     use HasFactory;
 
     protected $fillable = [

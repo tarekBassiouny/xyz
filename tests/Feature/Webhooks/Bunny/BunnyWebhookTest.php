@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Models\BunnyWebhookLog;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
-use App\Models\BunnyWebhookLog;
 use App\Services\Videos\VideoUploadService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
