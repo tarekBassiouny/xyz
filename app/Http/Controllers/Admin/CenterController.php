@@ -18,6 +18,11 @@ class CenterController extends Controller
         private readonly CenterServiceInterface $centerService
     ) {}
 
+    /**
+     * @queryParam per_page int Items per page. Example: 15
+     * @queryParam slug string Filter centers by slug. Example: center-1
+     * @queryParam type int Filter by center type. Example: 1
+     */
     public function index(): JsonResponse
     {
         $perPage = (int) request()->query('per_page', 15);
