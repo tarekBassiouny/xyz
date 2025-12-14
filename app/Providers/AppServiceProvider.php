@@ -10,7 +10,6 @@ use App\Services\Auth\JwtService;
 use App\Services\Auth\OtpService;
 use App\Services\Bunny\BunnyStreamApiClient;
 use App\Services\Bunny\BunnyStreamClientInterface;
-use App\Services\Bunny\BunnyWebhookVerifier;
 use App\Services\Bunny\FakeBunnyStreamClient;
 use App\Services\Centers\CenterService;
 use App\Services\Centers\Contracts\CenterServiceInterface;
@@ -91,8 +90,6 @@ class AppServiceProvider extends ServiceProvider
 
             return new FakeBunnyStreamClient;
         });
-
-        $this->app->singleton(BunnyWebhookVerifier::class);
     }
 
     /**

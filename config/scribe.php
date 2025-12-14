@@ -36,6 +36,7 @@ return [
                 'prefixes' => [
                     '/api/v1/*',
                     '/admin/*',
+                    '/api/webhooks/*',
                 ],
             ],
 
@@ -43,6 +44,7 @@ return [
             'include' => [
                 '/api/v1/*',
                 '/admin/*',
+                '/api/webhooks/*',
             ],
 
             // Exclude internal Laravel and Sanctum endpoints
