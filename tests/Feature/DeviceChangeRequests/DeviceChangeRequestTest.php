@@ -70,7 +70,7 @@ it('admin approves and swaps active device', function (): void {
         'is_student' => false,
     ]);
 
-    $approve = $this->postJson("/admin/device-change-requests/{$requestId}/approve", [], $this->adminHeaders());
+    $approve = $this->postJson("/api/v1/admin/device-change-requests/{$requestId}/approve", [], $this->adminHeaders());
 
     $approve->assertOk()->assertJsonPath('data.status', DeviceChangeRequest::STATUS_APPROVED);
 
@@ -103,7 +103,7 @@ it('admin can reject pending request without device changes', function (): void 
         'is_student' => false,
     ]);
 
-    $reject = $this->postJson("/admin/device-change-requests/{$requestId}/reject", [
+    $reject = $this->postJson("/api/v1/admin/device-change-requests/{$requestId}/reject", [
         'decision_reason' => 'No proof',
     ], $this->adminHeaders());
 
