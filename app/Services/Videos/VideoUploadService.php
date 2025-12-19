@@ -8,7 +8,7 @@ use App\Models\Center;
 use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
-use App\Services\Bunny\BunnyStreamClientInterface;
+use App\Services\Bunny\BunnyStreamService;
 use Illuminate\Validation\ValidationException;
 
 class VideoUploadService
@@ -23,13 +23,13 @@ class VideoUploadService
 
     public const STATUS_FAILED = 4;
 
-    public function __construct(private readonly BunnyStreamClientInterface $bunnyClient) {}
+    public function __construct(private readonly BunnyStreamService $bunnyService) {}
 
     public function initializeUpload(User $admin, Center $center, string $originalFilename, ?Video $video = null): VideoUploadSession
     {
-        $created = $this->bunnyClient->createVideo(['title' => $originalFilename]);
+        $created = $this->bunnyService->createVideo(['title' => $originalFilename]);
         $bunnyId = $created['id'];
-        $libraryId = $this->bunnyClient->libraryId();
+        $libraryId = $created['library_id'] ?? config('bunny.api.library_id');
         $libraryIdValue = is_numeric($libraryId) ? (int) $libraryId : null;
 
         $session = VideoUploadSession::create([

@@ -38,6 +38,7 @@ function attachCourseAndVideo(): array
     $video = Video::factory()->create([
         'source_url' => 'https://videos.example.com/'.$course->id.'/video.mp4',
         'lifecycle_status' => 2,
+        'encoding_status' => 3,
     ]);
 
     CourseVideo::create([
@@ -72,6 +73,12 @@ it('creates a request and blocks duplicates', function (): void {
 
 it('admin approves and allowance affects view limit', function (): void {
     [$course, $video] = attachCourseAndVideo();
+    $student = User::factory()->create([
+        'is_student' => true,
+        'password' => 'secret123',
+        'center_id' => $course->center_id,
+    ]);
+    $this->asApiUser($student);
     $device = makeRequestDevice($this->apiUser);
 
     Enrollment::factory()->create([
@@ -97,13 +104,17 @@ it('admin approves and allowance affects view limit', function (): void {
     $block = $this->apiPost("/api/v1/courses/{$course->id}/videos/{$video->id}/playback/authorize", [
         'device_id' => $device->device_id,
     ]);
-    $block->assertStatus(403);
+    $block->assertStatus(403)->assertJsonPath('error.code', 'VIEW_LIMIT_EXCEEDED');
 
     $request = $this->apiPost("/api/v1/courses/{$course->id}/videos/{$video->id}/extra-view-requests");
     $requestId = $request->json('data.id');
 
-    $admin = $this->asAdmin();
-    $admin->update(['center_id' => $course->center_id]);
+    $admin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => $course->center_id,
+        'phone' => '1000000001',
+    ]);
     $this->adminToken = (string) Auth::guard('admin')->attempt([
         'email' => $admin->email,
         'password' => 'secret123',
@@ -119,7 +130,9 @@ it('admin approves and allowance affects view limit', function (): void {
         'device_id' => $device->device_id,
     ]);
 
-    $allowed->assertOk()->assertJsonPath('success', true);
+    $allowed->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonMissing(['playback_url', 'expires_at', 'api_key', 'token', 'signed_url', 'cdn_url', 'upload_url']);
 });
 
 it('admin can reject pending requests', function (): void {

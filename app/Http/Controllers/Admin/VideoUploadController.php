@@ -40,11 +40,8 @@ class VideoUploadController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                'id' => $session->id,
-                'bunny_upload_id' => $session->bunny_upload_id,
-                'upload_status' => $session->upload_status,
-                'progress_percent' => $session->progress_percent,
-                'upload_url' => $session->getAttribute('upload_url'),
+                'video_id' => $session->bunny_upload_id,
+                'library_id' => $session->library_id,
             ],
         ], 201);
     }
