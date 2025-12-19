@@ -8,6 +8,7 @@ use App\Services\Auth\Contracts\JwtServiceInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
 use App\Services\Auth\JwtService;
 use App\Services\Auth\OtpService;
+use App\Services\Bunny\BunnyLibraryService;
 use App\Services\Bunny\BunnyStreamService;
 use App\Services\Centers\CenterService;
 use App\Services\Centers\Contracts\CenterServiceInterface;
@@ -71,7 +72,7 @@ class AppServiceProvider extends ServiceProvider
             $apiUrl = (string) ($apiConfig['api_url'] ?? '');
             $libraryId = (string) ($apiConfig['library_id'] ?? '');
 
-            if ($apiKey === '' || $apiUrl === '' || $libraryId === '') {
+            if ($apiKey === '' || $apiUrl === '') {
                 throw new RuntimeException('Missing Bunny Stream configuration.');
             }
 
@@ -79,6 +80,21 @@ class AppServiceProvider extends ServiceProvider
                 apiKey: $apiKey,
                 apiUrl: $apiUrl,
                 libraryId: $libraryId,
+            );
+        });
+
+        $this->app->singleton(BunnyLibraryService::class, function ($app) {
+            $apiConfig = $app['config']->get('bunny.api', []);
+            $apiKey = (string) ($apiConfig['api_key'] ?? '');
+            $apiUrl = (string) ($apiConfig['api_url'] ?? '');
+
+            if ($apiKey === '' || $apiUrl === '') {
+                throw new RuntimeException('Missing Bunny Stream configuration.');
+            }
+
+            return new BunnyLibraryService(
+                apiKey: $apiKey,
+                apiUrl: $apiUrl,
             );
         });
     }

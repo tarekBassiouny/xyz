@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "XYZ LMS API (v3)",
-    "_postman_id": "e000499e-ef05-4682-b518-5d3268de0c8b",
+    "name": "XYZ LMS API (v4)",
+    "_postman_id": "af58b640-018a-432f-afc0-05991624ce3f",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -36,6 +36,41 @@
             "body": {
               "mode": "raw",
               "raw": "{\"email\":\"admin@example.com\",\"password\":\"admin123\"}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/admin/auth/password/reset",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/auth/password/reset",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/auth/password/reset"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"token\":\"reset-token\",\"email\":\"admin@example.com\",\"password\":\"newpassword123\"}"
             },
             "description": "",
             "auth": {
@@ -159,6 +194,12 @@
                   "disabled": false
                 },
                 {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number to retrieve. Must be at least 1.",
+                  "disabled": false
+                },
+                {
                   "key": "slug",
                   "value": "center-1",
                   "description": "Filter centers by slug.",
@@ -171,7 +212,7 @@
                   "disabled": false
                 }
               ],
-              "raw": "{{baseUrl}}/api/v1/admin/centers?per_page=15&slug=center-1&type=1"
+              "raw": "{{baseUrl}}/api/v1/admin/centers?per_page=15&page=1&slug=center-1&type=1"
             },
             "method": "GET",
             "header": [
@@ -222,7 +263,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"slug\":\"center-01\",\"type\":0,\"name_translations\":{\"en\":\"Center Name\",\"ar\":\"اسم المركز\"},\"description_translations\":{\"en\":\"Description\"},\"logo_url\":\"https:\\/\\/example.com\\/logo.png\",\"primary_color\":\"#000000\",\"default_view_limit\":3,\"allow_extra_view_requests\":false,\"pdf_download_permission\":false,\"device_limit\":1,\"settings\":{\"pdf_download_permission\":true}}"
+              "raw": "{\"slug\":\"center-01\",\"type\":0,\"name\":\"Center Name\",\"name_translations\":{\"en\":\"Center Name\",\"ar\":\"اسم المركز\"},\"description_translations\":{\"en\":\"Description\"},\"logo_url\":\"https:\\/\\/example.com\\/logo.png\",\"primary_color\":\"#000000\",\"default_view_limit\":3,\"allow_extra_view_requests\":false,\"pdf_download_permission\":false,\"device_limit\":1,\"settings\":{\"pdf_download_permission\":true},\"owner_user_id\":10,\"owner\":{\"name\":\"Owner Name\",\"email\":\"owner@example.com\",\"phone\":\"+1234567890\"},\"owner_role\":\"center_owner\"}"
             },
             "description": "",
             "auth": {
@@ -305,7 +346,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"slug\":\"b\",\"type\":16,\"name_translations\":{\"en\":\"Updated Name\"},\"description_translations\":{\"en\":\"Updated description\"},\"logo_url\":\"https:\\/\\/example.com\\/logo.png\",\"primary_color\":\"#123456\",\"default_view_limit\":5,\"allow_extra_view_requests\":false,\"pdf_download_permission\":false,\"device_limit\":2,\"settings\":{\"pdf_download_permission\":false}}"
+              "raw": "{\"slug\":\"center-01\",\"type\":0,\"name_translations\":{\"en\":\"Updated Name\"},\"description_translations\":{\"en\":\"Updated description\"},\"logo_url\":\"https:\\/\\/example.com\\/logo.png\",\"primary_color\":\"#123456\",\"default_view_limit\":5,\"allow_extra_view_requests\":false,\"pdf_download_permission\":false,\"device_limit\":2,\"settings\":{\"pdf_download_permission\":false}}"
             },
             "description": "",
             "auth": {
@@ -547,7 +588,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"title\":\"Sample Course\",\"description\":\"This is an introductory course.\",\"category_id\":1,\"center_id\":1,\"difficulty\":\"beginner\",\"language\":\"en\",\"price\":0,\"metadata\":{\"key\":\"value\"},\"title_translations\":[\"b\"],\"description_translations\":[\"architecto\"],\"difficulty_level\":1,\"created_by\":5}"
+              "raw": "{\"title\":\"Sample Course\",\"description\":\"This is an introductory course.\",\"category_id\":1,\"center_id\":1,\"difficulty\":\"beginner\",\"language\":\"en\",\"price\":0,\"metadata\":{\"key\":\"value\"},\"title_translations\":[\"Sample Course\"],\"description_translations\":[\"Intro course\"],\"difficulty_level\":1,\"created_by\":5}"
             },
             "description": "",
             "auth": {
@@ -630,7 +671,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"title\":\"Updated Course Title\",\"description\":\"Updated description.\",\"category_id\":2,\"center_id\":1,\"difficulty\":\"intermediate\",\"language\":\"en\",\"price\":10.5,\"metadata\":{\"key\":\"value\"},\"title_translations\":[\"b\"],\"description_translations\":[\"architecto\"],\"difficulty_level\":2,\"created_by\":5}"
+              "raw": "{\"title\":\"Updated Course Title\",\"description\":\"Updated description.\",\"category_id\":2,\"center_id\":1,\"difficulty\":\"intermediate\",\"language\":\"en\",\"price\":10.5,\"metadata\":{\"key\":\"value\"},\"title_translations\":[\"Updated Course\"],\"description_translations\":[\"Updated desc\"],\"difficulty_level\":2,\"created_by\":5}"
             },
             "description": "",
             "auth": {
@@ -1151,7 +1192,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"sections\":[16]}"
+              "raw": "{\"sections\":[2]}"
             },
             "description": "",
             "auth": {
@@ -1427,7 +1468,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"course_id\":1,\"title\":\"Introduction\",\"description\":\"Overview of the course.\",\"sort_order\":1,\"videos\":[16],\"pdfs\":[16]}"
+              "raw": "{\"course_id\":1,\"title\":\"Introduction\",\"description\":\"Overview of the course.\",\"sort_order\":1,\"videos\":[5],\"pdfs\":[3]}"
             },
             "description": "",
             "auth": {
@@ -1476,7 +1517,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"title\":\"Updated Section\",\"description\":\"Updated description.\",\"sort_order\":2,\"videos\":[16],\"pdfs\":[16]}"
+              "raw": "{\"title\":\"Updated Section\",\"description\":\"Updated description.\",\"sort_order\":2,\"videos\":[5],\"pdfs\":[3]}"
             },
             "description": "",
             "auth": {
@@ -2370,6 +2411,12 @@
                   "disabled": false
                 },
                 {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number to retrieve. Must be at least 1.",
+                  "disabled": false
+                },
+                {
                   "key": "status",
                   "value": "3",
                   "description": "Filter by upload status (0-4).",
@@ -2382,7 +2429,7 @@
                   "disabled": false
                 }
               ],
-              "raw": "{{baseUrl}}/api/v1/admin/video-upload-sessions?per_page=15&status=3&center_id=1"
+              "raw": "{{baseUrl}}/api/v1/admin/video-upload-sessions?per_page=15&page=1&status=3&center_id=1"
             },
             "method": "GET",
             "header": [
@@ -2618,7 +2665,7 @@
                 },
                 {
                   "key": "social_links[0]",
-                  "value": "architecto",
+                  "value": "https://linkedin.com/in/johndoe",
                   "type": "text",
                   "description": ""
                 },
@@ -2791,7 +2838,7 @@
                 },
                 {
                   "key": "social_links[0]",
-                  "value": "architecto",
+                  "value": "https://linkedin.com/in/johndoe",
                   "type": "text",
                   "description": ""
                 },
@@ -3138,7 +3185,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"permission_ids\":[16]}"
+              "raw": "{\"permission_ids\":[1]}"
             },
             "description": "",
             "auth": {
@@ -3380,7 +3427,7 @@
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\"role_ids\":[16]}"
+              "raw": "{\"role_ids\":[1]}"
             },
             "description": "",
             "auth": {

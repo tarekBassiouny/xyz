@@ -98,3 +98,36 @@ it('allows admins with permission and center access', function (): void {
 
     $response->assertOk();
 });
+
+it('restricts center management to super admins', function (): void {
+    $permission = Permission::factory()->create(['name' => 'center.manage']);
+    $role = Role::factory()->create(['slug' => 'center_admin']);
+    $role->permissions()->sync([$permission->id]);
+
+    $admin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+    ]);
+    $admin->roles()->sync([$role->id]);
+
+    $token = (string) Auth::guard('admin')->attempt([
+        'email' => $admin->email,
+        'password' => 'secret123',
+        'is_student' => false,
+    ]);
+
+    $forbidden = $this->getJson('/api/v1/admin/centers', [
+        'Authorization' => 'Bearer '.$token,
+        'Accept' => 'application/json',
+    ]);
+
+    $forbidden->assertForbidden();
+
+    $super = $this->asAdmin();
+    $allowed = $this->getJson('/api/v1/admin/centers', [
+        'Authorization' => 'Bearer '.$this->adminToken,
+        'Accept' => 'application/json',
+    ]);
+
+    $allowed->assertOk();
+});

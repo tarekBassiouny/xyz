@@ -32,16 +32,21 @@ class VideoUploadService
     public function initializeUpload(User $admin, Center $center, string $originalFilename, ?Video $video = null): VideoUploadSession
     {
         $this->centerScopeService->assertAdminSameCenter($admin, $center);
+        $libraryIdValue = is_numeric($center->bunny_library_id) ? (int) $center->bunny_library_id : null;
+
+        if ($libraryIdValue === null) {
+            throw ValidationException::withMessages([
+                'center_id' => ['Center library is not configured.'],
+            ]);
+        }
 
         if ($video !== null) {
             $video->loadMissing('creator');
             $this->centerScopeService->assertAdminCenterId($admin, $video->creator->center_id);
         }
 
-        $created = $this->bunnyService->createVideo(['title' => $originalFilename]);
+        $created = $this->bunnyService->createVideo(['title' => $originalFilename], $libraryIdValue);
         $bunnyId = $created['id'];
-        $libraryId = $created['library_id'] ?? config('bunny.api.library_id');
-        $libraryIdValue = is_numeric($libraryId) ? (int) $libraryId : null;
 
         $session = VideoUploadSession::create([
             'center_id' => $center->id,

@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Services\Centers;
 
+use App\Jobs\CreateCenterBunnyLibrary;
+use App\Jobs\SendCenterOnboardingEmail;
 use App\Models\Center;
 use App\Models\Role;
 use App\Models\User;
-use App\Notifications\AdminCenterOnboardingNotification;
 use App\Services\Centers\Contracts\CenterServiceInterface;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -36,8 +36,8 @@ class CenterOnboardingService
                 $owner = $this->createOwner($ownerPayload, $center, $roleSlug);
             }
 
-            $token = Password::broker()->createToken($owner);
-            $owner->notify(new AdminCenterOnboardingNotification($center, $token));
+            SendCenterOnboardingEmail::dispatch($center->id, $owner->id)->afterCommit();
+            CreateCenterBunnyLibrary::dispatch($center->id)->afterCommit();
 
             return [
                 'center' => $center,

@@ -91,7 +91,6 @@ class StoreInstructorRequest extends FormRequest
             ],
             'avatar' => [
                 'description' => 'Profile image file upload.',
-                'example' => 'avatar.jpg',
             ],
             'email' => [
                 'description' => 'Contact email for the instructor.',

@@ -1500,6 +1500,74 @@ endpoints:
   -
     custom: []
     httpMethods:
+      - POST
+    uri: api/v1/admin/auth/password/reset
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: ''
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: en
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters: []
+    cleanQueryParameters: []
+    bodyParameters:
+      token:
+        custom: []
+        name: token
+        description: 'Password reset token.'
+        required: true
+        example: reset-token
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      email:
+        custom: []
+        name: email
+        description: 'Admin email address. Must be a valid email address.'
+        required: true
+        example: admin@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      password:
+        custom: []
+        name: password
+        description: 'New password. Must be at least 8 characters.'
+        required: true
+        example: newpassword123
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanBodyParameters:
+      token: reset-token
+      email: admin@example.com
+      password: newpassword123
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
       - GET
     uri: api/v1/admin/auth/me
     metadata:
@@ -1626,6 +1694,17 @@ endpoints:
         exampleWasSpecified: true
         nullable: false
         deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
       slug:
         custom: []
         name: slug
@@ -1650,6 +1729,7 @@ endpoints:
         deprecated: false
     cleanQueryParameters:
       per_page: 15
+      page: 1
       slug: center-1
       type: 1
     bodyParameters: []
@@ -1689,20 +1769,31 @@ endpoints:
         custom: []
         name: slug
         description: 'Unique, immutable center slug. Must contain only letters, numbers, dashes and underscores. Must not be greater than 255 characters.'
-        required: true
+        required: false
         example: center-01
         type: string
         enumValues: []
         exampleWasSpecified: false
-        nullable: false
+        nullable: true
         deprecated: false
       type:
         custom: []
         name: type
         description: 'Center type identifier.'
-        required: true
+        required: false
         example: 0
         type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      name:
+        custom: []
+        name: name
+        description: 'Center name when translations are not provided. This field is required when <code>name_translations</code> is not present. Must not be greater than 255 characters.'
+        required: false
+        example: 'Center Name'
+        type: string
         enumValues: []
         exampleWasSpecified: false
         nullable: false
@@ -1710,8 +1801,8 @@ endpoints:
       name_translations:
         custom: []
         name: name_translations
-        description: 'Localized center name.'
-        required: true
+        description: 'Localized center name. This field is required when <code>name</code> is not present.'
+        required: false
         example:
           en: 'Center Name'
           ar: 'اسم المركز'
@@ -1810,9 +1901,79 @@ endpoints:
         exampleWasSpecified: false
         nullable: true
         deprecated: false
+      owner_user_id:
+        custom: []
+        name: owner_user_id
+        description: 'Existing user ID to assign as the owner. This field is required when <code>owner</code> is not present. The <code>id</code> of an existing record in the users table.'
+        required: false
+        example: 10
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      owner:
+        custom: []
+        name: owner
+        description: 'Owner details when creating a new owner user. This field is required when <code>owner_user_id</code> is not present.'
+        required: false
+        example:
+          name: 'Owner Name'
+          email: owner@example.com
+          phone: '+1234567890'
+        type: object
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      owner.name:
+        custom: []
+        name: owner.name
+        description: 'Owner name. This field is required when <code>owner_user_id</code> is not present. Must not be greater than 255 characters.'
+        required: false
+        example: 'Owner Name'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      owner.email:
+        custom: []
+        name: owner.email
+        description: 'Owner email address. This field is required when <code>owner_user_id</code> is not present. Must be a valid email address. Must not be greater than 255 characters.'
+        required: false
+        example: owner@example.com
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      owner.phone:
+        custom: []
+        name: owner.phone
+        description: 'Owner phone number. Must not be greater than 50 characters.'
+        required: false
+        example: '+1234567890'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
+      owner_role:
+        custom: []
+        name: owner_role
+        description: 'Optional role name to assign to the owner.'
+        required: false
+        example: center_owner
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: true
+        deprecated: false
     cleanBodyParameters:
       slug: center-01
       type: 0
+      name: 'Center Name'
       name_translations:
         en: 'Center Name'
         ar: 'اسم المركز'
@@ -1826,6 +1987,12 @@ endpoints:
       device_limit: 1
       settings:
         pdf_download_permission: true
+      owner_user_id: 10
+      owner:
+        name: 'Owner Name'
+        email: owner@example.com
+        phone: '+1234567890'
+      owner_role: center_owner
     fileParameters: []
     responses: []
     responseFields: []
@@ -1916,9 +2083,9 @@ endpoints:
       slug:
         custom: []
         name: slug
-        description: 'Must contain only letters, numbers, dashes and underscores. Must not be greater than 255 characters.'
+        description: 'Unique, immutable center slug. Must contain only letters, numbers, dashes and underscores. Must not be greater than 255 characters.'
         required: false
-        example: b
+        example: center-01
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -1927,9 +2094,9 @@ endpoints:
       type:
         custom: []
         name: type
-        description: ''
+        description: 'Center type identifier.'
         required: false
-        example: 16
+        example: 0
         type: integer
         enumValues: []
         exampleWasSpecified: false
@@ -2038,8 +2205,8 @@ endpoints:
         nullable: true
         deprecated: false
     cleanBodyParameters:
-      slug: b
-      type: 16
+      slug: center-01
+      type: 0
       name_translations:
         en: 'Updated Name'
       description_translations:
@@ -2484,10 +2651,10 @@ endpoints:
       title_translations:
         custom: []
         name: title_translations
-        description: 'Must not be greater than 255 characters.'
+        description: 'Localized title value. Must not be greater than 255 characters.'
         required: false
         example:
-          - b
+          - 'Sample Course'
         type: 'string[]'
         enumValues: []
         exampleWasSpecified: false
@@ -2496,10 +2663,10 @@ endpoints:
       description_translations:
         custom: []
         name: description_translations
-        description: ''
+        description: 'Localized description value.'
         required: false
         example:
-          - architecto
+          - 'Intro course'
         type: 'string[]'
         enumValues: []
         exampleWasSpecified: false
@@ -2538,9 +2705,9 @@ endpoints:
       metadata:
         key: value
       title_translations:
-        - b
+        - 'Sample Course'
       description_translations:
-        - architecto
+        - 'Intro course'
       difficulty_level: 1
       created_by: 5
     fileParameters: []
@@ -2725,10 +2892,10 @@ endpoints:
       title_translations:
         custom: []
         name: title_translations
-        description: 'Must not be greater than 255 characters.'
+        description: 'Localized title value. Must not be greater than 255 characters.'
         required: false
         example:
-          - b
+          - 'Updated Course'
         type: 'string[]'
         enumValues: []
         exampleWasSpecified: false
@@ -2737,10 +2904,10 @@ endpoints:
       description_translations:
         custom: []
         name: description_translations
-        description: ''
+        description: 'Localized description value.'
         required: false
         example:
-          - architecto
+          - 'Updated desc'
         type: 'string[]'
         enumValues: []
         exampleWasSpecified: false
@@ -2779,9 +2946,9 @@ endpoints:
       metadata:
         key: value
       title_translations:
-        - b
+        - 'Updated Course'
       description_translations:
-        - architecto
+        - 'Updated desc'
       difficulty_level: 2
       created_by: 5
     fileParameters: []
@@ -2888,7 +3055,7 @@ endpoints:
       options.include_sections:
         custom: []
         name: options.include_sections
-        description: ''
+        description: 'Whether to include sections in the clone.'
         required: false
         example: false
         type: boolean
@@ -2899,7 +3066,7 @@ endpoints:
       options.include_videos:
         custom: []
         name: options.include_videos
-        description: ''
+        description: 'Whether to include videos in the clone.'
         required: false
         example: false
         type: boolean
@@ -2910,7 +3077,7 @@ endpoints:
       options.include_pdfs:
         custom: []
         name: options.include_pdfs
-        description: ''
+        description: 'Whether to include PDFs in the clone.'
         required: false
         example: false
         type: boolean
@@ -3149,10 +3316,10 @@ endpoints:
       sections:
         custom: []
         name: sections
-        description: 'The <code>id</code> of an existing record in the sections table.'
+        description: 'Section ID. The <code>id</code> of an existing record in the sections table.'
         required: false
         example:
-          - 16
+          - 2
         type: 'integer[]'
         enumValues: []
         exampleWasSpecified: false
@@ -3160,7 +3327,7 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       sections:
-        - 16
+        - 2
     fileParameters: []
     responses: []
     responseFields: []
@@ -3567,10 +3734,10 @@ endpoints:
       videos:
         custom: []
         name: videos
-        description: 'The <code>id</code> of an existing record in the videos table.'
+        description: 'Video ID to attach. The <code>id</code> of an existing record in the videos table.'
         required: false
         example:
-          - 16
+          - 5
         type: 'integer[]'
         enumValues: []
         exampleWasSpecified: false
@@ -3579,10 +3746,10 @@ endpoints:
       pdfs:
         custom: []
         name: pdfs
-        description: 'The <code>id</code> of an existing record in the pdfs table.'
+        description: 'PDF ID to attach. The <code>id</code> of an existing record in the pdfs table.'
         required: false
         example:
-          - 16
+          - 3
         type: 'integer[]'
         enumValues: []
         exampleWasSpecified: false
@@ -3594,9 +3761,9 @@ endpoints:
       description: 'Overview of the course.'
       sort_order: 1
       videos:
-        - 16
+        - 5
       pdfs:
-        - 16
+        - 3
     fileParameters: []
     responses: []
     responseFields: []
@@ -3688,10 +3855,10 @@ endpoints:
       videos:
         custom: []
         name: videos
-        description: 'The <code>id</code> of an existing record in the videos table.'
+        description: 'Video ID to attach. The <code>id</code> of an existing record in the videos table.'
         required: false
         example:
-          - 16
+          - 5
         type: 'integer[]'
         enumValues: []
         exampleWasSpecified: false
@@ -3700,10 +3867,10 @@ endpoints:
       pdfs:
         custom: []
         name: pdfs
-        description: 'The <code>id</code> of an existing record in the pdfs table.'
+        description: 'PDF ID to attach. The <code>id</code> of an existing record in the pdfs table.'
         required: false
         example:
-          - 16
+          - 3
         type: 'integer[]'
         enumValues: []
         exampleWasSpecified: false
@@ -3714,9 +3881,9 @@ endpoints:
       description: 'Updated description.'
       sort_order: 2
       videos:
-        - 16
+        - 5
       pdfs:
-        - 16
+        - 3
     fileParameters: []
     responses: []
     responseFields: []
@@ -4501,6 +4668,17 @@ endpoints:
         exampleWasSpecified: false
         nullable: false
         deprecated: false
+      page:
+        custom: []
+        name: page
+        description: 'Page number to retrieve. Must be at least 1.'
+        required: false
+        example: 1
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
       status:
         custom: []
         name: status
@@ -4525,6 +4703,7 @@ endpoints:
         deprecated: false
     cleanQueryParameters:
       per_page: 15
+      page: 1
       status: 3
       center_id: 1
     bodyParameters: []
@@ -4981,7 +5160,7 @@ endpoints:
       avatar:
         custom: []
         name: avatar
-        description: 'Must be a file. Must be an image. Must not be greater than 512000 kilobytes.'
+        description: 'Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes.'
         required: false
         example: null
         type: file
@@ -5014,10 +5193,10 @@ endpoints:
       social_links:
         custom: []
         name: social_links
-        description: ''
+        description: 'Social link value.'
         required: false
         example:
-          - architecto
+          - 'https://linkedin.com/in/johndoe'
         type: 'string[]'
         enumValues: []
         exampleWasSpecified: false
@@ -5053,7 +5232,7 @@ endpoints:
       email: john.doe@example.com
       phone: '+1234567890'
       social_links:
-        - architecto
+        - 'https://linkedin.com/in/johndoe'
       metadata:
         specialization: Math
         languages:
@@ -5212,7 +5391,7 @@ endpoints:
       avatar:
         custom: []
         name: avatar
-        description: 'Must be a file. Must be an image. Must not be greater than 512000 kilobytes.'
+        description: 'Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes.'
         required: false
         example: null
         type: file
@@ -5245,10 +5424,10 @@ endpoints:
       social_links:
         custom: []
         name: social_links
-        description: ''
+        description: 'Social link value.'
         required: false
         example:
-          - architecto
+          - 'https://linkedin.com/in/johndoe'
         type: 'string[]'
         enumValues: []
         exampleWasSpecified: false
@@ -5281,7 +5460,7 @@ endpoints:
       email: john.doe@example.com
       phone: '+1234567890'
       social_links:
-        - architecto
+        - 'https://linkedin.com/in/johndoe'
       metadata:
         specialization: Physics
     fileParameters:
@@ -5795,7 +5974,7 @@ endpoints:
       settings.default_view_limit:
         custom: []
         name: settings.default_view_limit
-        description: 'Must be at least 0.'
+        description: 'Default view limit for videos. Must be at least 0.'
         required: false
         example: 3
         type: integer
@@ -5806,7 +5985,7 @@ endpoints:
       settings.allow_extra_view_requests:
         custom: []
         name: settings.allow_extra_view_requests
-        description: ''
+        description: 'Whether students can request extra views.'
         required: false
         example: false
         type: boolean
@@ -5817,7 +5996,7 @@ endpoints:
       settings.pdf_download_permission:
         custom: []
         name: settings.pdf_download_permission
-        description: ''
+        description: 'Whether PDF downloads are allowed.'
         required: false
         example: false
         type: boolean
@@ -5828,7 +6007,7 @@ endpoints:
       settings.device_limit:
         custom: []
         name: settings.device_limit
-        description: 'Must be at least 1.'
+        description: 'Maximum active devices per student. Must be at least 1.'
         required: false
         example: 1
         type: integer
@@ -5839,7 +6018,7 @@ endpoints:
       settings.branding:
         custom: []
         name: settings.branding
-        description: ''
+        description: 'Branding settings payload.'
         required: false
         example:
           logo_url: 'https://example.com/logo.png'
@@ -5852,7 +6031,7 @@ endpoints:
       settings.branding.logo_url:
         custom: []
         name: settings.branding.logo_url
-        description: ''
+        description: 'Logo URL.'
         required: false
         example: 'https://example.com/logo.png'
         type: string
@@ -5863,7 +6042,7 @@ endpoints:
       settings.branding.primary_color:
         custom: []
         name: settings.branding.primary_color
-        description: ''
+        description: 'Primary branding color.'
         required: false
         example: '#000000'
         type: string
@@ -6594,10 +6773,10 @@ endpoints:
       permission_ids:
         custom: []
         name: permission_ids
-        description: 'The <code>id</code> of an existing record in the permissions table.'
+        description: 'Permission ID. The <code>id</code> of an existing record in the permissions table.'
         required: false
         example:
-          - 16
+          - 1
         type: 'integer[]'
         enumValues: []
         exampleWasSpecified: false
@@ -6605,7 +6784,7 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       permission_ids:
-        - 16
+        - 1
     fileParameters: []
     responses: []
     responseFields: []
@@ -6998,10 +7177,10 @@ endpoints:
       role_ids:
         custom: []
         name: role_ids
-        description: 'The <code>id</code> of an existing record in the roles table.'
+        description: 'Role ID. The <code>id</code> of an existing record in the roles table.'
         required: false
         example:
-          - 16
+          - 1
         type: 'integer[]'
         enumValues: []
         exampleWasSpecified: false
@@ -7009,7 +7188,7 @@ endpoints:
         deprecated: false
     cleanBodyParameters:
       role_ids:
-        - 16
+        - 1
     fileParameters: []
     responses: []
     responseFields: []

@@ -48,7 +48,8 @@ class PlaybackAuthorizationService
         $this->viewLimitService->assertWithinLimit($user, $video, $course, $pivot->view_limit_override);
 
         $this->sessionService->startSession($user, $video, $device);
-        $libraryId = $video->library_id ?? config('bunny.api.library_id');
+        $course->loadMissing('center');
+        $libraryId = $course->center->bunny_library_id;
         $videoId = $video->source_id;
 
         if (! is_string($videoId) || $videoId === '') {

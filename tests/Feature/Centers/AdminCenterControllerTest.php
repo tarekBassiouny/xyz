@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Jobs\CreateCenterBunnyLibrary;
+use App\Jobs\SendCenterOnboardingEmail;
 use App\Models\Center;
 use App\Models\Role;
 use App\Models\User;
-use App\Notifications\AdminCenterOnboardingNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Bus;
 
 uses(RefreshDatabase::class)->group('centers', 'admin');
 
@@ -17,7 +18,7 @@ beforeEach(function (): void {
 });
 
 it('creates a center', function (): void {
-    Notification::fake();
+    Bus::fake();
     Role::factory()->create(['slug' => 'center_owner']);
 
     $payload = [
@@ -55,11 +56,12 @@ it('creates a center', function (): void {
     ]);
     $owner = User::where('email', 'owner@example.com')->first();
     expect($owner)->not->toBeNull();
-    Notification::assertSentTo($owner, AdminCenterOnboardingNotification::class);
+    Bus::assertDispatched(SendCenterOnboardingEmail::class);
+    Bus::assertDispatched(CreateCenterBunnyLibrary::class);
 });
 
 it('creates a center with an existing owner', function (): void {
-    Notification::fake();
+    Bus::fake();
     Role::factory()->create(['slug' => 'center_owner']);
 
     $owner = User::factory()->create([
@@ -81,7 +83,8 @@ it('creates a center with an existing owner', function (): void {
         'user_id' => $owner->id,
         'type' => 'owner',
     ]);
-    Notification::assertSentTo($owner, AdminCenterOnboardingNotification::class);
+    Bus::assertDispatched(SendCenterOnboardingEmail::class);
+    Bus::assertDispatched(CreateCenterBunnyLibrary::class);
 });
 
 it('lists centers with pagination', function (): void {

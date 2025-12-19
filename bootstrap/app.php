@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Middleware\JwtAdminMiddleware;
 use App\Http\Middleware\JwtMobileMiddleware;
 use App\Http\Middleware\RequirePermission;
+use App\Http\Middleware\RequireRole;
 use App\Http\Middleware\SetRequestLocale;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -92,6 +93,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'setlocale' => SetRequestLocale::class,
             'enrollment.active' => \App\Http\Middleware\EnsureActiveEnrollment::class,
             'require.permission' => RequirePermission::class,
+            'require.role' => RequireRole::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -13,7 +13,7 @@ Route::middleware('jwt.admin')->group(function () {
     Route::post('/auth/refresh', [AdminAuthController::class, 'refresh']);
     Route::post('/auth/logout', [AdminAuthController::class, 'logout']);
 
-    Route::middleware('require.permission:center.manage')->group(function (): void {
+    Route::middleware(['require.permission:center.manage', 'require.role:super_admin'])->group(function (): void {
         Route::get('/centers', [CenterController::class, 'index']);
         Route::post('/centers', [CenterController::class, 'store']);
         Route::get('/centers/{center}', [CenterController::class, 'show']);

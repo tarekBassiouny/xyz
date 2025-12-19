@@ -38,4 +38,25 @@ class AdminPasswordResetRequest extends FormRequest
             ],
         ], 422));
     }
+
+    /**
+     * @return array<string, array<string, mixed>>
+     */
+    public function bodyParameters(): array
+    {
+        return [
+            'token' => [
+                'description' => 'Password reset token.',
+                'example' => 'reset-token',
+            ],
+            'email' => [
+                'description' => 'Admin email address.',
+                'example' => 'admin@example.com',
+            ],
+            'password' => [
+                'description' => 'New password.',
+                'example' => 'newpassword123',
+            ],
+        ];
+    }
 }

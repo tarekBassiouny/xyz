@@ -155,6 +155,9 @@
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-auth-login">
                                 <a href="#endpoints-POSTapi-v1-admin-auth-login">POST api/v1/admin/auth/login</a>
                             </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-admin-auth-password-reset">
+                                <a href="#endpoints-POSTapi-v1-admin-auth-password-reset">POST api/v1/admin/auth/password/reset</a>
+                            </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-GETapi-v1-admin-auth-me">
                                 <a href="#endpoints-GETapi-v1-admin-auth-me">GET api/v1/admin/auth/me</a>
                             </li>
@@ -4630,6 +4633,180 @@ You can check the Dev Tools console for debugging information.</code></pre>
         </div>
         </form>
 
+                    <h2 id="endpoints-POSTapi-v1-admin-auth-password-reset">POST api/v1/admin/auth/password/reset</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-POSTapi-v1-admin-auth-password-reset">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request POST \
+    "http://xyz-lms.test/api/v1/admin/auth/password/reset" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en" \
+    --data "{
+    \"token\": \"reset-token\",
+    \"email\": \"admin@example.com\",
+    \"password\": \"newpassword123\"
+}"
+</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/v1/admin/auth/password/reset"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+let body = {
+    "token": "reset-token",
+    "email": "admin@example.com",
+    "password": "newpassword123"
+};
+
+fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(body),
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-POSTapi-v1-admin-auth-password-reset">
+</span>
+<span id="execution-results-POSTapi-v1-admin-auth-password-reset" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-POSTapi-v1-admin-auth-password-reset"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-POSTapi-v1-admin-auth-password-reset"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-POSTapi-v1-admin-auth-password-reset" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-POSTapi-v1-admin-auth-password-reset">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-POSTapi-v1-admin-auth-password-reset" data-method="POST"
+      data-path="api/v1/admin/auth/password/reset"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-v1-admin-auth-password-reset', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-POSTapi-v1-admin-auth-password-reset"
+                    onclick="tryItOut('POSTapi-v1-admin-auth-password-reset');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-POSTapi-v1-admin-auth-password-reset"
+                    onclick="cancelTryOut('POSTapi-v1-admin-auth-password-reset');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-POSTapi-v1-admin-auth-password-reset"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-black">POST</small>
+            <b><code>api/v1/admin/auth/password/reset</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="POSTapi-v1-admin-auth-password-reset"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="POSTapi-v1-admin-auth-password-reset"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="POSTapi-v1-admin-auth-password-reset"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                                <h4 class="fancy-heading-panel"><b>Body Parameters</b></h4>
+        <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>token</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="token"                data-endpoint="POSTapi-v1-admin-auth-password-reset"
+               value="reset-token"
+               data-component="body">
+    <br>
+<p>Password reset token. Example: <code>reset-token</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="email"                data-endpoint="POSTapi-v1-admin-auth-password-reset"
+               value="admin@example.com"
+               data-component="body">
+    <br>
+<p>Admin email address. Must be a valid email address. Example: <code>admin@example.com</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>password</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="password"                data-endpoint="POSTapi-v1-admin-auth-password-reset"
+               value="newpassword123"
+               data-component="body">
+    <br>
+<p>New password. Must be at least 8 characters. Example: <code>newpassword123</code></p>
+        </div>
+        </form>
+
                     <h2 id="endpoints-GETapi-v1-admin-auth-me">GET api/v1/admin/auth/me</h2>
 
 <p>
@@ -5015,7 +5192,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/centers?per_page=15&amp;slug=center-1&amp;type=1" \
+    --get "http://xyz-lms.test/api/v1/admin/centers?per_page=15&amp;page=1&amp;slug=center-1&amp;type=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -5028,6 +5205,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 const params = {
     "per_page": "15",
+    "page": "1",
     "slug": "center-1",
     "type": "1",
 };
@@ -5146,6 +5324,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>Items per page. Example: <code>15</code></p>
             </div>
                                     <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-admin-centers"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>slug</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
 <i>optional</i> &nbsp;
@@ -5191,6 +5381,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --data "{
     \"slug\": \"center-01\",
     \"type\": 0,
+    \"name\": \"Center Name\",
     \"name_translations\": {
         \"en\": \"Center Name\",
         \"ar\": \"اسم المركز\"
@@ -5206,7 +5397,14 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"device_limit\": 1,
     \"settings\": {
         \"pdf_download_permission\": true
-    }
+    },
+    \"owner_user_id\": 10,
+    \"owner\": {
+        \"name\": \"Owner Name\",
+        \"email\": \"owner@example.com\",
+        \"phone\": \"+1234567890\"
+    },
+    \"owner_role\": \"center_owner\"
 }"
 </code></pre></div>
 
@@ -5225,6 +5423,7 @@ const headers = {
 let body = {
     "slug": "center-01",
     "type": 0,
+    "name": "Center Name",
     "name_translations": {
         "en": "Center Name",
         "ar": "اسم المركز"
@@ -5240,7 +5439,14 @@ let body = {
     "device_limit": 1,
     "settings": {
         "pdf_download_permission": true
-    }
+    },
+    "owner_user_id": 10,
+    "owner": {
+        "name": "Owner Name",
+        "email": "owner@example.com",
+        "phone": "+1234567890"
+    },
+    "owner_role": "center_owner"
 };
 
 fetch(url, {
@@ -5340,7 +5546,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
         <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>slug</code></b>&nbsp;&nbsp;
 <small>string</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="slug"                data-endpoint="POSTapi-v1-admin-centers"
@@ -5352,7 +5558,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>type</code></b>&nbsp;&nbsp;
 <small>integer</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="type"                data-endpoint="POSTapi-v1-admin-centers"
@@ -5362,16 +5568,28 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <p>Center type identifier. Example: <code>0</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>name</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="name"                data-endpoint="POSTapi-v1-admin-centers"
+               value="Center Name"
+               data-component="body">
+    <br>
+<p>Center name when translations are not provided. This field is required when <code>name_translations</code> is not present. Must not be greater than 255 characters. Example: <code>Center Name</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>name_translations</code></b>&nbsp;&nbsp;
 <small>object</small>&nbsp;
- &nbsp;
+<i>optional</i> &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
                               name="name_translations"                data-endpoint="POSTapi-v1-admin-centers"
                value=""
                data-component="body">
     <br>
-<p>Localized center name.</p>
+<p>Localized center name. This field is required when <code>name</code> is not present.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
@@ -5488,6 +5706,78 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="body">
     <br>
 <p>Optional center settings payload.</p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>owner_user_id</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="owner_user_id"                data-endpoint="POSTapi-v1-admin-centers"
+               value="10"
+               data-component="body">
+    <br>
+<p>Existing user ID to assign as the owner. This field is required when <code>owner</code> is not present. The <code>id</code> of an existing record in the users table. Example: <code>10</code></p>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+        <details>
+            <summary style="padding-bottom: 10px;">
+                <b style="line-height: 2;"><code>owner</code></b>&nbsp;&nbsp;
+<small>object</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+<br>
+<p>Owner details when creating a new owner user. This field is required when <code>owner_user_id</code> is not present.</p>
+            </summary>
+                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>name</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="owner.name"                data-endpoint="POSTapi-v1-admin-centers"
+               value="Owner Name"
+               data-component="body">
+    <br>
+<p>Owner name. This field is required when <code>owner_user_id</code> is not present. Must not be greater than 255 characters. Example: <code>Owner Name</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="owner.email"                data-endpoint="POSTapi-v1-admin-centers"
+               value="owner@example.com"
+               data-component="body">
+    <br>
+<p>Owner email address. This field is required when <code>owner_user_id</code> is not present. Must be a valid email address. Must not be greater than 255 characters. Example: <code>owner@example.com</code></p>
+                    </div>
+                                                                <div style="margin-left: 14px; clear: unset;">
+                        <b style="line-height: 2;"><code>phone</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="owner.phone"                data-endpoint="POSTapi-v1-admin-centers"
+               value="+1234567890"
+               data-component="body">
+    <br>
+<p>Owner phone number. Must not be greater than 50 characters. Example: <code>+1234567890</code></p>
+                    </div>
+                                    </details>
+        </div>
+                <div style=" padding-left: 28px;  clear: unset;">
+            <b style="line-height: 2;"><code>owner_role</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="owner_role"                data-endpoint="POSTapi-v1-admin-centers"
+               value="center_owner"
+               data-component="body">
+    <br>
+<p>Optional role name to assign to the owner. Example: <code>center_owner</code></p>
         </div>
         </form>
 
@@ -5646,8 +5936,8 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: en" \
     --data "{
-    \"slug\": \"b\",
-    \"type\": 16,
+    \"slug\": \"center-01\",
+    \"type\": 0,
     \"name_translations\": {
         \"en\": \"Updated Name\"
     },
@@ -5679,8 +5969,8 @@ const headers = {
 };
 
 let body = {
-    "slug": "b",
-    "type": 16,
+    "slug": "center-01",
+    "type": 0,
     "name_translations": {
         "en": "Updated Name"
     },
@@ -5812,10 +6102,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="text" style="display: none"
                               name="slug"                data-endpoint="PUTapi-v1-admin-centers--center-"
-               value="b"
+               value="center-01"
                data-component="body">
     <br>
-<p>Must contain only letters, numbers, dashes and underscores. Must not be greater than 255 characters. Example: <code>b</code></p>
+<p>Unique, immutable center slug. Must contain only letters, numbers, dashes and underscores. Must not be greater than 255 characters. Example: <code>center-01</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>type</code></b>&nbsp;&nbsp;
@@ -5824,10 +6114,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
                 <input type="number" style="display: none"
                step="any"               name="type"                data-endpoint="PUTapi-v1-admin-centers--center-"
-               value="16"
+               value="0"
                data-component="body">
     <br>
-<p>Example: <code>16</code></p>
+<p>Center type identifier. Example: <code>0</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>name_translations</code></b>&nbsp;&nbsp;
@@ -6879,10 +7169,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
         \"key\": \"value\"
     },
     \"title_translations\": [
-        \"b\"
+        \"Sample Course\"
     ],
     \"description_translations\": [
-        \"architecto\"
+        \"Intro course\"
     ],
     \"difficulty_level\": 1,
     \"created_by\": 5
@@ -6913,10 +7203,10 @@ let body = {
         "key": "value"
     },
     "title_translations": [
-        "b"
+        "Sample Course"
     ],
     "description_translations": [
-        "architecto"
+        "Intro course"
     ],
     "difficulty_level": 1,
     "created_by": 5
@@ -7126,7 +7416,7 @@ Must be one of:
                name="title_translations[1]"                data-endpoint="POSTapi-v1-admin-courses"
                data-component="body">
     <br>
-<p>Must not be greater than 255 characters.</p>
+<p>Localized title value. Must not be greater than 255 characters.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
@@ -7140,7 +7430,7 @@ Must be one of:
                name="description_translations[1]"                data-endpoint="POSTapi-v1-admin-courses"
                data-component="body">
     <br>
-
+<p>Localized description value.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>difficulty_level</code></b>&nbsp;&nbsp;
@@ -7334,10 +7624,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
         \"key\": \"value\"
     },
     \"title_translations\": [
-        \"b\"
+        \"Updated Course\"
     ],
     \"description_translations\": [
-        \"architecto\"
+        \"Updated desc\"
     ],
     \"difficulty_level\": 2,
     \"created_by\": 5
@@ -7368,10 +7658,10 @@ let body = {
         "key": "value"
     },
     "title_translations": [
-        "b"
+        "Updated Course"
     ],
     "description_translations": [
-        "architecto"
+        "Updated desc"
     ],
     "difficulty_level": 2,
     "created_by": 5
@@ -7594,7 +7884,7 @@ Must be one of:
                name="title_translations[1]"                data-endpoint="PUTapi-v1-admin-courses--course_id-"
                data-component="body">
     <br>
-<p>Must not be greater than 255 characters.</p>
+<p>Localized title value. Must not be greater than 255 characters.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>description_translations</code></b>&nbsp;&nbsp;
@@ -7608,7 +7898,7 @@ Must be one of:
                name="description_translations[1]"                data-endpoint="PUTapi-v1-admin-courses--course_id-"
                data-component="body">
     <br>
-
+<p>Localized description value.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>difficulty_level</code></b>&nbsp;&nbsp;
@@ -7956,7 +8246,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Whether to include sections in the clone. Example: <code>false</code></p>
                     </div>
                                                                 <div style="margin-left: 14px; clear: unset;">
                         <b style="line-height: 2;"><code>include_videos</code></b>&nbsp;&nbsp;
@@ -7978,7 +8268,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Whether to include videos in the clone. Example: <code>false</code></p>
                     </div>
                                                                 <div style="margin-left: 14px; clear: unset;">
                         <b style="line-height: 2;"><code>include_pdfs</code></b>&nbsp;&nbsp;
@@ -8000,7 +8290,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Whether to include PDFs in the clone. Example: <code>false</code></p>
                     </div>
                                     </details>
         </div>
@@ -8500,7 +8790,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: en" \
     --data "{
     \"sections\": [
-        16
+        2
     ]
 }"
 </code></pre></div>
@@ -8519,7 +8809,7 @@ const headers = {
 
 let body = {
     "sections": [
-        16
+        2
     ]
 };
 
@@ -8642,7 +8932,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="sections[1]"                data-endpoint="PUTapi-v1-admin-courses--course_id--sections-reorder"
                data-component="body">
     <br>
-<p>The <code>id</code> of an existing record in the sections table.</p>
+<p>Section ID. The <code>id</code> of an existing record in the sections table.</p>
         </div>
         </form>
 
@@ -9464,10 +9754,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"description\": \"Overview of the course.\",
     \"sort_order\": 1,
     \"videos\": [
-        16
+        5
     ],
     \"pdfs\": [
-        16
+        3
     ]
 }"
 </code></pre></div>
@@ -9490,10 +9780,10 @@ let body = {
     "description": "Overview of the course.",
     "sort_order": 1,
     "videos": [
-        16
+        5
     ],
     "pdfs": [
-        16
+        3
     ]
 };
 
@@ -9664,7 +9954,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="videos[1]"                data-endpoint="POSTapi-v1-admin-courses--course--sections-structure"
                data-component="body">
     <br>
-<p>The <code>id</code> of an existing record in the videos table.</p>
+<p>Video ID to attach. The <code>id</code> of an existing record in the videos table.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>pdfs</code></b>&nbsp;&nbsp;
@@ -9678,7 +9968,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="pdfs[1]"                data-endpoint="POSTapi-v1-admin-courses--course--sections-structure"
                data-component="body">
     <br>
-<p>The <code>id</code> of an existing record in the pdfs table.</p>
+<p>PDF ID to attach. The <code>id</code> of an existing record in the pdfs table.</p>
         </div>
         </form>
 
@@ -9704,10 +9994,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
     \"description\": \"Updated description.\",
     \"sort_order\": 2,
     \"videos\": [
-        16
+        5
     ],
     \"pdfs\": [
-        16
+        3
     ]
 }"
 </code></pre></div>
@@ -9729,10 +10019,10 @@ let body = {
     "description": "Updated description.",
     "sort_order": 2,
     "videos": [
-        16
+        5
     ],
     "pdfs": [
-        16
+        3
     ]
 };
 
@@ -9903,7 +10193,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="videos[1]"                data-endpoint="PUTapi-v1-admin-courses--course--sections--section_id--structure"
                data-component="body">
     <br>
-<p>The <code>id</code> of an existing record in the videos table.</p>
+<p>Video ID to attach. The <code>id</code> of an existing record in the videos table.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>pdfs</code></b>&nbsp;&nbsp;
@@ -9917,7 +10207,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="pdfs[1]"                data-endpoint="PUTapi-v1-admin-courses--course--sections--section_id--structure"
                data-component="body">
     <br>
-<p>The <code>id</code> of an existing record in the pdfs table.</p>
+<p>PDF ID to attach. The <code>id</code> of an existing record in the pdfs table.</p>
         </div>
         </form>
 
@@ -11833,7 +12123,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/admin/video-upload-sessions?per_page=15&amp;status=3&amp;center_id=1" \
+    --get "http://xyz-lms.test/api/v1/admin/video-upload-sessions?per_page=15&amp;page=1&amp;status=3&amp;center_id=1" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -11846,6 +12136,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 const params = {
     "per_page": "15",
+    "page": "1",
     "status": "3",
     "center_id": "1",
 };
@@ -11962,6 +12253,18 @@ You can check the Dev Tools console for debugging information.</code></pre>
                data-component="query">
     <br>
 <p>Items per page (max 100). Must be at least 1. Must not be greater than 100. Example: <code>15</code></p>
+            </div>
+                                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>page</code></b>&nbsp;&nbsp;
+<small>integer</small>&nbsp;
+<i>optional</i> &nbsp;
+ &nbsp;
+                <input type="number" style="display: none"
+               step="any"               name="page"                data-endpoint="GETapi-v1-admin-video-upload-sessions"
+               value="1"
+               data-component="query">
+    <br>
+<p>Page number to retrieve. Must be at least 1. Example: <code>1</code></p>
             </div>
                                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>status</code></b>&nbsp;&nbsp;
@@ -12886,10 +13189,10 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "avatar_url=https://example.com/avatar.jpg"\
     --form "email=john.doe@example.com"\
     --form "phone=+1234567890"\
-    --form "social_links[]=architecto"\
+    --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpv76qs0ip55buf1ayPyD" </code></pre></div>
+    --form "avatar=@/tmp/phpm9osmuh85mrp1HFengv" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -12914,7 +13217,7 @@ body.append('title_translations[ar]', 'أستاذ');
 body.append('avatar_url', 'https://example.com/avatar.jpg');
 body.append('email', 'john.doe@example.com');
 body.append('phone', '+1234567890');
-body.append('social_links[]', 'architecto');
+body.append('social_links[]', 'https://linkedin.com/in/johndoe');
 body.append('metadata[specialization]', 'Math');
 body.append('metadata[languages][]', 'en');
 body.append('avatar', document.querySelector('input[name="avatar"]').files[0]);
@@ -13083,7 +13386,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpv76qs0ip55buf1ayPyD</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpm9osmuh85mrp1HFengv</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -13121,7 +13424,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="social_links[1]"                data-endpoint="POSTapi-v1-admin-instructors"
                data-component="body">
     <br>
-
+<p>Social link value.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>metadata</code></b>&nbsp;&nbsp;
@@ -13301,9 +13604,9 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "avatar_url=https://example.com/avatar.jpg"\
     --form "email=john.doe@example.com"\
     --form "phone=+1234567890"\
-    --form "social_links[]=architecto"\
+    --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpjv7f233v9g1v298fDmU" </code></pre></div>
+    --form "avatar=@/tmp/phpvofncc4aojo96AzECsS" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13328,7 +13631,7 @@ body.append('title_translations[ar]', 'أستاذ');
 body.append('avatar_url', 'https://example.com/avatar.jpg');
 body.append('email', 'john.doe@example.com');
 body.append('phone', '+1234567890');
-body.append('social_links[]', 'architecto');
+body.append('social_links[]', 'https://linkedin.com/in/johndoe');
 body.append('metadata[specialization]', 'Physics');
 body.append('avatar', document.querySelector('input[name="avatar"]').files[0]);
 
@@ -13513,7 +13816,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpjv7f233v9g1v298fDmU</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpvofncc4aojo96AzECsS</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -13551,7 +13854,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="social_links[1]"                data-endpoint="PUTapi-v1-admin-instructors--id-"
                data-component="body">
     <br>
-
+<p>Social link value.</p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>metadata</code></b>&nbsp;&nbsp;
@@ -14371,7 +14674,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/php8mpsl5qu6cfcahFQ62A" </code></pre></div>
+    --form "file=@/tmp/phplnoi2kgoim3kchCXvfw" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14522,7 +14825,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/php8mpsl5qu6cfcahFQ62A</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phplnoi2kgoim3kchCXvfw</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;
@@ -14882,7 +15185,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="3"
                data-component="body">
     <br>
-<p>Must be at least 0. Example: <code>3</code></p>
+<p>Default view limit for videos. Must be at least 0. Example: <code>3</code></p>
                     </div>
                                                                 <div style="margin-left: 14px; clear: unset;">
                         <b style="line-height: 2;"><code>allow_extra_view_requests</code></b>&nbsp;&nbsp;
@@ -14904,7 +15207,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Whether students can request extra views. Example: <code>false</code></p>
                     </div>
                                                                 <div style="margin-left: 14px; clear: unset;">
                         <b style="line-height: 2;"><code>pdf_download_permission</code></b>&nbsp;&nbsp;
@@ -14926,7 +15229,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>false</code></p>
+<p>Whether PDF downloads are allowed. Example: <code>false</code></p>
                     </div>
                                                                 <div style="margin-left: 14px; clear: unset;">
                         <b style="line-height: 2;"><code>device_limit</code></b>&nbsp;&nbsp;
@@ -14938,7 +15241,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="1"
                data-component="body">
     <br>
-<p>Must be at least 1. Example: <code>1</code></p>
+<p>Maximum active devices per student. Must be at least 1. Example: <code>1</code></p>
                     </div>
                                                                 <div style=" margin-left: 14px; clear: unset;">
         <details>
@@ -14948,7 +15251,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 <i>optional</i> &nbsp;
  &nbsp;
 <br>
-
+<p>Branding settings payload.</p>
             </summary>
                                                 <div style="margin-left: 28px; clear: unset;">
                         <b style="line-height: 2;"><code>logo_url</code></b>&nbsp;&nbsp;
@@ -14960,7 +15263,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="https://example.com/logo.png"
                data-component="body">
     <br>
-<p>Example: <code>https://example.com/logo.png</code></p>
+<p>Logo URL. Example: <code>https://example.com/logo.png</code></p>
                     </div>
                                                                 <div style="margin-left: 28px; clear: unset;">
                         <b style="line-height: 2;"><code>primary_color</code></b>&nbsp;&nbsp;
@@ -14972,7 +15275,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value="#000000"
                data-component="body">
     <br>
-<p>Example: <code>#000000</code></p>
+<p>Primary branding color. Example: <code>#000000</code></p>
                     </div>
                                     </details>
         </div>
@@ -16690,7 +16993,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: en" \
     --data "{
     \"permission_ids\": [
-        16
+        1
     ]
 }"
 </code></pre></div>
@@ -16709,7 +17012,7 @@ const headers = {
 
 let body = {
     "permission_ids": [
-        16
+        1
     ]
 };
 
@@ -16832,7 +17135,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="permission_ids[1]"                data-endpoint="PUTapi-v1-admin-roles--role_id--permissions"
                data-component="body">
     <br>
-<p>The <code>id</code> of an existing record in the permissions table.</p>
+<p>Permission ID. The <code>id</code> of an existing record in the permissions table.</p>
         </div>
         </form>
 
@@ -17708,7 +18011,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "X-Locale: en" \
     --data "{
     \"role_ids\": [
-        16
+        1
     ]
 }"
 </code></pre></div>
@@ -17727,7 +18030,7 @@ const headers = {
 
 let body = {
     "role_ids": [
-        16
+        1
     ]
 };
 
@@ -17850,7 +18153,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                name="role_ids[1]"                data-endpoint="PUTapi-v1-admin-users--user_id--roles"
                data-component="body">
     <br>
-<p>The <code>id</code> of an existing record in the roles table.</p>
+<p>Role ID. The <code>id</code> of an existing record in the roles table.</p>
         </div>
         </form>
 

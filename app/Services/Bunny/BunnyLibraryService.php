@@ -10,22 +10,18 @@ use Psr\Http\Client\ClientInterface;
 use ToshY\BunnyNet\BunnyHttpClient;
 use ToshY\BunnyNet\Exception\Client\BunnyHttpClientResponseException;
 use ToshY\BunnyNet\Exception\Client\BunnyJsonException;
-use ToshY\BunnyNet\Model\Api\Stream\ManageVideos\CreateVideo;
-use ToshY\BunnyNet\Model\Api\Stream\ManageVideos\GetVideo;
+use ToshY\BunnyNet\Model\Api\Base\StreamVideoLibrary\AddVideoLibrary;
+use ToshY\BunnyNet\Model\Api\Base\StreamVideoLibrary\ListVideoLibraries;
 
-class BunnyStreamService
+class BunnyLibraryService
 {
     private BunnyHttpClient $client;
-
-    private string $apiUrlValue;
 
     public function __construct(
         private readonly string $apiKey,
         private readonly string $apiUrl,
-        private readonly string $libraryId,
         ?ClientInterface $httpClient = null,
     ) {
-        $this->apiUrlValue = rtrim($this->apiUrl, '/');
         $this->client = new BunnyHttpClient(
             client: $httpClient ?? new Client,
             apiKey: $this->apiKey,
@@ -34,61 +30,46 @@ class BunnyStreamService
     }
 
     /**
-     * @param  array<string, mixed>  $payload
-     * @return array{id:string, upload_url:string, raw:array<string, mixed>, library_id:int}
+     * @return array{id:int, raw:array<string, mixed>}
      *
      * @throws BunnyJsonException
      * @throws ClientExceptionInterface
      */
-    public function createVideo(array $payload, ?int $libraryId = null): array
+    public function createLibrary(string $name): array
     {
-        $libraryIdValue = $libraryId ?? (is_numeric($this->libraryId) ? (int) $this->libraryId : null);
-        if ($libraryIdValue === null) {
-            throw new \RuntimeException('Missing Bunny library ID.');
-        }
-
         try {
             $response = $this->client->request(
-                new CreateVideo($libraryIdValue, $payload)
+                new AddVideoLibrary(['Name' => $name])
             );
             $data = $this->decodeResponse($response->getContents());
         } catch (BunnyHttpClientResponseException $exception) {
             $data = $this->decodeResponse($exception->getMessage());
         }
 
-        $id = $data['guid'] ?? $data['id'] ?? null;
+        $id = $data['Id'] ?? $data['id'] ?? null;
 
-        if (! is_string($id) || $id === '') {
-            throw new \RuntimeException('Failed to create Bunny video.');
+        if (! is_numeric($id)) {
+            throw new \RuntimeException('Failed to create Bunny library.');
         }
 
-        $uploadUrl = $data['upload_url']
-            ?? $this->apiUrlValue."/library/{$libraryIdValue}/videos/{$id}";
-
         return [
-            'id' => $id,
-            'upload_url' => $uploadUrl,
+            'id' => (int) $id,
             'raw' => $data,
-            'library_id' => $libraryIdValue,
         ];
     }
 
     /**
+     * @param  array<string, mixed>  $query
      * @return array<string, mixed>
      *
      * @throws BunnyJsonException
      * @throws ClientExceptionInterface
      */
-    public function getVideo(string $videoGuid, ?int $libraryId = null): array
+    public function listLibraries(array $query = []): array
     {
-        $libraryIdValue = $libraryId ?? (is_numeric($this->libraryId) ? (int) $this->libraryId : null);
-        if ($libraryIdValue === null) {
-            throw new \RuntimeException('Missing Bunny library ID.');
-        }
-
         try {
             $response = $this->client->request(
-                new GetVideo($libraryIdValue, $videoGuid)
+                new ListVideoLibraries($query)
             );
 
             return $this->decodeResponse($response->getContents());

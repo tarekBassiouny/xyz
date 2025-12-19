@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\Center;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\ExtraViewRequest;
@@ -32,7 +33,14 @@ function makeRequestDevice(User $user, string $uuid = 'device-123')
 
 function attachCourseAndVideo(): array
 {
-    $course = Course::factory()->create(['status' => 3, 'is_published' => true]);
+    $center = Center::factory()->create([
+        'bunny_library_id' => 10,
+    ]);
+    $course = Course::factory()->create([
+        'status' => 3,
+        'is_published' => true,
+        'center_id' => $center->id,
+    ]);
     /** @var Video $video */
     $video = Video::factory()->create([
         'source_url' => 'https://videos.example.com/'.$course->id.'/video.mp4',

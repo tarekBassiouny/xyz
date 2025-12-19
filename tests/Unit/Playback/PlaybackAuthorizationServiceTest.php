@@ -59,7 +59,13 @@ function assertPlaybackDenied(callable $callback, string $code): void
 }
 
 it('returns embed config when authorization succeeds', function (): void {
-    $course = Course::factory()->create(['status' => 3]);
+    $center = Center::factory()->create([
+        'bunny_library_id' => 55,
+    ]);
+    $course = Course::factory()->create([
+        'status' => 3,
+        'center_id' => $center->id,
+    ]);
     $student = User::factory()->create([
         'is_student' => true,
         'center_id' => $course->center_id,
@@ -68,7 +74,6 @@ it('returns embed config when authorization succeeds', function (): void {
         'encoding_status' => 3,
         'lifecycle_status' => 2,
         'source_id' => 'bunny-1',
-        'library_id' => 55,
     ]);
     CourseVideo::create([
         'course_id' => $course->id,
@@ -137,7 +142,13 @@ it('returns embed config when authorization succeeds', function (): void {
 });
 
 it('denies playback without enrollment', function (): void {
-    $course = Course::factory()->create(['status' => 3]);
+    $center = Center::factory()->create([
+        'bunny_library_id' => 10,
+    ]);
+    $course = Course::factory()->create([
+        'status' => 3,
+        'center_id' => $center->id,
+    ]);
     $student = User::factory()->create([
         'is_student' => true,
         'center_id' => $course->center_id,
@@ -169,7 +180,13 @@ it('denies playback without enrollment', function (): void {
 });
 
 it('denies playback when center does not match', function (): void {
-    $course = Course::factory()->create(['status' => 3]);
+    $center = Center::factory()->create([
+        'bunny_library_id' => 10,
+    ]);
+    $course = Course::factory()->create([
+        'status' => 3,
+        'center_id' => $center->id,
+    ]);
     $otherCenter = Center::factory()->create();
     $student = User::factory()->create([
         'is_student' => true,
@@ -207,7 +224,13 @@ it('denies playback when center does not match', function (): void {
 });
 
 it('denies playback when video is not ready', function (): void {
-    $course = Course::factory()->create(['status' => 3]);
+    $center = Center::factory()->create([
+        'bunny_library_id' => 10,
+    ]);
+    $course = Course::factory()->create([
+        'status' => 3,
+        'center_id' => $center->id,
+    ]);
     $student = User::factory()->create([
         'is_student' => true,
         'center_id' => $course->center_id,
@@ -216,7 +239,6 @@ it('denies playback when video is not ready', function (): void {
         'encoding_status' => 2,
         'lifecycle_status' => 1,
         'source_id' => 'bunny-missing',
-        'library_id' => 10,
     ]);
     CourseVideo::create([
         'course_id' => $course->id,
@@ -246,7 +268,13 @@ it('denies playback when video is not ready', function (): void {
 });
 
 it('propagates device authorization failure', function (): void {
-    $course = Course::factory()->create(['status' => 3]);
+    $center = Center::factory()->create([
+        'bunny_library_id' => 10,
+    ]);
+    $course = Course::factory()->create([
+        'status' => 3,
+        'center_id' => $center->id,
+    ]);
     $student = User::factory()->create([
         'is_student' => true,
         'center_id' => $course->center_id,
@@ -255,7 +283,6 @@ it('propagates device authorization failure', function (): void {
         'encoding_status' => 3,
         'lifecycle_status' => 2,
         'source_id' => 'bunny-device',
-        'library_id' => 10,
     ]);
     CourseVideo::create([
         'course_id' => $course->id,
@@ -297,7 +324,13 @@ it('propagates device authorization failure', function (): void {
 });
 
 it('propagates concurrency failures', function (): void {
-    $course = Course::factory()->create(['status' => 3]);
+    $center = Center::factory()->create([
+        'bunny_library_id' => 10,
+    ]);
+    $course = Course::factory()->create([
+        'status' => 3,
+        'center_id' => $center->id,
+    ]);
     $student = User::factory()->create([
         'is_student' => true,
         'center_id' => $course->center_id,
@@ -306,7 +339,6 @@ it('propagates concurrency failures', function (): void {
         'encoding_status' => 3,
         'lifecycle_status' => 2,
         'source_id' => 'bunny-concurrency',
-        'library_id' => 10,
     ]);
     CourseVideo::create([
         'course_id' => $course->id,
@@ -360,7 +392,13 @@ it('propagates concurrency failures', function (): void {
 });
 
 it('propagates view limit failures', function (): void {
-    $course = Course::factory()->create(['status' => 3]);
+    $center = Center::factory()->create([
+        'bunny_library_id' => 10,
+    ]);
+    $course = Course::factory()->create([
+        'status' => 3,
+        'center_id' => $center->id,
+    ]);
     $student = User::factory()->create([
         'is_student' => true,
         'center_id' => $course->center_id,
@@ -369,7 +407,6 @@ it('propagates view limit failures', function (): void {
         'encoding_status' => 3,
         'lifecycle_status' => 2,
         'source_id' => 'bunny-view-limit',
-        'library_id' => 10,
     ]);
     CourseVideo::create([
         'course_id' => $course->id,
@@ -424,5 +461,78 @@ it('propagates view limit failures', function (): void {
     assertPlaybackDenied(
         fn () => $service->authorize($student, $course, $video, null, 'device-1'),
         'VIEW_LIMIT_EXCEEDED'
+    );
+});
+
+it('denies playback when library id is missing', function (): void {
+    $center = Center::factory()->create([
+        'bunny_library_id' => null,
+    ]);
+    $course = Course::factory()->create([
+        'status' => 3,
+        'center_id' => $center->id,
+    ]);
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $course->center_id,
+    ]);
+    $video = Video::factory()->create([
+        'encoding_status' => 3,
+        'lifecycle_status' => 2,
+        'source_id' => 'bunny-lib-missing',
+    ]);
+    CourseVideo::create([
+        'course_id' => $course->id,
+        'video_id' => $video->id,
+        'order_index' => 1,
+        'visible' => true,
+    ]);
+
+    $enrollmentService = Mockery::mock(EnrollmentServiceInterface::class);
+    $enrollmentService->shouldReceive('getActiveEnrollment')
+        ->once()
+        ->andReturn(Enrollment::factory()->create([
+            'user_id' => $student->id,
+            'course_id' => $course->id,
+            'center_id' => $course->center_id,
+            'status' => Enrollment::STATUS_ACTIVE,
+        ]));
+
+    $deviceService = Mockery::mock(DeviceServiceInterface::class);
+    $deviceService->shouldReceive('assertActiveDevice')
+        ->once()
+        ->andReturn(UserDevice::factory()->create([
+            'user_id' => $student->id,
+            'device_id' => 'device-1',
+            'status' => UserDevice::STATUS_ACTIVE,
+        ]));
+
+    $concurrencyService = Mockery::mock(ConcurrencyService::class);
+    $concurrencyService->shouldReceive('assertNoActiveSession')
+        ->once();
+
+    $viewLimitService = Mockery::mock(ViewLimitService::class);
+    $viewLimitService->shouldReceive('assertWithinLimit')
+        ->once();
+
+    $sessionService = Mockery::mock(PlaybackSessionService::class);
+    $sessionService->shouldReceive('startSession')
+        ->once()
+        ->andReturn(PlaybackSession::factory()->create([
+            'user_id' => $student->id,
+            'video_id' => $video->id,
+        ]));
+
+    $service = buildPlaybackService([
+        'enrollmentService' => $enrollmentService,
+        'sessionService' => $sessionService,
+        'deviceService' => $deviceService,
+        'viewLimitService' => $viewLimitService,
+        'concurrencyService' => $concurrencyService,
+    ]);
+
+    assertPlaybackDenied(
+        fn () => $service->authorize($student, $course, $video, null, 'device-1'),
+        'LIBRARY_ID_MISSING'
     );
 });
