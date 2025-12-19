@@ -74,15 +74,15 @@
             "@postman:restructure"
         ],
 
-            "postman:scribe": [
+        "postman:scribe": [
             "php artisan scribe:generate"
         ],
 
-            "postman:download": [
+        "postman:download": [
             "curl http://xyz-lms.test/docs.postman -o postman/scribe.postman.json"
         ],
 
-            "postman:restructure": [
+        "postman:restructure": [
             "node postman/restructure.js"
         ]
     },

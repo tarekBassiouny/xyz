@@ -1,13 +1,13 @@
 {
   "info": {
-    "name": "XYZ LMS API (v2)",
-    "_postman_id": "46ca32e3-761d-45f5-bfeb-ceca1ba13301",
+    "name": "XYZ LMS API (v3)",
+    "_postman_id": "e000499e-ef05-4682-b518-5d3268de0c8b",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "🔐 Admin Auth (JWT)",
+      "name": "🔐 Admin – Auth (JWT)",
       "item": [
         {
           "name": "POST api/v1/admin/auth/login",
@@ -680,46 +680,6 @@
           "response": []
         },
         {
-          "name": "POST api/v1/admin/courses/{course_id}/publish",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/admin/courses/:course_id/publish",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/admin/courses/:course_id/publish",
-              "variable": [
-                {
-                  "id": "course_id",
-                  "key": "course_id",
-                  "value": "1",
-                  "description": "The ID of the course."
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "en"
-              }
-            ],
-            "body": null,
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
           "name": "POST api/v1/admin/courses/{course_id}/clone",
           "request": {
             "url": {
@@ -755,6 +715,46 @@
               "mode": "raw",
               "raw": "{\"options\":{\"include_sections\":true,\"include_videos\":true,\"include_pdfs\":true}}"
             },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/admin/courses/{course_id}/publish",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/courses/:course_id/publish",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/courses/:course_id/publish",
+              "variable": [
+                {
+                  "id": "course_id",
+                  "key": "course_id",
+                  "value": "1",
+                  "description": "The ID of the course."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
             "description": "",
             "auth": {
               "type": "noauth"
@@ -2033,154 +2033,6 @@
       "name": "🧑‍💼 Admin – Enrollment & Controls",
       "item": [
         {
-          "name": "GET api/v1/extra-view-requests",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/extra-view-requests",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/extra-view-requests"
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "en"
-              }
-            ],
-            "body": null,
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST api/v1/courses/{course_id}/videos/{video_id}/extra-view-requests",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/courses/:course_id/videos/:video_id/extra-view-requests",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/courses/:course_id/videos/:video_id/extra-view-requests",
-              "variable": [
-                {
-                  "id": "course_id",
-                  "key": "course_id",
-                  "value": "1",
-                  "description": "The ID of the course."
-                },
-                {
-                  "id": "video_id",
-                  "key": "video_id",
-                  "value": "1",
-                  "description": "The ID of the video."
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "en"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"reason\":\"Need to review before exam\"}"
-            },
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "GET api/v1/device-change-requests",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/device-change-requests",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/device-change-requests"
-            },
-            "method": "GET",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "en"
-              }
-            ],
-            "body": null,
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "POST api/v1/device-change-requests",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/device-change-requests",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/device-change-requests"
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "en"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"new_device_id\":\"device-xyz\",\"model\":\"iPhone 15\",\"os_version\":\"iOS 17\",\"reason\":\"Upgraded phone\"}"
-            },
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
           "name": "POST api/v1/admin/enrollments",
           "request": {
             "url": {
@@ -2480,6 +2332,57 @@
               "path": "api/v1/admin/videos",
               "query": [],
               "raw": "{{baseUrl}}/api/v1/admin/videos"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/v1/admin/video-upload-sessions",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/video-upload-sessions",
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                  "disabled": false
+                },
+                {
+                  "key": "status",
+                  "value": "3",
+                  "description": "Filter by upload status (0-4).",
+                  "disabled": false
+                },
+                {
+                  "key": "center_id",
+                  "value": "1",
+                  "description": "Filter by center ID (admins scoped automatically).",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/admin/video-upload-sessions?per_page=15&status=3&center_id=1"
             },
             "method": "GET",
             "header": [
@@ -3042,7 +2945,454 @@
       ]
     },
     {
-      "name": "🧑‍💼 Admin – Audit & Settings",
+      "name": "🧑‍💼 Admin – Roles",
+      "item": [
+        {
+          "name": "GET api/v1/admin/roles",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/roles",
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Items per page.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/admin/roles?per_page=15"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/admin/roles",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/roles",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/roles"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Content Admin\",\"slug\":\"content_admin\",\"description\":\"Manages course and video content.\"}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT api/v1/admin/roles/{role_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/roles/:role_id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/roles/:role_id",
+              "variable": [
+                {
+                  "id": "role_id",
+                  "key": "role_id",
+                  "value": "1",
+                  "description": "The ID of the role."
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Support Admin\",\"slug\":\"support_admin\",\"description\":\"Handles support workflows.\"}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE api/v1/admin/roles/{role_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/roles/:role_id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/roles/:role_id",
+              "variable": [
+                {
+                  "id": "role_id",
+                  "key": "role_id",
+                  "value": "1",
+                  "description": "The ID of the role."
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT api/v1/admin/roles/{role_id}/permissions",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/roles/:role_id/permissions",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/roles/:role_id/permissions",
+              "variable": [
+                {
+                  "id": "role_id",
+                  "key": "role_id",
+                  "value": "1",
+                  "description": "The ID of the role."
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"permission_ids\":[16]}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🧑‍💼 Admin – Permissions",
+      "item": [
+        {
+          "name": "GET api/v1/admin/permissions",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/permissions",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/permissions"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🧑‍💼 Admin – Users",
+      "item": [
+        {
+          "name": "GET api/v1/admin/users",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/users",
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Items per page.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/admin/users?per_page=15"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/admin/users",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/users",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/users"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Jane Admin\",\"email\":\"jane.admin@example.com\",\"phone\":\"19990000003\",\"password\":\"secret123\",\"status\":1,\"center_id\":12}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT api/v1/admin/users/{user_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/users/:user_id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/users/:user_id",
+              "variable": [
+                {
+                  "id": "user_id",
+                  "key": "user_id",
+                  "value": "1",
+                  "description": "The ID of the user."
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"name\":\"Updated Admin\",\"email\":\"updated.admin@example.com\",\"phone\":\"19990000004\",\"password\":\"secret123\",\"status\":1,\"center_id\":12}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE api/v1/admin/users/{user_id}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/users/:user_id",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/users/:user_id",
+              "variable": [
+                {
+                  "id": "user_id",
+                  "key": "user_id",
+                  "value": "1",
+                  "description": "The ID of the user."
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT api/v1/admin/users/{user_id}/roles",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/users/:user_id/roles",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/admin/users/:user_id/roles",
+              "variable": [
+                {
+                  "id": "user_id",
+                  "key": "user_id",
+                  "value": "1",
+                  "description": "The ID of the user."
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"role_ids\":[16]}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "🧑‍💼 Admin – Settings",
       "item": [
         {
           "name": "GET api/v1/admin/settings/preview",
@@ -3078,7 +3428,12 @@
             }
           },
           "response": []
-        },
+        }
+      ]
+    },
+    {
+      "name": "🧑‍💼 Admin – Audit Logs",
+      "item": [
         {
           "name": "GET api/v1/admin/audit-logs",
           "request": {
@@ -3200,7 +3555,7 @@
       ]
     },
     {
-      "name": "📱 Mobile Auth (JWT)",
+      "name": "📱 Mobile – Auth (JWT)",
       "item": [
         {
           "name": "POST api/v1/auth/send-otp",
@@ -3672,6 +4027,104 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "POST api/v1/courses/{course_id}/videos/{video_id}/playback/authorize",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/courses/:course_id/videos/:video_id/playback/authorize",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/courses/:course_id/videos/:video_id/playback/authorize",
+              "variable": [
+                {
+                  "id": "course_id",
+                  "key": "course_id",
+                  "value": "1",
+                  "description": "The ID of the course."
+                },
+                {
+                  "id": "video_id",
+                  "key": "video_id",
+                  "value": "1",
+                  "description": "The ID of the video."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"device_id\":\"device-123\",\"section_id\":5}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/courses/{course_id}/videos/{video_id}/extra-view-requests",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/courses/:course_id/videos/:video_id/extra-view-requests",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/courses/:course_id/videos/:video_id/extra-view-requests",
+              "variable": [
+                {
+                  "id": "course_id",
+                  "key": "course_id",
+                  "value": "1",
+                  "description": "The ID of the course."
+                },
+                {
+                  "id": "video_id",
+                  "key": "video_id",
+                  "value": "1",
+                  "description": "The ID of the video."
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"reason\":\"Need to review before exam\"}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -3966,55 +4419,6 @@
       "name": "🎬 Student – Playback",
       "item": [
         {
-          "name": "POST api/v1/courses/{course_id}/videos/{video_id}/playback/authorize",
-          "request": {
-            "url": {
-              "host": "{{baseUrl}}",
-              "path": "api/v1/courses/:course_id/videos/:video_id/playback/authorize",
-              "query": [],
-              "raw": "{{baseUrl}}/api/v1/courses/:course_id/videos/:video_id/playback/authorize",
-              "variable": [
-                {
-                  "id": "course_id",
-                  "key": "course_id",
-                  "value": "1",
-                  "description": "The ID of the course."
-                },
-                {
-                  "id": "video_id",
-                  "key": "video_id",
-                  "value": "1",
-                  "description": "The ID of the video."
-                }
-              ]
-            },
-            "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              },
-              {
-                "key": "Accept",
-                "value": "application/json"
-              },
-              {
-                "key": "X-Locale",
-                "value": "en"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\"device_id\":\"device-123\",\"section_id\":5}"
-            },
-            "description": "",
-            "auth": {
-              "type": "noauth"
-            }
-          },
-          "response": []
-        },
-        {
           "name": "PATCH api/v1/playback/sessions/{session}",
           "request": {
             "url": {
@@ -4092,6 +4496,110 @@
             "body": {
               "mode": "raw",
               "raw": "{\"progress_percent\":100}"
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "📱 Student – Requests",
+      "item": [
+        {
+          "name": "GET api/v1/extra-view-requests",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/extra-view-requests",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/extra-view-requests"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/v1/device-change-requests",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/device-change-requests",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/device-change-requests"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST api/v1/device-change-requests",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/device-change-requests",
+              "query": [],
+              "raw": "{{baseUrl}}/api/v1/device-change-requests"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"new_device_id\":\"device-xyz\",\"model\":\"iPhone 15\",\"os_version\":\"iOS 17\",\"reason\":\"Upgraded phone\"}"
             },
             "description": "",
             "auth": {

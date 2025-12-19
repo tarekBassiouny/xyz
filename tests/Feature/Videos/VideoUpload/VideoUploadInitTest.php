@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Models\Center;
-use App\Models\User;
 use App\Models\Video;
 use App\Services\Bunny\BunnyStreamService;
 use App\Services\Videos\VideoUploadService;
@@ -22,8 +21,7 @@ it('creates bunny video and returns upload url', function (): void {
         ]);
 
     $center = Center::factory()->create();
-    /** @var User $admin */
-    $admin = User::factory()->create(['is_student' => false]);
+    $admin = $this->asAdmin();
 
     $response = $this->actingAs($admin, 'admin')->postJson('/api/v1/admin/video-uploads', [
         'center_id' => $center->id,
@@ -52,8 +50,7 @@ it('ties existing video to new upload session', function (): void {
         ]);
 
     $center = Center::factory()->create();
-    /** @var User $admin */
-    $admin = User::factory()->create(['is_student' => false]);
+    $admin = $this->asAdmin();
     /** @var Video $video */
     $video = Video::factory()->create([
         'created_by' => $admin->id,

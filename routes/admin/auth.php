@@ -11,10 +11,12 @@ Route::middleware('jwt.admin')->group(function () {
     Route::post('/auth/refresh', [AdminAuthController::class, 'refresh']);
     Route::post('/auth/logout', [AdminAuthController::class, 'logout']);
 
-    Route::get('/centers', [CenterController::class, 'index']);
-    Route::post('/centers', [CenterController::class, 'store']);
-    Route::get('/centers/{center}', [CenterController::class, 'show']);
-    Route::put('/centers/{center}', [CenterController::class, 'update']);
-    Route::delete('/centers/{center}', [CenterController::class, 'destroy']);
-    Route::post('/centers/{center}/restore', [CenterController::class, 'restore']);
+    Route::middleware('require.permission:center.manage')->group(function (): void {
+        Route::get('/centers', [CenterController::class, 'index']);
+        Route::post('/centers', [CenterController::class, 'store']);
+        Route::get('/centers/{center}', [CenterController::class, 'show']);
+        Route::put('/centers/{center}', [CenterController::class, 'update']);
+        Route::delete('/centers/{center}', [CenterController::class, 'destroy']);
+        Route::post('/centers/{center}/restore', [CenterController::class, 'restore']);
+    });
 });

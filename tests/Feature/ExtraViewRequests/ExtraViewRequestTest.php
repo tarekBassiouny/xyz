@@ -11,7 +11,6 @@ use App\Models\User;
 use App\Models\Video;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Auth;
 
 uses(RefreshDatabase::class)->group('extra-view-requests');
 
@@ -109,20 +108,10 @@ it('admin approves and allowance affects view limit', function (): void {
     $request = $this->apiPost("/api/v1/courses/{$course->id}/videos/{$video->id}/extra-view-requests");
     $requestId = $request->json('data.id');
 
-    $admin = User::factory()->create([
-        'password' => 'secret123',
-        'is_student' => false,
-        'center_id' => $course->center_id,
-        'phone' => '1000000001',
-    ]);
-    $this->adminToken = (string) Auth::guard('admin')->attempt([
-        'email' => $admin->email,
-        'password' => 'secret123',
-        'is_student' => false,
-    ]);
-    $approve = $this->postJson("/api/v1/admin/extra-view-requests/{$requestId}/approve", [
+    $admin = $this->asAdmin();
+    $approve = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/extra-view-requests/{$requestId}/approve", [
         'granted_views' => 1,
-    ], $this->adminHeaders());
+    ]);
 
     $approve->assertOk()->assertJsonPath('data.status', ExtraViewRequest::STATUS_APPROVED);
 
@@ -148,15 +137,9 @@ it('admin can reject pending requests', function (): void {
     $requestId = $request->json('data.id');
 
     $admin = $this->asAdmin();
-    $admin->update(['center_id' => $course->center_id]);
-    $this->adminToken = (string) Auth::guard('admin')->attempt([
-        'email' => $admin->email,
-        'password' => 'secret123',
-        'is_student' => false,
-    ]);
-    $reject = $this->postJson("/api/v1/admin/extra-view-requests/{$requestId}/reject", [
+    $reject = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/extra-view-requests/{$requestId}/reject", [
         'decision_reason' => 'Not eligible',
-    ], $this->adminHeaders());
+    ]);
 
     $reject->assertOk()
         ->assertJsonPath('data.status', ExtraViewRequest::STATUS_REJECTED)

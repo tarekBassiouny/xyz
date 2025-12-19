@@ -97,6 +97,23 @@ class User extends Authenticatable implements JWTSubject
             ->wherePivotNull('deleted_at');
     }
 
+    public function hasRole(string $role): bool
+    {
+        return $this->roles()
+            ->where('slug', $role)
+            ->orWhere('name', $role)
+            ->exists();
+    }
+
+    public function hasPermission(string $permission): bool
+    {
+        return $this->roles()
+            ->whereHas('permissions', function ($query) use ($permission): void {
+                $query->where('name', $permission);
+            })
+            ->exists();
+    }
+
     /** @return HasMany<UserDevice, self> */
     public function devices(): HasMany
     {

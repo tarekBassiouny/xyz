@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 use App\Models\Center;
-use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
 use App\Services\Bunny\BunnyStreamService;
@@ -23,8 +22,8 @@ it('initializes an upload session for admin', function (): void {
         ]);
 
     $center = Center::factory()->create();
-    /** @var User $admin */
-    $admin = User::factory()->create(['is_student' => false, 'center_id' => $center->id]);
+    $admin = $this->asAdmin();
+    $admin->update(['center_id' => $center->id]);
 
     $response = $this->actingAs($admin, 'admin')->postJson('/api/v1/admin/video-uploads', [
         'center_id' => $center->id,
@@ -53,8 +52,7 @@ it('moves upload session to ready and updates video', function (): void {
         ]);
 
     $center = Center::factory()->create();
-    /** @var User $admin */
-    $admin = User::factory()->create(['is_student' => false, 'center_id' => $center->id]);
+    $admin = $this->asAdmin();
     /** @var Video $video */
     $video = Video::factory()->create([
         'lifecycle_status' => 0,
@@ -102,8 +100,7 @@ it('records failures and keeps video inactive', function (): void {
         ]);
 
     $center = Center::factory()->create();
-    /** @var User $admin */
-    $admin = User::factory()->create(['is_student' => false, 'center_id' => $center->id]);
+    $admin = $this->asAdmin();
 
     $create = $this->actingAs($admin, 'admin')->postJson('/api/v1/admin/video-uploads', [
         'center_id' => $center->id,

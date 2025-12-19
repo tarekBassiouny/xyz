@@ -15,11 +15,9 @@ it('lists videos with upload sessions for admin center', function (): void {
     $center = Center::factory()->create();
     $otherCenter = Center::factory()->create();
 
-    /** @var User $admin */
-    $admin = User::factory()->create([
-        'is_student' => false,
-        'center_id' => $center->id,
-    ]);
+    $admin = $this->asAdmin();
+    $admin->update(['center_id' => $center->id]);
+    $admin->update(['center_id' => $center->id]);
 
     /** @var VideoUploadSession $session */
     $session = VideoUploadSession::factory()->create([
@@ -36,7 +34,6 @@ it('lists videos with upload sessions for admin center', function (): void {
         'lifecycle_status' => 1,
     ]);
 
-    /** @var User $otherAdmin */
     $otherAdmin = User::factory()->create([
         'is_student' => false,
         'center_id' => $otherCenter->id,
@@ -47,7 +44,7 @@ it('lists videos with upload sessions for admin center', function (): void {
         'created_by' => $otherAdmin->id,
     ]);
 
-    $response = $this->actingAs($admin, 'admin')->getJson('/api/v1/admin/videos?per_page=10');
+    $response = $this->getJson('/api/v1/admin/videos?per_page=10&center_id='.$center->id, $this->adminHeaders());
 
     $response->assertOk()
         ->assertJsonPath('meta.total', 1)
