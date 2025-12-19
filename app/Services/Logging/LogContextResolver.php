@@ -16,7 +16,7 @@ class LogContextResolver
      * Log::info('Job completed', $resolver->resolve(['source' => 'job']));
      *
      * @param  array<string, mixed>  $overrides
-     * @return array{center_id:int|null,user_id:int|null,request_id:string|null,source:string|null}
+     * @return array<string, mixed>
      */
     public function resolve(array $overrides = []): array
     {
@@ -41,9 +41,7 @@ class LogContextResolver
         }
 
         foreach ($overrides as $key => $value) {
-            if (array_key_exists($key, $context)) {
-                $context[$key] = $value;
-            }
+            $context[$key] = $value;
         }
 
         return $context;
