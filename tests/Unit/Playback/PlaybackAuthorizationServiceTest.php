@@ -10,6 +10,7 @@ use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Models\Video;
+use App\Services\Centers\CenterScopeService;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use App\Services\Playback\ConcurrencyService;
@@ -30,6 +31,7 @@ function buildPlaybackService(array $overrides = []): PlaybackAuthorizationServi
         'deviceService' => Mockery::mock(DeviceServiceInterface::class),
         'viewLimitService' => Mockery::mock(ViewLimitService::class),
         'concurrencyService' => Mockery::mock(ConcurrencyService::class),
+        'centerScopeService' => new CenterScopeService,
     ];
 
     $deps = array_merge($defaults, $overrides);
@@ -40,6 +42,7 @@ function buildPlaybackService(array $overrides = []): PlaybackAuthorizationServi
         $deps['deviceService'],
         $deps['viewLimitService'],
         $deps['concurrencyService'],
+        $deps['centerScopeService'],
     );
 }
 

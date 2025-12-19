@@ -14,9 +14,7 @@ class UpdateAdminUserRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $user = $this->user();
-
-        return $user instanceof User && $user->hasPermission('admin.manage');
+        return true;
     }
 
     /**
@@ -47,17 +45,6 @@ class UpdateAdminUserRequest extends FormRequest
                 'details' => $validator->errors(),
             ],
         ], 422));
-    }
-
-    protected function failedAuthorization(): void
-    {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'error' => [
-                'code' => 'PERMISSION_DENIED',
-                'message' => 'You do not have permission to perform this action.',
-            ],
-        ], 403));
     }
 
     /**

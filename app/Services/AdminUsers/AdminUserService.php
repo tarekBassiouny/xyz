@@ -37,6 +37,11 @@ class AdminUserService
             'status' => (int) ($data['status'] ?? 1),
         ]);
 
+        if (isset($data['center_id']) && is_numeric($data['center_id'])) {
+            $centerId = (int) $data['center_id'];
+            $user->centers()->sync([$centerId => ['type' => 'admin']]);
+        }
+
         return $user->refresh() ?? $user;
     }
 
@@ -57,6 +62,11 @@ class AdminUserService
         ], static fn ($value): bool => $value !== null);
 
         $user->update($payload);
+
+        if (array_key_exists('center_id', $data)) {
+            $centerId = isset($data['center_id']) && is_numeric($data['center_id']) ? (int) $data['center_id'] : null;
+            $user->centers()->sync($centerId !== null ? [$centerId => ['type' => 'admin']] : []);
+        }
 
         return $user->refresh() ?? $user;
     }

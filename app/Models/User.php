@@ -61,6 +61,7 @@ class User extends Authenticatable implements JWTSubject
         'country_code',
         'email',
         'password',
+        'force_password_reset',
         'status',
         'is_student',
         'avatar_url',
@@ -70,6 +71,7 @@ class User extends Authenticatable implements JWTSubject
     protected $casts = [
         'status' => 'integer',
         'is_student' => 'boolean',
+        'force_password_reset' => 'boolean',
         'last_login_at' => 'datetime',
     ];
 
@@ -85,6 +87,7 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Center::class, 'user_centers')
             ->using(\App\Models\Pivots\UserCenter::class)
             ->withTimestamps()
+            ->withPivot(['type'])
             ->wherePivotNull('deleted_at');
     }
 
@@ -107,10 +110,33 @@ class User extends Authenticatable implements JWTSubject
 
     public function hasPermission(string $permission): bool
     {
+        if ($this->hasRole('super_admin')) {
+            return true;
+        }
+
+        if ($this->is_student) {
+            return false;
+        }
+
         return $this->roles()
             ->whereHas('permissions', function ($query) use ($permission): void {
                 $query->where('name', $permission);
             })
+            ->exists();
+    }
+
+    public function belongsToCenter(int $centerId): bool
+    {
+        return $this->centers()
+            ->where('centers.id', $centerId)
+            ->exists();
+    }
+
+    public function isAdminOfCenter(int $centerId): bool
+    {
+        return $this->centers()
+            ->where('centers.id', $centerId)
+            ->wherePivotIn('type', ['admin', 'owner'])
             ->exists();
     }
 

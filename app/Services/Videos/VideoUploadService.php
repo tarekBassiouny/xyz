@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
 use App\Services\Bunny\BunnyStreamService;
+use App\Services\Centers\CenterScopeService;
 use Illuminate\Validation\ValidationException;
 
 class VideoUploadService
@@ -23,10 +24,20 @@ class VideoUploadService
 
     public const STATUS_FAILED = 4;
 
-    public function __construct(private readonly BunnyStreamService $bunnyService) {}
+    public function __construct(
+        private readonly BunnyStreamService $bunnyService,
+        private readonly CenterScopeService $centerScopeService
+    ) {}
 
     public function initializeUpload(User $admin, Center $center, string $originalFilename, ?Video $video = null): VideoUploadSession
     {
+        $this->centerScopeService->assertAdminSameCenter($admin, $center);
+
+        if ($video !== null) {
+            $video->loadMissing('creator');
+            $this->centerScopeService->assertAdminCenterId($admin, $video->creator->center_id);
+        }
+
         $created = $this->bunnyService->createVideo(['title' => $originalFilename]);
         $bunnyId = $created['id'];
         $libraryId = $created['library_id'] ?? config('bunny.api.library_id');
@@ -59,8 +70,10 @@ class VideoUploadService
     /**
      * @param  array<string, mixed>  $payload
      */
-    public function transition(VideoUploadSession $session, string $statusLabel, array $payload): VideoUploadSession
+    public function transition(User $admin, VideoUploadSession $session, string $statusLabel, array $payload): VideoUploadSession
     {
+        $this->centerScopeService->assertAdminSameCenter($admin, $session);
+
         $status = $this->statusFromLabel($statusLabel);
         $this->assertTransitionAllowed($session->upload_status, $status);
 

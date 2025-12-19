@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Roles;
 
-use App\Models\User;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
@@ -14,9 +13,7 @@ class StoreRoleRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        $user = $this->user();
-
-        return $user instanceof User && $user->hasPermission('role.manage');
+        return true;
     }
 
     /**
@@ -41,17 +38,6 @@ class StoreRoleRequest extends FormRequest
                 'details' => $validator->errors(),
             ],
         ], 422));
-    }
-
-    protected function failedAuthorization(): void
-    {
-        throw new HttpResponseException(response()->json([
-            'success' => false,
-            'error' => [
-                'code' => 'PERMISSION_DENIED',
-                'message' => 'You do not have permission to perform this action.',
-            ],
-        ], 403));
     }
 
     /**

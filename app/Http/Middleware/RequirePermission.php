@@ -8,6 +8,7 @@ use App\Models\User;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
 class RequirePermission
@@ -26,7 +27,7 @@ class RequirePermission
             ], 403);
         }
 
-        if ($user->is_student || ! $user->hasPermission($permission)) {
+        if ($user->is_student || ! Gate::forUser($user)->allows('permission', $permission)) {
             return response()->json([
                 'success' => false,
                 'error' => [

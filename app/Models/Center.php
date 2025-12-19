@@ -69,7 +69,11 @@ class Center extends Model
     /** @return BelongsToMany<User, self> */
     public function users(): BelongsToMany
     {
-        return $this->belongsToMany(User::class, 'user_centers');
+        return $this->belongsToMany(User::class, 'user_centers')
+            ->using(\App\Models\Pivots\UserCenter::class)
+            ->withTimestamps()
+            ->withPivot(['type'])
+            ->wherePivotNull('deleted_at');
     }
 
     /** @return HasMany<Course, self> */

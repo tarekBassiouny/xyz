@@ -10,6 +10,7 @@ use App\Models\Section;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Models\Video;
+use App\Services\Centers\CenterScopeService;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
 use Illuminate\Database\Eloquent\Relations\Pivot;
@@ -22,7 +23,8 @@ class PlaybackAuthorizationService
         private readonly PlaybackSessionService $sessionService,
         private readonly DeviceServiceInterface $deviceService,
         private readonly ViewLimitService $viewLimitService,
-        private readonly ConcurrencyService $concurrencyService
+        private readonly ConcurrencyService $concurrencyService,
+        private readonly CenterScopeService $centerScopeService
     ) {}
 
     /**
@@ -114,9 +116,7 @@ class PlaybackAuthorizationService
 
     private function assertCenterAccess(User $user, Course $course): void
     {
-        if ($user->center_id !== null && (int) $user->center_id !== (int) $course->center_id) {
-            $this->deny('CENTER_MISMATCH', 'User does not belong to this center.');
-        }
+        $this->centerScopeService->assertSameCenter($user, $course);
     }
 
     private function assertVideoReady(Video $video): void

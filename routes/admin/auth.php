@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\Admin\AdminPasswordResetController;
 use App\Http\Controllers\Admin\CenterController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/auth/login', [AdminAuthController::class, 'login']);
+Route::post('/auth/password/reset', [AdminPasswordResetController::class, 'reset']);
 
 Route::middleware('jwt.admin')->group(function () {
     Route::get('/auth/me', [AdminAuthController::class, 'me']);

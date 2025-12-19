@@ -66,13 +66,13 @@ class PdfStorageService
         $pdf = Pdf::create($payload);
 
         if ($course !== null) {
-            $this->attachPdf($pdf, $course, $section, $video);
+            $this->attachPdf($pdf, $course, $section, $video, $creator);
         }
 
         return $pdf;
     }
 
-    private function attachPdf(Pdf $pdf, Course $course, ?Section $section, ?Video $video): void
+    private function attachPdf(Pdf $pdf, Course $course, ?Section $section, ?Video $video, ?User $creator): void
     {
         if ($section !== null && (int) $section->course_id !== (int) $course->id) {
             throw ValidationException::withMessages([
@@ -89,7 +89,13 @@ class PdfStorageService
         if ($section !== null) {
             $this->sectionAttachmentService->movePdfToSection($pdf, $section);
         } else {
-            $this->courseAttachmentService->assignPdf($course, (int) $pdf->id);
+            if (! $creator instanceof User) {
+                throw ValidationException::withMessages([
+                    'creator' => ['PDF attachments require an authenticated user.'],
+                ]);
+            }
+
+            $this->courseAttachmentService->assignPdf($course, (int) $pdf->id, $creator);
         }
 
         if ($video !== null) {
