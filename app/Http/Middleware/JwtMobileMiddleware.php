@@ -41,6 +41,27 @@ class JwtMobileMiddleware
             ], 403);
         }
 
+        if (! ($user instanceof \App\Models\User) || ! is_numeric($user->center_id)) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'CENTER_REQUIRED',
+                    'message' => 'Student center assignment is required.',
+                ],
+            ], 403);
+        }
+
+        $requestedCenterId = $request->input('center_id');
+        if (is_numeric($requestedCenterId) && (int) $requestedCenterId !== (int) $user->center_id) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'CENTER_MISMATCH',
+                    'message' => 'Center mismatch.',
+                ],
+            ], 403);
+        }
+
         $token = $guard->getToken();
         if ($token === null) {
             return response()->json([
@@ -83,7 +104,7 @@ class JwtMobileMiddleware
         }
 
         // Set resolved user for controllers
-        $request->setUserResolver(fn () => $user);
+        $request->setUserResolver(fn (): \App\Models\User => $user);
 
         return $next($request);
     }

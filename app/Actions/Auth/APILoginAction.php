@@ -9,6 +9,7 @@ use App\Models\UserDevice;
 use App\Services\Auth\Contracts\JwtServiceInterface;
 use App\Services\Auth\Contracts\OtpServiceInterface;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class APILoginAction
 {
@@ -38,6 +39,17 @@ class APILoginAction
         }
 
         $user = $otp->user;
+
+        if (! is_numeric($user->center_id)) {
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'CENTER_REQUIRED',
+                    'message' => 'Student center assignment is required.',
+                ],
+            ], 403));
+        }
+
         $device = $this->deviceService->register($user, $data['device_uuid'], $data);
         $tokens = $this->jwtService->create($user, $device);
 

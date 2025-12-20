@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Resources\Student;
 
 use App\Models\User;
+use App\Models\UserDevice;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,6 +24,7 @@ class StudentUserResource extends JsonResource
 
         return [
             'id' => $user->id,
+            'center_id' => $user->center_id,
             'name' => $user->name,
             'phone' => $user->phone,
             'email' => $user->email,
@@ -30,7 +32,7 @@ class StudentUserResource extends JsonResource
             'is_student' => $user->is_student,
             'roles' => $user->roles->pluck('name'),
             'device' => $user->devices
-                ->where('status', \App\Models\UserDevice::STATUS_ACTIVE)
+                ->where('status', UserDevice::STATUS_ACTIVE)
                 ->first(),
         ];
     }

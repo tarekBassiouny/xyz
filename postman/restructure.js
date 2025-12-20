@@ -30,7 +30,7 @@ const tree = {
 
   /* -------- WEBHOOKS -------- */
 
-  webhooks: folder("🔔 Webhooks"),
+  public: folder("🔔 public"),
 
   /* -------- MOBILE / STUDENT -------- */
 
@@ -121,10 +121,10 @@ function route(item) {
   if (raw.includes("/api/v1/admin/audit-logs"))
     return tree.adminAudit;
 
-  /* ================= WEBHOOKS ================= */
+  /* ================= external ================= */
 
-  if (raw.includes("/api/webhooks/"))
-    return tree.webhooks;
+  if (raw.includes("/api/external/"))
+    return tree.public;
 
   /* ================= MOBILE AUTH ================= */
 
@@ -214,8 +214,8 @@ const finalCollection = {
     tree.adminSettings,
     tree.adminAudit,
 
-    // ---- SYSTEM
-    tree.webhooks,
+    // ---- PUBLIC / WEBHOOKS
+    tree.public,
 
     // ---- MOBILE / STUDENT
     tree.mobileAuth,

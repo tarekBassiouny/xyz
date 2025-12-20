@@ -71,8 +71,11 @@
                     <a href="#endpoints">Endpoints</a>
                 </li>
                                     <ul id="tocify-subheader-endpoints" class="tocify-subheader">
-                                                    <li class="tocify-item level-2" data-unique="endpoints-POSTapi-webhooks-bunny">
-                                <a href="#endpoints-POSTapi-webhooks-bunny">POST api/webhooks/bunny</a>
+                                                    <li class="tocify-item level-2" data-unique="endpoints-POSTapi-external-webhooks-bunny">
+                                <a href="#endpoints-POSTapi-external-webhooks-bunny">POST api/external/webhooks/bunny</a>
+                            </li>
+                                                                                <li class="tocify-item level-2" data-unique="endpoints-GETapi-external-centers--slug-">
+                                <a href="#endpoints-GETapi-external-centers--slug-">GET api/external/centers/{slug}</a>
                             </li>
                                                                                 <li class="tocify-item level-2" data-unique="endpoints-POSTapi-v1-auth-send-otp">
                                 <a href="#endpoints-POSTapi-v1-auth-send-otp">POST api/v1/auth/send-otp</a>
@@ -443,20 +446,20 @@ You can switch the language used with the tabs at the top right (or from the nav
 
     
 
-                                <h2 id="endpoints-POSTapi-webhooks-bunny">POST api/webhooks/bunny</h2>
+                                <h2 id="endpoints-POSTapi-external-webhooks-bunny">POST api/external/webhooks/bunny</h2>
 
 <p>
 </p>
 
 
 
-<span id="example-requests-POSTapi-webhooks-bunny">
+<span id="example-requests-POSTapi-external-webhooks-bunny">
 <blockquote>Example request:</blockquote>
 
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request POST \
-    "http://xyz-lms.test/api/webhooks/bunny" \
+    "http://xyz-lms.test/api/external/webhooks/bunny" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: en"</code></pre></div>
@@ -464,7 +467,7 @@ You can switch the language used with the tabs at the top right (or from the nav
 
 <div class="javascript-example">
     <pre><code class="language-javascript">const url = new URL(
-    "http://xyz-lms.test/api/webhooks/bunny"
+    "http://xyz-lms.test/api/external/webhooks/bunny"
 );
 
 const headers = {
@@ -480,45 +483,45 @@ fetch(url, {
 
 </span>
 
-<span id="example-responses-POSTapi-webhooks-bunny">
+<span id="example-responses-POSTapi-external-webhooks-bunny">
 </span>
-<span id="execution-results-POSTapi-webhooks-bunny" hidden>
+<span id="execution-results-POSTapi-external-webhooks-bunny" hidden>
     <blockquote>Received response<span
-                id="execution-response-status-POSTapi-webhooks-bunny"></span>:
+                id="execution-response-status-POSTapi-external-webhooks-bunny"></span>:
     </blockquote>
-    <pre class="json"><code id="execution-response-content-POSTapi-webhooks-bunny"
+    <pre class="json"><code id="execution-response-content-POSTapi-external-webhooks-bunny"
       data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
 </span>
-<span id="execution-error-POSTapi-webhooks-bunny" hidden>
+<span id="execution-error-POSTapi-external-webhooks-bunny" hidden>
     <blockquote>Request failed with error:</blockquote>
-    <pre><code id="execution-error-message-POSTapi-webhooks-bunny">
+    <pre><code id="execution-error-message-POSTapi-external-webhooks-bunny">
 
 Tip: Check that you&#039;re properly connected to the network.
 If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
 You can check the Dev Tools console for debugging information.</code></pre>
 </span>
-<form id="form-POSTapi-webhooks-bunny" data-method="POST"
-      data-path="api/webhooks/bunny"
+<form id="form-POSTapi-external-webhooks-bunny" data-method="POST"
+      data-path="api/external/webhooks/bunny"
       data-authed="0"
       data-hasfiles="0"
       data-isarraybody="0"
       autocomplete="off"
-      onsubmit="event.preventDefault(); executeTryOut('POSTapi-webhooks-bunny', this);">
+      onsubmit="event.preventDefault(); executeTryOut('POSTapi-external-webhooks-bunny', this);">
     <h3>
         Request&nbsp;&nbsp;&nbsp;
                     <button type="button"
                     style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-tryout-POSTapi-webhooks-bunny"
-                    onclick="tryItOut('POSTapi-webhooks-bunny');">Try it out ⚡
+                    id="btn-tryout-POSTapi-external-webhooks-bunny"
+                    onclick="tryItOut('POSTapi-external-webhooks-bunny');">Try it out ⚡
             </button>
             <button type="button"
                     style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-canceltryout-POSTapi-webhooks-bunny"
-                    onclick="cancelTryOut('POSTapi-webhooks-bunny');" hidden>Cancel 🛑
+                    id="btn-canceltryout-POSTapi-external-webhooks-bunny"
+                    onclick="cancelTryOut('POSTapi-external-webhooks-bunny');" hidden>Cancel 🛑
             </button>&nbsp;&nbsp;
             <button type="submit"
                     style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
-                    id="btn-executetryout-POSTapi-webhooks-bunny"
+                    id="btn-executetryout-POSTapi-external-webhooks-bunny"
                     data-initial-text="Send Request 💥"
                     data-loading-text="⏱ Sending..."
                     hidden>Send Request 💥
@@ -526,7 +529,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             </h3>
             <p>
             <small class="badge badge-black">POST</small>
-            <b><code>api/webhooks/bunny</code></b>
+            <b><code>api/external/webhooks/bunny</code></b>
         </p>
                 <h4 class="fancy-heading-panel"><b>Headers</b></h4>
                                 <div style="padding-left: 28px; clear: unset;">
@@ -535,7 +538,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Content-Type"                data-endpoint="POSTapi-webhooks-bunny"
+                              name="Content-Type"                data-endpoint="POSTapi-external-webhooks-bunny"
                value="application/json"
                data-component="header">
     <br>
@@ -547,7 +550,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="Accept"                data-endpoint="POSTapi-webhooks-bunny"
+                              name="Accept"                data-endpoint="POSTapi-external-webhooks-bunny"
                value="application/json"
                data-component="header">
     <br>
@@ -559,13 +562,150 @@ You can check the Dev Tools console for debugging information.</code></pre>
  &nbsp;
  &nbsp;
                 <input type="text" style="display: none"
-                              name="X-Locale"                data-endpoint="POSTapi-webhooks-bunny"
+                              name="X-Locale"                data-endpoint="POSTapi-external-webhooks-bunny"
                value="en"
                data-component="header">
     <br>
 <p>Example: <code>en</code></p>
             </div>
                         </form>
+
+                    <h2 id="endpoints-GETapi-external-centers--slug-">GET api/external/centers/{slug}</h2>
+
+<p>
+</p>
+
+
+
+<span id="example-requests-GETapi-external-centers--slug-">
+<blockquote>Example request:</blockquote>
+
+
+<div class="bash-example">
+    <pre><code class="language-bash">curl --request GET \
+    --get "http://xyz-lms.test/api/external/centers/architecto" \
+    --header "Content-Type: application/json" \
+    --header "Accept: application/json" \
+    --header "X-Locale: en"</code></pre></div>
+
+
+<div class="javascript-example">
+    <pre><code class="language-javascript">const url = new URL(
+    "http://xyz-lms.test/api/external/centers/architecto"
+);
+
+const headers = {
+    "Content-Type": "application/json",
+    "Accept": "application/json",
+    "X-Locale": "en",
+};
+
+fetch(url, {
+    method: "GET",
+    headers,
+}).then(response =&gt; response.json());</code></pre></div>
+
+</span>
+
+<span id="example-responses-GETapi-external-centers--slug-">
+    </span>
+<span id="execution-results-GETapi-external-centers--slug-" hidden>
+    <blockquote>Received response<span
+                id="execution-response-status-GETapi-external-centers--slug-"></span>:
+    </blockquote>
+    <pre class="json"><code id="execution-response-content-GETapi-external-centers--slug-"
+      data-empty-response-text="<Empty response>" style="max-height: 400px;"></code></pre>
+</span>
+<span id="execution-error-GETapi-external-centers--slug-" hidden>
+    <blockquote>Request failed with error:</blockquote>
+    <pre><code id="execution-error-message-GETapi-external-centers--slug-">
+
+Tip: Check that you&#039;re properly connected to the network.
+If you&#039;re a maintainer of ths API, verify that your API is running and you&#039;ve enabled CORS.
+You can check the Dev Tools console for debugging information.</code></pre>
+</span>
+<form id="form-GETapi-external-centers--slug-" data-method="GET"
+      data-path="api/external/centers/{slug}"
+      data-authed="0"
+      data-hasfiles="0"
+      data-isarraybody="0"
+      autocomplete="off"
+      onsubmit="event.preventDefault(); executeTryOut('GETapi-external-centers--slug-', this);">
+    <h3>
+        Request&nbsp;&nbsp;&nbsp;
+                    <button type="button"
+                    style="background-color: #8fbcd4; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-tryout-GETapi-external-centers--slug-"
+                    onclick="tryItOut('GETapi-external-centers--slug-');">Try it out ⚡
+            </button>
+            <button type="button"
+                    style="background-color: #c97a7e; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-canceltryout-GETapi-external-centers--slug-"
+                    onclick="cancelTryOut('GETapi-external-centers--slug-');" hidden>Cancel 🛑
+            </button>&nbsp;&nbsp;
+            <button type="submit"
+                    style="background-color: #6ac174; padding: 5px 10px; border-radius: 5px; border-width: thin;"
+                    id="btn-executetryout-GETapi-external-centers--slug-"
+                    data-initial-text="Send Request 💥"
+                    data-loading-text="⏱ Sending..."
+                    hidden>Send Request 💥
+            </button>
+            </h3>
+            <p>
+            <small class="badge badge-green">GET</small>
+            <b><code>api/external/centers/{slug}</code></b>
+        </p>
+                <h4 class="fancy-heading-panel"><b>Headers</b></h4>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Content-Type</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Content-Type"                data-endpoint="GETapi-external-centers--slug-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>Accept</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="Accept"                data-endpoint="GETapi-external-centers--slug-"
+               value="application/json"
+               data-component="header">
+    <br>
+<p>Example: <code>application/json</code></p>
+            </div>
+                                <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>X-Locale</code></b>&nbsp;&nbsp;
+&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="X-Locale"                data-endpoint="GETapi-external-centers--slug-"
+               value="en"
+               data-component="header">
+    <br>
+<p>Example: <code>en</code></p>
+            </div>
+                        <h4 class="fancy-heading-panel"><b>URL Parameters</b></h4>
+                    <div style="padding-left: 28px; clear: unset;">
+                <b style="line-height: 2;"><code>slug</code></b>&nbsp;&nbsp;
+<small>string</small>&nbsp;
+ &nbsp;
+ &nbsp;
+                <input type="text" style="display: none"
+                              name="slug"                data-endpoint="GETapi-external-centers--slug-"
+               value="architecto"
+               data-component="url">
+    <br>
+<p>The slug of the center. Example: <code>architecto</code></p>
+            </div>
+                    </form>
 
                     <h2 id="endpoints-POSTapi-v1-auth-send-otp">POST api/v1/auth/send-otp</h2>
 
@@ -13723,7 +13863,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpt4lsunnrro73c6pE6uF" </code></pre></div>
+    --form "avatar=@/tmp/phpaom0p03bmk5o7fJJUHz" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -13917,7 +14057,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpt4lsunnrro73c6pE6uF</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpaom0p03bmk5o7fJJUHz</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -14137,7 +14277,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpba35debngb4edqfsuJq" </code></pre></div>
+    --form "avatar=@/tmp/phpsookr1c9jce56L8RGJx" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -14347,7 +14487,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpba35debngb4edqfsuJq</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpsookr1c9jce56L8RGJx</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -15205,7 +15345,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "course_id=1"\
     --form "section_id=2"\
     --form "video_id=3"\
-    --form "file=@/tmp/php0ros175bi0t8cu6mV6P" </code></pre></div>
+    --form "file=@/tmp/phprj2lfa1on07c17NbL38" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -15356,7 +15496,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/php0ros175bi0t8cu6mV6P</code></p>
+<p>PDF file to upload (max 50MB). Must be a file. Must not be greater than 51200 kilobytes. Example: <code>/tmp/phprj2lfa1on07c17NbL38</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>course_id</code></b>&nbsp;&nbsp;

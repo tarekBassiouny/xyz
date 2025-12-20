@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "XYZ LMS API (v1)",
-    "_postman_id": "b5e47802-2be7-4999-b4d5-8b2f0a847164",
+    "_postman_id": "01977d73-c934-41b3-801f-1953d31634d6",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -3998,18 +3998,58 @@
       ]
     },
     {
-      "name": "🔔 Webhooks",
+      "name": "🔔 public",
       "item": [
         {
-          "name": "POST api/webhooks/bunny",
+          "name": "POST api/external/webhooks/bunny",
           "request": {
             "url": {
               "host": "{{baseUrl}}",
-              "path": "api/webhooks/bunny",
+              "path": "api/external/webhooks/bunny",
               "query": [],
-              "raw": "{{baseUrl}}/api/webhooks/bunny"
+              "raw": "{{baseUrl}}/api/external/webhooks/bunny"
             },
             "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/external/centers/{slug}",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/external/centers/:slug",
+              "query": [],
+              "raw": "{{baseUrl}}/api/external/centers/:slug",
+              "variable": [
+                {
+                  "id": "slug",
+                  "key": "slug",
+                  "value": "architecto",
+                  "description": "The slug of the center."
+                }
+              ]
+            },
+            "method": "GET",
             "header": [
               {
                 "key": "Content-Type",

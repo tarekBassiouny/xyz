@@ -54,6 +54,16 @@ class EnsureActiveEnrollment
             ], 403);
         }
 
+        if (is_numeric($user->center_id) && (int) $course->center_id !== (int) $user->center_id) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'CENTER_MISMATCH',
+                    'message' => 'Course does not belong to your center.',
+                ],
+            ], 403);
+        }
+
         $request->attributes->set('enrollment', $enrollment);
 
         return $next($request);

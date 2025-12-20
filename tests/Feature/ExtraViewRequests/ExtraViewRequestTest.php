@@ -12,12 +12,14 @@ use App\Models\User;
 use App\Models\Video;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Auth;
 
 uses(RefreshDatabase::class)->group('extra-view-requests');
 
 beforeEach(function (): void {
     $student = $this->makeApiUser();
-    $this->asApiUser($student, null, 'device-123');
+    $token = Auth::guard('api')->login($student);
+    $this->asApiUser($student, $token, 'device-123');
 });
 
 function makeRequestDevice(User $user, string $uuid = 'device-123')
