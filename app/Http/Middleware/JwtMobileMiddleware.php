@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\JwtToken;
+use App\Models\UserDevice;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -37,6 +39,47 @@ class JwtMobileMiddleware
                     'message' => 'Authentication required.',
                 ],
             ], 403);
+        }
+
+        $token = $guard->getToken();
+        if ($token === null) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Authentication required.',
+                ],
+            ], 403);
+        }
+
+        /** @var JwtToken|null $record */
+        $record = JwtToken::where('access_token', (string) $token)
+            ->whereNull('revoked_at')
+            ->where('expires_at', '>', now())
+            ->first();
+
+        if ($record === null) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Authentication required.',
+                ],
+            ], 403);
+        }
+
+        if ($record->device_id !== null) {
+            /** @var UserDevice|null $device */
+            $device = UserDevice::where('id', $record->device_id)->first();
+            if ($device === null || $device->status !== UserDevice::STATUS_ACTIVE) {
+                return response()->json([
+                    'success' => false,
+                    'error' => [
+                        'code' => 'UNAUTHORIZED',
+                        'message' => 'Authentication required.',
+                    ],
+                ], 403);
+            }
         }
 
         // Set resolved user for controllers

@@ -12,7 +12,7 @@ uses(RefreshDatabase::class)->group('device-change-requests');
 
 beforeEach(function (): void {
     $student = $this->makeApiUser();
-    $this->asApiUser($student);
+    $this->asApiUser($student, null, 'old-device');
 });
 
 function registerActiveDevice(User $user, string $uuid = 'device-1')
@@ -103,7 +103,7 @@ it('lists only own device change requests', function (): void {
 
     $other = User::factory()->create(['is_student' => true, 'password' => 'secret123']);
     registerActiveDevice($other, 'other-old');
-    $this->asApiUser($other);
+    $this->asApiUser($other, null, 'other-old');
     $this->apiPost('/api/v1/device-change-requests', [
         'new_device_id' => 'other-new',
         'model' => 'Model Y',

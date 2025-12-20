@@ -63,3 +63,35 @@ it('revokes token on logout and blocks reuse', function (): void {
 
     $reuse->assertStatus(403);
 });
+
+it('blocks revoked access tokens', function (): void {
+    JwtToken::where('access_token', $this->token)
+        ->update(['revoked_at' => now()]);
+
+    $response = $this->getJson('/api/v1/auth/me', [
+        'Authorization' => 'Bearer '.$this->token,
+    ]);
+
+    $response->assertStatus(403);
+});
+
+it('blocks expired access tokens', function (): void {
+    JwtToken::where('access_token', $this->token)
+        ->update(['expires_at' => now()->subMinute()]);
+
+    $response = $this->getJson('/api/v1/auth/me', [
+        'Authorization' => 'Bearer '.$this->token,
+    ]);
+
+    $response->assertStatus(403);
+});
+
+it('blocks tokens for revoked devices', function (): void {
+    $this->device->update(['status' => \App\Models\UserDevice::STATUS_REVOKED]);
+
+    $response = $this->getJson('/api/v1/auth/me', [
+        'Authorization' => 'Bearer '.$this->token,
+    ]);
+
+    $response->assertStatus(403);
+});

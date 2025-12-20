@@ -15,7 +15,7 @@ uses(RefreshDatabase::class)->group('playback', 'sessions');
 
 beforeEach(function (): void {
     $student = $this->makeApiUser();
-    $this->asApiUser($student);
+    $this->asApiUser($student, null, 'device-123');
 });
 
 function makeDevice(User $user, string $uuid = 'device-123')

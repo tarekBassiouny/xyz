@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Helpers;
 
+use App\Models\JwtToken;
 use App\Models\User;
+use App\Models\UserDevice;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Testing\TestResponse;
+use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 
 trait ApiTestHelper
 {
@@ -14,7 +17,7 @@ trait ApiTestHelper
 
     private ?User $apiUser = null;
 
-    public function asApiUser(?User $user = null, ?string $token = null): User
+    public function asApiUser(?User $user = null, ?string $token = null, ?string $deviceUuid = null): User
     {
         if ($user === null) {
             /** @var User $user */
@@ -33,6 +36,36 @@ trait ApiTestHelper
                 'email' => $user->email,
                 'password' => 'secret123',
                 'is_student' => true,
+            ]);
+        }
+
+        if ($this->apiBearerToken === '') {
+            $this->apiBearerToken = JWTAuth::fromUser($user);
+        }
+
+        if ($this->apiBearerToken !== null) {
+            $deviceId = $deviceUuid ?? 'device-123';
+            $device = UserDevice::updateOrCreate(
+                [
+                    'user_id' => $user->id,
+                    'device_id' => $deviceId,
+                ],
+                [
+                    'model' => 'device-model',
+                    'os_version' => 'os-version',
+                    'status' => UserDevice::STATUS_ACTIVE,
+                    'approved_at' => now(),
+                    'last_used_at' => now(),
+                ]
+            );
+
+            JwtToken::create([
+                'user_id' => $user->id,
+                'device_id' => $device->id,
+                'access_token' => $this->apiBearerToken,
+                'refresh_token' => 'test-refresh-token',
+                'expires_at' => now()->addMinutes(30),
+                'refresh_expires_at' => now()->addDays(30),
             ]);
         }
 

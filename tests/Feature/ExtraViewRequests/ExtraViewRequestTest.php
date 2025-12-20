@@ -17,7 +17,7 @@ uses(RefreshDatabase::class)->group('extra-view-requests');
 
 beforeEach(function (): void {
     $student = $this->makeApiUser();
-    $this->asApiUser($student);
+    $this->asApiUser($student, null, 'device-123');
 });
 
 function makeRequestDevice(User $user, string $uuid = 'device-123')
@@ -85,7 +85,7 @@ it('admin approves and allowance affects view limit', function (): void {
         'password' => 'secret123',
         'center_id' => $course->center_id,
     ]);
-    $this->asApiUser($student);
+    $this->asApiUser($student, null, 'device-123');
     $device = makeRequestDevice($this->apiUser);
 
     Enrollment::factory()->create([

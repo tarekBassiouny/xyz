@@ -17,7 +17,7 @@ uses(RefreshDatabase::class)->group('view-limits', 'playback');
 
 beforeEach(function (): void {
     $student = $this->makeApiUser();
-    $this->asApiUser($student);
+    $this->asApiUser($student, null, 'device-123');
 });
 
 function makeViewDevice(User $user, string $uuid = 'device-123')

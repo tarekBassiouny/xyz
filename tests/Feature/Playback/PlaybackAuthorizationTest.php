@@ -12,7 +12,7 @@ uses(RefreshDatabase::class)->group('playback', 'api');
 
 beforeEach(function (): void {
     $student = $this->makeApiUser();
-    $this->asApiUser($student);
+    $this->asApiUser($student, null, 'device-123');
 });
 
 function mockAuthorizationFailure(string $code, string $message): void

@@ -17,7 +17,7 @@ uses(RefreshDatabase::class)->group('concurrency', 'playback');
 
 beforeEach(function (): void {
     $student = $this->makeApiUser();
-    $this->asApiUser($student);
+    $this->asApiUser($student, null, 'device-1');
 });
 
 function makeConcurrencyDevice(User $user, string $uuid): \App\Models\UserDevice
@@ -105,6 +105,8 @@ it('blocks concurrent session from another device', function (): void {
         'device_id' => 'device-2',
         'status' => \App\Models\UserDevice::STATUS_ACTIVE,
     ]);
+
+    $this->asApiUser($this->apiUser, null, 'device-2');
 
     $mock = Mockery::mock(PlaybackAuthorizationService::class);
     $mock->shouldReceive('authorize')

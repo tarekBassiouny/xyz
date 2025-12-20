@@ -85,7 +85,8 @@ it('allows a student with enrollment and permission to download a pdf', function
 
     expect(CoursePdf::count())->toBe(1);
 
-    $response = $this->actingAs($student, 'api')->get("/api/v1/courses/{$course->id}/pdfs/{$pdf->id}/download");
+    $this->asApiUser($student, null, 'device-123');
+    $response = $this->apiGet("/api/v1/courses/{$course->id}/pdfs/{$pdf->id}/download");
 
     $response->assertOk();
     expect($response->streamedContent())->toBe('content');
@@ -132,7 +133,8 @@ it('blocks download when download permission is disabled', function (): void {
         'download_permission_override' => null,
     ]);
 
-    $response = $this->actingAs($student, 'api')->get("/api/v1/courses/{$course->id}/pdfs/{$pdf->id}/download");
+    $this->asApiUser($student, null, 'device-123');
+    $response = $this->apiGet("/api/v1/courses/{$course->id}/pdfs/{$pdf->id}/download");
 
     $response->assertStatus(403);
 });
