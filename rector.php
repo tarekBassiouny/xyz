@@ -22,6 +22,5 @@ return RectorConfig::configure()
         codingStyle: true,
         typeDeclarations: true,
         deadCode: true,
-        instanceOf: true,
         privatization: true
     );

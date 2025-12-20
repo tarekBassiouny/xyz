@@ -59,7 +59,8 @@
             "./vendor/bin/phpstan analyse"
         ],
         "fix": [
-            "./vendor/bin/pint"
+            "./vendor/bin/pint",
+            "./vendor/bin/rector process"
         ],
         "rector:check": [
             "./vendor/bin/rector process --dry-run"
@@ -70,6 +71,7 @@
         "quality": [
             "./vendor/bin/pint --test",
             "./vendor/bin/phpstan analyse",
+            "./vendor/bin/rector process --dry-run",
             "php artisan test"
         ],
         "test": [

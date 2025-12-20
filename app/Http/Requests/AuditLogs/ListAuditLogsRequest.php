@@ -22,6 +22,7 @@ class ListAuditLogsRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'center_id' => ['sometimes', 'integer'],
             'entity_type' => ['sometimes', 'string', 'max:255'],
             'entity_id' => ['sometimes', 'integer'],
             'action' => ['sometimes', 'string', 'max:255'],
@@ -39,6 +40,10 @@ class ListAuditLogsRequest extends FormRequest
     public function queryParameters(): array
     {
         return [
+            'center_id' => [
+                'description' => 'Filter by center ID (super admin only).',
+                'example' => '2',
+            ],
             'entity_type' => [
                 'description' => 'Filter by entity class/type.',
                 'example' => Course::class,
