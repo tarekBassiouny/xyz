@@ -1,7 +1,7 @@
 {
   "info": {
-    "name": "XYZ LMS API (v1)",
-    "_postman_id": "2c2a8371-6675-45b8-8294-ff764731107c",
+    "name": "XYZ LMS API (v2)",
+    "_postman_id": "40df8464-ec37-4c17-9195-9d9862574456",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -2192,6 +2192,81 @@
           "response": []
         },
         {
+          "name": "GET api/v1/admin/extra-view-requests",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/extra-view-requests",
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                  "disabled": false
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number to retrieve. Must be at least 1.",
+                  "disabled": false
+                },
+                {
+                  "key": "status",
+                  "value": "1",
+                  "description": "Filter by request status.",
+                  "disabled": false
+                },
+                {
+                  "key": "center_id",
+                  "value": "2",
+                  "description": "Filter by center ID (super admin only).",
+                  "disabled": false
+                },
+                {
+                  "key": "user_id",
+                  "value": "5",
+                  "description": "Filter by user ID.",
+                  "disabled": false
+                },
+                {
+                  "key": "date_from",
+                  "value": "2025-01-01",
+                  "description": "Filter requests created from this date. Must be a valid date.",
+                  "disabled": false
+                },
+                {
+                  "key": "date_to",
+                  "value": "2025-12-31",
+                  "description": "Filter requests created up to this date. Must be a valid date.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/admin/extra-view-requests?per_page=15&page=1&status=1&center_id=2&user_id=5&date_from=2025-01-01&date_to=2025-12-31"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
           "name": "POST api/v1/admin/extra-view-requests/{extraViewRequest_id}/approve",
           "request": {
             "url": {
@@ -2270,6 +2345,81 @@
               "mode": "raw",
               "raw": "{\"decision_reason\":\"Insufficient justification provided\"}"
             },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET api/v1/admin/device-change-requests",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/device-change-requests",
+              "query": [
+                {
+                  "key": "per_page",
+                  "value": "15",
+                  "description": "Items per page (max 100). Must be at least 1. Must not be greater than 100.",
+                  "disabled": false
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Page number to retrieve. Must be at least 1.",
+                  "disabled": false
+                },
+                {
+                  "key": "status",
+                  "value": "1",
+                  "description": "Filter by request status.",
+                  "disabled": false
+                },
+                {
+                  "key": "center_id",
+                  "value": "2",
+                  "description": "Filter by center ID (super admin only).",
+                  "disabled": false
+                },
+                {
+                  "key": "user_id",
+                  "value": "5",
+                  "description": "Filter by user ID.",
+                  "disabled": false
+                },
+                {
+                  "key": "date_from",
+                  "value": "2025-01-01",
+                  "description": "Filter requests created from this date. Must be a valid date.",
+                  "disabled": false
+                },
+                {
+                  "key": "date_to",
+                  "value": "2025-12-31",
+                  "description": "Filter requests created up to this date. Must be a valid date.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/admin/device-change-requests?per_page=15&page=1&status=1&center_id=2&user_id=5&date_from=2025-01-01&date_to=2025-12-31"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "en"
+              }
+            ],
+            "body": null,
             "description": "",
             "auth": {
               "type": "noauth"
