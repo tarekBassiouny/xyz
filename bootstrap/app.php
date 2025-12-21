@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Http\Middleware\EnsureActiveEnrollment;
+use App\Http\Middleware\EnsureUnbrandedStudent;
 use App\Http\Middleware\JwtAdminMiddleware;
 use App\Http\Middleware\JwtMobileMiddleware;
 use App\Http\Middleware\RequestIdMiddleware;
@@ -77,6 +78,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'jwt.mobile' => JwtMobileMiddleware::class,
             'jwt.admin' => JwtAdminMiddleware::class,
             'enrollment.active' => EnsureActiveEnrollment::class,
+            'ensure.unbranded.student' => EnsureUnbrandedStudent::class,
             'require.permission' => RequirePermission::class,
             'require.role' => RequireRole::class,
         ]);

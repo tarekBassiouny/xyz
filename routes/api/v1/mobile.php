@@ -13,7 +13,13 @@ use App\Http\Controllers\Api\V1\Sections\PublicSectionController;
 use App\Http\Controllers\Api\V1\Sections\PublicSectionPdfController;
 use App\Http\Controllers\Api\V1\Sections\PublicSectionVideoController;
 use App\Http\Controllers\Mobile\AuthController;
+use App\Http\Controllers\Mobile\CategoryController;
+use App\Http\Controllers\Mobile\CentersController;
+use App\Http\Controllers\Mobile\EnrolledCoursesController;
+use App\Http\Controllers\Mobile\ExploreController;
+use App\Http\Controllers\Mobile\InstructorController;
 use App\Http\Controllers\Mobile\MeController;
+use App\Http\Controllers\Mobile\SearchController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -35,6 +41,57 @@ Route::middleware('jwt.mobile')->group(function (): void {
     Route::get('/auth/me', [MeController::class, 'profile']);
     Route::post('/auth/me', [MeController::class, 'updateProfile']);
     Route::post('/auth/logout', [MeController::class, 'logout']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Explore
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/courses/explore', [ExploreController::class, 'explore']);
+    Route::get('/centers/{center}/courses/{course}', [ExploreController::class, 'show']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Search
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/search', [SearchController::class, 'index']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Centers (Unbranded Only)
+    |--------------------------------------------------------------------------
+    */
+    Route::middleware('ensure.unbranded.student')->group(function (): void {
+        Route::get('/centers', [CentersController::class, 'index']);
+        Route::get('/centers/{center}', [CentersController::class, 'show']);
+    });
+
+    /*
+    |--------------------------------------------------------------------------
+    | Instructors
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/instructors', [InstructorController::class, 'index']);
+
+    /*
+    |--------------------------------------------------------------------------
+    | Categories
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/categories', [CategoryController::class, 'index']);
+    
+    /*
+    |--------------------------------------------------------------------------
+    | My Courses (Enrolled)
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/courses/enrolled', [EnrolledCoursesController::class, 'index']);
+
+
+
+
+
 
     /*
     |--------------------------------------------------------------------------
