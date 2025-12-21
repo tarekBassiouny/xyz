@@ -35,5 +35,4 @@ return [
         ],
     ],
     'system_api_key' => env('SYSTEM_API_KEY'),
-
 ];

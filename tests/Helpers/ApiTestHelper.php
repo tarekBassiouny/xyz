@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Tests\Helpers;
 
+use App\Models\Center;
 use App\Models\JwtToken;
 use App\Models\User;
 use App\Models\UserDevice;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
@@ -113,6 +115,33 @@ trait ApiTestHelper
             $baseHeaders['Authorization'] = 'Bearer '.$this->apiBearerToken;
         }
 
+        if (! array_key_exists('X-Api-Key', $headers)) {
+            $baseHeaders['X-Api-Key'] = $this->resolveApiKey();
+        }
+
         return array_merge($baseHeaders, $headers);
+    }
+
+    private function resolveApiKey(): string
+    {
+        $systemKey = (string) Config::get('services.system_api_key', '');
+        if ($systemKey === '') {
+            $systemKey = 'system-test-key';
+            Config::set('services.system_api_key', $systemKey);
+        }
+
+        if ($this->apiUser instanceof User && is_numeric($this->apiUser->center_id)) {
+            $center = Center::find((int) $this->apiUser->center_id);
+            if ($center instanceof Center) {
+                if (! is_string($center->api_key) || $center->api_key === '') {
+                    $center->api_key = 'center-key-'.$center->id;
+                    $center->save();
+                }
+
+                return $center->api_key;
+            }
+        }
+
+        return $systemKey;
     }
 }
