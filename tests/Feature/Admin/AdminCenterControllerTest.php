@@ -60,6 +60,44 @@ it('creates a center', function (): void {
     Bus::assertDispatched(CreateCenterBunnyLibrary::class);
 });
 
+it('rejects branded center creation without branding metadata', function (): void {
+    Bus::fake();
+    Role::factory()->create(['slug' => 'center_owner']);
+
+    $payload = [
+        'slug' => 'brandless',
+        'type' => 1,
+        'name_translations' => ['en' => 'Brandless'],
+        'owner' => [
+            'name' => 'Owner User',
+            'email' => 'brandless-owner@example.com',
+        ],
+    ];
+
+    $response = $this->postJson('/api/v1/admin/centers', $payload);
+
+    $response->assertStatus(422);
+});
+
+it('allows unbranded center creation without branding metadata', function (): void {
+    Bus::fake();
+    Role::factory()->create(['slug' => 'center_owner']);
+
+    $payload = [
+        'slug' => 'unbranded',
+        'type' => 0,
+        'name_translations' => ['en' => 'Unbranded'],
+        'owner' => [
+            'name' => 'Owner User',
+            'email' => 'unbranded-owner@example.com',
+        ],
+    ];
+
+    $response = $this->postJson('/api/v1/admin/centers', $payload);
+
+    $response->assertCreated();
+});
+
 it('creates a center with an existing owner', function (): void {
     Bus::fake();
     Role::factory()->create(['slug' => 'center_owner']);

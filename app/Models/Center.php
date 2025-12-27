@@ -21,6 +21,10 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property array<string, string>|null $description_translations
  * @property string|null $logo_url
  * @property string|null $primary_color
+ * @property string $onboarding_status
+ * @property array<string, mixed>|null $branding_metadata
+ * @property string $storage_driver
+ * @property string|null $storage_root
  * @property int $default_view_limit
  * @property bool $allow_extra_view_requests
  * @property bool $pdf_download_permission
@@ -34,6 +38,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class Center extends Model
 {
+    public const ONBOARDING_DRAFT = 'DRAFT';
+    public const ONBOARDING_IN_PROGRESS = 'IN_PROGRESS';
+    public const ONBOARDING_FAILED = 'FAILED';
+    public const ONBOARDING_ACTIVE = 'ACTIVE';
+
     /** @use HasFactory<\Database\Factories\CenterFactory> */
     use HasFactory;
 
@@ -49,6 +58,10 @@ class Center extends Model
         'description_translations',
         'logo_url',
         'primary_color',
+        'onboarding_status',
+        'branding_metadata',
+        'storage_driver',
+        'storage_root',
         'default_view_limit',
         'allow_extra_view_requests',
         'pdf_download_permission',
@@ -59,6 +72,10 @@ class Center extends Model
     protected $casts = [
         'name_translations' => 'array',
         'description_translations' => 'array',
+        'onboarding_status' => 'string',
+        'branding_metadata' => 'array',
+        'storage_driver' => 'string',
+        'storage_root' => 'string',
         'allow_extra_view_requests' => 'boolean',
         'pdf_download_permission' => 'boolean',
         'default_view_limit' => 'integer',
@@ -104,5 +121,14 @@ class Center extends Model
     public function videoUploadSessions(): HasMany
     {
         return $this->hasMany(VideoUploadSession::class);
+    }
+
+    public function getStorageRootAttribute(?string $value): string
+    {
+        if (is_string($value) && $value !== '') {
+            return $value;
+        }
+
+        return 'centers/'.$this->id;
     }
 }
