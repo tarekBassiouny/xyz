@@ -4,13 +4,11 @@ declare(strict_types=1);
 
 namespace App\Services\Centers;
 
-use App\Jobs\CreateCenterBunnyLibrary;
-use App\Jobs\SendCenterOnboardingEmail;
 use App\Models\Center;
+use App\Models\CenterSetting;
 use App\Models\Role;
 use App\Models\User;
 use App\Services\Centers\Contracts\CenterServiceInterface;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
@@ -27,24 +25,142 @@ class CenterOnboardingService
      */
     public function onboard(array $centerData, ?User $existingOwner, ?array $ownerPayload, string $roleSlug): array
     {
-        return DB::transaction(function () use ($centerData, $existingOwner, $ownerPayload, $roleSlug): array {
-            $center = $this->centerService->create($centerData);
+        $center = $this->centerService->create($centerData);
 
-            if ($existingOwner instanceof User) {
-                $owner = $this->attachExistingOwner($existingOwner, $center, $roleSlug);
-            } else {
-                $owner = $this->createOwner($ownerPayload, $center, $roleSlug);
-            }
+        return $this->runOnboarding($center, $existingOwner, $ownerPayload, $roleSlug);
+    }
 
-            SendCenterOnboardingEmail::dispatch($center->id, $owner->id)->afterCommit();
-            CreateCenterBunnyLibrary::dispatch($center->id)->afterCommit();
+    /**
+     * @param  array<string, mixed>|null  $ownerPayload
+     * @return array{center: Center, owner: User, email_sent: bool}
+     */
+    public function resume(Center $center, ?User $existingOwner, ?array $ownerPayload, string $roleSlug): array
+    {
+        $center->refresh();
+
+        return $this->runOnboarding($center, $existingOwner, $ownerPayload, $roleSlug);
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $ownerPayload
+     * @return array{center: Center, owner: User, email_sent: bool}
+     */
+    private function runOnboarding(Center $center, ?User $existingOwner, ?array $ownerPayload, string $roleSlug): array
+    {
+        if ($center->onboarding_status === Center::ONBOARDING_ACTIVE) {
+            $owner = $this->resolveExistingOwner($center, $existingOwner);
 
             return [
-                'center' => $center,
-                'owner' => $owner->fresh() ?? $owner,
-                'email_sent' => true,
+                'center' => $center->fresh(['setting']) ?? $center,
+                'owner' => $owner,
+                'email_sent' => false,
             ];
-        });
+        }
+
+        try {
+            $this->markOnboardingStatus($center, Center::ONBOARDING_IN_PROGRESS);
+            $this->initializeSettings($center);
+            $this->applyStorageDefaults($center);
+
+            $owner = $this->resolveOwner($center, $existingOwner, $ownerPayload, $roleSlug);
+
+            $this->markOnboardingStatus($center, Center::ONBOARDING_ACTIVE);
+
+            return [
+                'center' => $center->fresh(['setting']) ?? $center,
+                'owner' => $owner->fresh() ?? $owner,
+                'email_sent' => false,
+            ];
+        } catch (\Throwable $throwable) {
+            $freshCenter = $center->fresh() ?? $center;
+            $this->markOnboardingStatus($freshCenter, Center::ONBOARDING_FAILED);
+            throw $throwable;
+        }
+    }
+
+    private function initializeSettings(Center $center): void
+    {
+        CenterSetting::firstOrCreate([
+            'center_id' => $center->id,
+        ], [
+            'settings' => [],
+        ]);
+    }
+
+    private function applyStorageDefaults(Center $center): void
+    {
+        $updates = [];
+
+        if (! is_string($center->storage_driver) || $center->storage_driver === '') {
+            $updates['storage_driver'] = 'spaces';
+        }
+
+        $storageRoot = $center->getRawOriginal('storage_root');
+        if (! is_string($storageRoot) || $storageRoot === '') {
+            $updates['storage_root'] = 'centers/'.$center->id;
+        }
+
+        if ($updates !== []) {
+            $center->fill($updates);
+            $center->save();
+        }
+    }
+
+    /**
+     * @param  array<string, mixed>|null  $ownerPayload
+     */
+    private function resolveOwner(
+        Center $center,
+        ?User $existingOwner,
+        ?array $ownerPayload,
+        string $roleSlug
+    ): User {
+        $currentOwner = $this->findCenterOwner($center);
+        if ($currentOwner instanceof User) {
+            $this->ensureRole($currentOwner, $roleSlug);
+
+            return $currentOwner;
+        }
+
+        if ($existingOwner instanceof User) {
+            return $this->attachExistingOwner($existingOwner, $center, $roleSlug);
+        }
+
+        $payloadEmail = is_array($ownerPayload) ? ($ownerPayload['email'] ?? null) : null;
+        if (is_string($payloadEmail) && $payloadEmail !== '') {
+            $owner = User::where('email', $payloadEmail)->first();
+            if ($owner instanceof User) {
+                return $this->attachExistingOwner($owner, $center, $roleSlug);
+            }
+        }
+
+        return $this->createOwner($ownerPayload, $center, $roleSlug);
+    }
+
+    private function resolveExistingOwner(Center $center, ?User $existingOwner): User
+    {
+        $currentOwner = $this->findCenterOwner($center);
+        if ($currentOwner instanceof User) {
+            return $currentOwner;
+        }
+
+        if ($existingOwner instanceof User) {
+            return $existingOwner;
+        }
+
+        throw ValidationException::withMessages([
+            'owner' => ['Center owner is missing.'],
+        ]);
+    }
+
+    private function findCenterOwner(Center $center): ?User
+    {
+        /** @var User|null $owner */
+        $owner = $center->users()
+            ->wherePivot('type', 'owner')
+            ->first();
+
+        return $owner;
     }
 
     private function attachExistingOwner(User $owner, Center $center, string $roleSlug): User
@@ -123,5 +239,15 @@ class CenterOnboardingService
         }
 
         $user->roles()->syncWithoutDetaching([$role->id]);
+    }
+
+    private function markOnboardingStatus(Center $center, string $status): void
+    {
+        if ($center->onboarding_status === $status) {
+            return;
+        }
+
+        $center->onboarding_status = $status;
+        $center->save();
     }
 }

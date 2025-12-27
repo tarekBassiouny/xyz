@@ -2,13 +2,10 @@
 
 declare(strict_types=1);
 
-use App\Jobs\CreateCenterBunnyLibrary;
-use App\Jobs\SendCenterOnboardingEmail;
 use App\Models\Center;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Bus;
 
 uses(RefreshDatabase::class)->group('centers', 'admin');
 
@@ -18,7 +15,6 @@ beforeEach(function (): void {
 });
 
 it('creates a center', function (): void {
-    Bus::fake();
     Role::factory()->create(['slug' => 'center_owner']);
 
     $payload = [
@@ -43,7 +39,7 @@ it('creates a center', function (): void {
     $response = $this->postJson('/api/v1/admin/centers', $payload);
 
     $response->assertCreated()->assertJsonPath('data.center.slug', 'center-1');
-    $response->assertJsonPath('data.email_sent', true);
+    $response->assertJsonPath('data.email_sent', false);
     $this->assertDatabaseHas('centers', ['slug' => 'center-1']);
     $this->assertDatabaseHas('center_settings', ['center_id' => $response->json('data.center.id')]);
     $this->assertDatabaseHas('user_centers', [
@@ -56,12 +52,11 @@ it('creates a center', function (): void {
     ]);
     $owner = User::where('email', 'owner@example.com')->first();
     expect($owner)->not->toBeNull();
-    Bus::assertDispatched(SendCenterOnboardingEmail::class);
-    Bus::assertDispatched(CreateCenterBunnyLibrary::class);
+    $center = Center::where('slug', 'center-1')->first();
+    expect($center?->onboarding_status)->toBe(Center::ONBOARDING_ACTIVE);
 });
 
 it('rejects branded center creation without branding metadata', function (): void {
-    Bus::fake();
     Role::factory()->create(['slug' => 'center_owner']);
 
     $payload = [
@@ -80,7 +75,6 @@ it('rejects branded center creation without branding metadata', function (): voi
 });
 
 it('allows unbranded center creation without branding metadata', function (): void {
-    Bus::fake();
     Role::factory()->create(['slug' => 'center_owner']);
 
     $payload = [
@@ -99,7 +93,6 @@ it('allows unbranded center creation without branding metadata', function (): vo
 });
 
 it('creates a center with an existing owner', function (): void {
-    Bus::fake();
     Role::factory()->create(['slug' => 'center_owner']);
 
     $owner = User::factory()->create([
@@ -116,13 +109,13 @@ it('creates a center with an existing owner', function (): void {
     $response = $this->postJson('/api/v1/admin/centers', $payload);
 
     $response->assertCreated()->assertJsonPath('data.owner.id', $owner->id);
-    $response->assertJsonPath('data.email_sent', true);
+    $response->assertJsonPath('data.email_sent', false);
     $this->assertDatabaseHas('user_centers', [
         'user_id' => $owner->id,
         'type' => 'owner',
     ]);
-    Bus::assertDispatched(SendCenterOnboardingEmail::class);
-    Bus::assertDispatched(CreateCenterBunnyLibrary::class);
+    $center = Center::find($response->json('data.center.id'));
+    expect($center?->onboarding_status)->toBe(Center::ONBOARDING_ACTIVE);
 });
 
 it('lists centers with pagination', function (): void {

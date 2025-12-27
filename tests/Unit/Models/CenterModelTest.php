@@ -9,11 +9,7 @@ use Tests\TestCase;
 uses(TestCase::class, RefreshDatabase::class)->group('centers', 'model');
 
 it('defaults onboarding status and storage fields on creation', function (): void {
-    $center = Center::factory()->create([
-        'onboarding_status' => null,
-        'storage_driver' => null,
-        'storage_root' => null,
-    ]);
+    $center = Center::factory()->create();
 
     $center->refresh();
 

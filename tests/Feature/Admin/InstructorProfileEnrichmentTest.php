@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
+use App\Models\Center;
 use App\Models\Instructor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Storage;
 use Tests\Helpers\AdminTestHelper;
-use App\Models\Center;
 
 uses(RefreshDatabase::class, AdminTestHelper::class)->group('instructors');
 

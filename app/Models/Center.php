@@ -39,8 +39,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Center extends Model
 {
     public const ONBOARDING_DRAFT = 'DRAFT';
+
     public const ONBOARDING_IN_PROGRESS = 'IN_PROGRESS';
+
     public const ONBOARDING_FAILED = 'FAILED';
+
     public const ONBOARDING_ACTIVE = 'ACTIVE';
 
     /** @use HasFactory<\Database\Factories\CenterFactory> */
