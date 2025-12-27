@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use App\Jobs\CreateCenterBunnyLibrary;
+use App\Jobs\CreateBunnyLibraryJob;
 use App\Models\Center;
 use App\Services\Bunny\BunnyLibraryService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -25,7 +25,7 @@ it('creates and stores bunny library id for center', function (): void {
             'raw' => [],
         ]);
 
-    $job = new CreateCenterBunnyLibrary($center->id);
+    $job = new CreateBunnyLibraryJob($center->id);
     $job->handle($service);
 
     $center->refresh();
