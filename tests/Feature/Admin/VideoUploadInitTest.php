@@ -11,14 +11,21 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class)->group('videos');
 
 it('creates bunny video and returns upload url', function (): void {
-    $center = Center::factory()->create([
-        'bunny_library_id' => 123,
-    ]);
+    config(['bunny.api.library_id' => 123]);
+
+    $center = Center::factory()->create();
 
     $this->mock(BunnyStreamService::class)
         ->shouldReceive('createVideo')
         ->once()
-        ->with(['title' => 'sample.mp4'], 123)
+        ->with([
+            'title' => 'sample.mp4',
+            'meta' => [
+                'center_id' => $center->id,
+                'course_id' => null,
+                'env' => config('app.env'),
+            ],
+        ], 123)
         ->andReturn([
             'id' => 'bunny-123',
             'upload_url' => 'https://video.bunnycdn.com/library/123/videos/bunny-123',
@@ -44,19 +51,9 @@ it('creates bunny video and returns upload url', function (): void {
 });
 
 it('ties existing video to new upload session', function (): void {
-    $center = Center::factory()->create([
-        'bunny_library_id' => 123,
-    ]);
+    config(['bunny.api.library_id' => 123]);
 
-    $this->mock(BunnyStreamService::class)
-        ->shouldReceive('createVideo')
-        ->once()
-        ->with(['title' => 'sample.mp4'], 123)
-        ->andReturn([
-            'id' => 'bunny-456',
-            'upload_url' => 'https://video.bunnycdn.com/library/123/videos/bunny-456',
-            'library_id' => 123,
-        ]);
+    $center = Center::factory()->create();
 
     $admin = $this->asAdmin();
     /** @var Video $video */
@@ -66,6 +63,23 @@ it('ties existing video to new upload session', function (): void {
         'lifecycle_status' => 0,
         'upload_session_id' => null,
     ]);
+
+    $this->mock(BunnyStreamService::class)
+        ->shouldReceive('createVideo')
+        ->once()
+        ->with([
+            'title' => 'center_'.$center->id.'/video_'.$video->id,
+            'meta' => [
+                'center_id' => $center->id,
+                'course_id' => null,
+                'env' => config('app.env'),
+            ],
+        ], 123)
+        ->andReturn([
+            'id' => 'bunny-456',
+            'upload_url' => 'https://video.bunnycdn.com/library/123/videos/bunny-456',
+            'library_id' => 123,
+        ]);
 
     $response = $this->actingAs($admin, 'admin')->postJson('/api/v1/admin/video-uploads', [
         'center_id' => $center->id,
@@ -84,9 +98,9 @@ it('ties existing video to new upload session', function (): void {
 });
 
 it('rejects upload authorization without admin authentication', function (): void {
-    $center = Center::factory()->create([
-        'bunny_library_id' => 123,
-    ]);
+    config(['bunny.api.library_id' => 123]);
+
+    $center = Center::factory()->create();
 
     $response = $this->postJson('/api/v1/admin/video-uploads', [
         'center_id' => $center->id,
@@ -102,11 +116,10 @@ it('rejects upload when center library is missing', function (): void {
     config([
         'bunny.api.api_key' => 'test-key',
         'bunny.api.api_url' => 'https://video.bunnycdn.com',
+        'bunny.api.library_id' => null,
     ]);
 
-    $center = Center::factory()->create([
-        'bunny_library_id' => null,
-    ]);
+    $center = Center::factory()->create();
     $admin = $this->asAdmin();
 
     $response = $this->actingAs($admin, 'admin')->postJson('/api/v1/admin/video-uploads', [

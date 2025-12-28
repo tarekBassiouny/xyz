@@ -15,9 +15,7 @@ uses(RefreshDatabase::class)->group('extra-view-requests', 'admin');
 
 function attachAdminCourseAndVideo(): array
 {
-    $center = Center::factory()->create([
-        'bunny_library_id' => 10,
-    ]);
+    $center = Center::factory()->create();
     $course = Course::factory()->create([
         'status' => 3,
         'is_published' => true,

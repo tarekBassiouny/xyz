@@ -16,6 +16,8 @@ class CenterFactory extends Factory
         return [
             'slug' => 'center-'.uniqid(),
             'type' => 0,
+            'tier' => Center::TIER_STANDARD,
+            'is_featured' => false,
             'name_translations' => [
                 'en' => 'Center Name',
                 'ar' => 'مركز تجريبي',
@@ -26,6 +28,10 @@ class CenterFactory extends Factory
             ],
             'logo_url' => 'https://via.placeholder.com/200.png',
             'primary_color' => '#000000',
+            'onboarding_status' => Center::ONBOARDING_DRAFT,
+            'branding_metadata' => null,
+            'storage_driver' => 'spaces',
+            'storage_root' => null,
             'default_view_limit' => 2,
             'allow_extra_view_requests' => true,
             'pdf_download_permission' => false,

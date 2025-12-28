@@ -12,14 +12,21 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class)->group('videos');
 
 it('initializes an upload session for admin', function (): void {
-    $center = Center::factory()->create([
-        'bunny_library_id' => 123,
-    ]);
+    config(['bunny.api.library_id' => 123]);
+
+    $center = Center::factory()->create();
 
     $this->mock(BunnyStreamService::class)
         ->shouldReceive('createVideo')
         ->once()
-        ->with(['title' => 'intro.mp4'], 123)
+        ->with([
+            'title' => 'intro.mp4',
+            'meta' => [
+                'center_id' => $center->id,
+                'course_id' => null,
+                'env' => config('app.env'),
+            ],
+        ], 123)
         ->andReturn([
             'id' => 'bunny-789',
             'upload_url' => 'https://video.bunnycdn.com/library/123/videos/bunny-789',
@@ -46,19 +53,9 @@ it('initializes an upload session for admin', function (): void {
 });
 
 it('moves upload session to ready and updates video', function (): void {
-    $center = Center::factory()->create([
-        'bunny_library_id' => 123,
-    ]);
+    config(['bunny.api.library_id' => 123]);
 
-    $this->mock(BunnyStreamService::class)
-        ->shouldReceive('createVideo')
-        ->once()
-        ->with(['title' => 'lesson.mp4'], 123)
-        ->andReturn([
-            'id' => 'bunny-abc',
-            'upload_url' => 'https://video.bunnycdn.com/library/123/videos/bunny-abc',
-            'library_id' => 123,
-        ]);
+    $center = Center::factory()->create();
 
     $admin = $this->asAdmin();
     /** @var Video $video */
@@ -67,6 +64,23 @@ it('moves upload session to ready and updates video', function (): void {
         'encoding_status' => 0,
         'created_by' => $admin->id,
     ]);
+
+    $this->mock(BunnyStreamService::class)
+        ->shouldReceive('createVideo')
+        ->once()
+        ->with([
+            'title' => 'center_'.$center->id.'/video_'.$video->id,
+            'meta' => [
+                'center_id' => $center->id,
+                'course_id' => null,
+                'env' => config('app.env'),
+            ],
+        ], 123)
+        ->andReturn([
+            'id' => 'bunny-abc',
+            'upload_url' => 'https://video.bunnycdn.com/library/123/videos/bunny-abc',
+            'library_id' => 123,
+        ]);
 
     $create = $this->actingAs($admin, 'admin')->postJson('/api/v1/admin/video-uploads', [
         'center_id' => $center->id,
@@ -98,14 +112,21 @@ it('moves upload session to ready and updates video', function (): void {
 });
 
 it('records failures and keeps video inactive', function (): void {
-    $center = Center::factory()->create([
-        'bunny_library_id' => 123,
-    ]);
+    config(['bunny.api.library_id' => 123]);
+
+    $center = Center::factory()->create();
 
     $this->mock(BunnyStreamService::class)
         ->shouldReceive('createVideo')
         ->once()
-        ->with(['title' => 'broken.mp4'], 123)
+        ->with([
+            'title' => 'broken.mp4',
+            'meta' => [
+                'center_id' => $center->id,
+                'course_id' => null,
+                'env' => config('app.env'),
+            ],
+        ], 123)
         ->andReturn([
             'id' => 'bunny-def',
             'upload_url' => 'https://video.bunnycdn.com/library/123/videos/bunny-def',
