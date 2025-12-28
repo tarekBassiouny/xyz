@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Jobs\CreateBunnyLibraryJob;
 use App\Jobs\ProcessCenterLogoJob;
 use App\Jobs\SendAdminInvitationEmailJob;
 use App\Models\Center;
@@ -60,7 +59,6 @@ it('creates a center', function (): void {
     expect($owner)->not->toBeNull();
     $center = Center::where('slug', 'center-1')->first();
     expect($center?->onboarding_status)->toBe(Center::ONBOARDING_ACTIVE);
-    Bus::assertDispatched(CreateBunnyLibraryJob::class);
     Bus::assertDispatched(SendAdminInvitationEmailJob::class);
     Bus::assertDispatched(ProcessCenterLogoJob::class);
 });

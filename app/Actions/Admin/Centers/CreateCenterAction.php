@@ -8,6 +8,7 @@ use App\Models\Center;
 use App\Models\User;
 use App\Services\Centers\CenterOnboardingService;
 use App\Services\Storage\StoragePathResolver;
+use RuntimeException;
 
 class CreateCenterAction
 {
@@ -29,6 +30,10 @@ class CreateCenterAction
             'logo_url' => $this->pathResolver->defaultCenterLogo(),
         ];
 
+        if ((int) $data['type'] === 1) {
+            $centerData['api_key'] = $this->generateApiKey();
+        }
+
         if (array_key_exists('tier', $data)) {
             $centerData['tier'] = $data['tier'];
         }
@@ -45,5 +50,18 @@ class CreateCenterAction
         $ownerPayload = is_array($adminPayload) ? $adminPayload : null;
 
         return $this->onboardingService->onboard($centerData, null, $ownerPayload, 'center_owner');
+    }
+
+    private function generateApiKey(): string
+    {
+        for ($attempt = 0; $attempt < 5; $attempt++) {
+            $key = bin2hex(random_bytes(20));
+
+            if (! Center::where('api_key', $key)->exists()) {
+                return $key;
+            }
+        }
+
+        throw new RuntimeException('Failed to generate unique API key.');
     }
 }

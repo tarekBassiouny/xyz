@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Jobs\CreateBunnyLibraryJob;
 use App\Jobs\SendAdminInvitationEmailJob;
 use App\Models\Center;
 use App\Models\Role;
@@ -52,6 +51,5 @@ it('retries onboarding without duplicating the owner user', function (): void {
     expect($after)->toBe($before)
         ->and($center?->fresh()?->onboarding_status)->toBe(Center::ONBOARDING_ACTIVE);
 
-    Bus::assertDispatched(CreateBunnyLibraryJob::class);
     Bus::assertDispatched(SendAdminInvitationEmailJob::class);
 });

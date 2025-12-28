@@ -13,7 +13,6 @@ use App\Models\Course;
 use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\Video;
-use App\Services\Bunny\BunnyEmbedTokenService;
 use App\Services\Playback\PlaybackAuthorizationService;
 use App\Services\Playback\PlaybackService;
 use Illuminate\Http\JsonResponse;
@@ -22,8 +21,7 @@ class PlaybackController extends Controller
 {
     public function __construct(
         private readonly PlaybackService $playbackService,
-        private readonly PlaybackAuthorizationService $authorizationService,
-        private readonly BunnyEmbedTokenService $embedTokenService
+        private readonly PlaybackAuthorizationService $authorizationService
     ) {}
 
     public function requestPlayback(
@@ -85,8 +83,7 @@ class PlaybackController extends Controller
 
         $this->authorizationService->assertCanRefreshToken($student, $center, $course, $video, $session);
 
-        $videoUuid = (string) $video->source_id;
-        $tokenPayload = $this->embedTokenService->generate($videoUuid, $student, $this->resolveEmbedTokenTtl());
+        $tokenPayload = $this->playbackService->generateEmbedToken($student, $center, $course, $video);
 
         return response()->json([
             'success' => true,
@@ -95,15 +92,5 @@ class PlaybackController extends Controller
                 'expires_in' => $tokenPayload['expires_in'],
             ],
         ]);
-    }
-
-    private function resolveEmbedTokenTtl(): int
-    {
-        $ttl = (int) config('bunny.embed_token_ttl', 600);
-        if ($ttl <= 0) {
-            $ttl = 600;
-        }
-
-        return min(600, max(300, $ttl));
     }
 }

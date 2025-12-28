@@ -12,7 +12,6 @@ use Psr\Http\Client\ClientInterface;
 use ToshY\BunnyNet\BunnyHttpClient;
 use ToshY\BunnyNet\Exception\Client\BunnyHttpClientResponseException;
 use ToshY\BunnyNet\Exception\Client\BunnyJsonException;
-use ToshY\BunnyNet\Model\Api\Base\StreamVideoLibrary\AddVideoLibrary;
 use ToshY\BunnyNet\Model\Api\Base\StreamVideoLibrary\ListVideoLibraries;
 
 class BunnyLibraryService
@@ -29,49 +28,6 @@ class BunnyLibraryService
             apiKey: $this->apiKey,
             baseUrl: rtrim($this->apiUrl, '/'),
         );
-    }
-
-    /**
-     * @return array{id:int, raw:array<string, mixed>}
-     *
-     * @throws BunnyJsonException
-     * @throws ClientExceptionInterface
-     */
-    public function createLibrary(string $name): array
-    {
-        dd($this->client, $name, $this->apiKey, $this->apiUrl);
-        // try {
-            $response = $this->client->request(
-                new AddVideoLibrary(['Name' => $name])
-            );
-            dd($this->client, $response);
-            $data = $this->decodeResponse($response->getContents());
-        // } catch (BunnyHttpClientResponseException $bunnyHttpClientResponseException) {
-        //     Log::warning('Bunny create library request failed.', $this->resolveLogContext([
-        //         'source' => 'api',
-        //         'library_name' => $name,
-        //         'error' => $bunnyHttpClientResponseException->getMessage(),
-        //     ]));
-        //     throw new \RuntimeException(
-        //         'Bunny create library failed: '.$bunnyHttpClientResponseException->getMessage(),
-        //         previous: $bunnyHttpClientResponseException
-        //     );
-        // }
-
-        $id = $data['Id'] ?? $data['id'] ?? null;
-
-        if (! is_numeric($id)) {
-            Log::error('Bunny create library returned invalid id.', $this->resolveLogContext([
-                'source' => 'api',
-                'library_name' => $name,
-            ]));
-            throw new \RuntimeException('Failed to create Bunny library.');
-        }
-
-        return [
-            'id' => (int) $id,
-            'raw' => $data,
-        ];
     }
 
     /**

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Services\Centers;
 
-use App\Jobs\CreateBunnyLibraryJob;
 use App\Jobs\ProcessCenterLogoJob;
 use App\Jobs\SendAdminInvitationEmailJob;
 use App\Models\Center;
@@ -115,10 +114,6 @@ class CenterOnboardingService
     {
         if (! (bool) config('onboarding.async_enabled', true)) {
             return;
-        }
-
-        if (! is_numeric($center->bunny_library_id)) {
-            CreateBunnyLibraryJob::dispatch($center->id);
         }
 
         if ($owner->invitation_sent_at === null) {

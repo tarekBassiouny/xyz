@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Jobs\CreateBunnyLibraryJob;
 use App\Jobs\ProcessCenterLogoJob;
 use App\Jobs\SendAdminInvitationEmailJob;
 use App\Models\Center;
@@ -42,7 +41,9 @@ it('dispatches onboarding jobs after center creation', function (): void {
     $centerId = $response->json('data.center.id');
     $ownerId = $response->json('data.owner.id');
 
-    Bus::assertDispatched(CreateBunnyLibraryJob::class, fn ($job) => $job->centerId === $centerId);
+    $center = Center::find($centerId);
+    expect($center?->getAttribute('bunny_library_id'))->toBeNull();
+
     Bus::assertDispatched(SendAdminInvitationEmailJob::class, fn ($job) => $job->centerId === $centerId && $job->ownerId === $ownerId);
     Bus::assertDispatched(ProcessCenterLogoJob::class, fn ($job) => $job->centerId === $centerId);
 });
@@ -57,7 +58,6 @@ it('re-running onboarding does not dispatch completed jobs', function (): void {
             'logo_source' => 'https://example.com/logo.png',
             'logo_processed_at' => now()->toISOString(),
         ],
-        'bunny_library_id' => 99,
         'onboarding_status' => Center::ONBOARDING_ACTIVE,
     ]);
 
@@ -74,7 +74,6 @@ it('re-running onboarding does not dispatch completed jobs', function (): void {
     $service = app(\App\Services\Centers\CenterOnboardingService::class);
     $service->resume($center, $owner, null, 'center_owner');
 
-    Bus::assertNotDispatched(CreateBunnyLibraryJob::class);
     Bus::assertNotDispatched(SendAdminInvitationEmailJob::class);
     Bus::assertNotDispatched(ProcessCenterLogoJob::class);
 });

@@ -6,6 +6,7 @@ namespace App\Services\Playback;
 
 use App\Models\Center;
 use App\Models\Course;
+use App\Models\Enrollment;
 use App\Models\PlaybackSession;
 use App\Models\User;
 use App\Models\Video;
@@ -74,14 +75,17 @@ class PlaybackService
             $this->deny('VIDEO_NOT_READY', 'Video is not ready for playback.', 422);
         }
 
-        $libraryId = $video->library_id ?? $center->bunny_library_id;
+        $libraryId = config('bunny.api.library_id');
         if (! is_numeric($libraryId)) {
             $this->deny('VIDEO_NOT_READY', 'Video is not ready for playback.', 422);
         }
 
+        $enrollmentId = $this->resolveEnrollmentId($student, $course);
         $embedToken = $this->embedTokenService->generate(
             $videoUuid,
             $student,
+            $center->id,
+            $enrollmentId,
             $this->resolveEmbedTokenTtl()
         );
 
@@ -91,6 +95,27 @@ class PlaybackService
             'embed_token' => $embedToken['token'],
             'session_id' => (string) $session->id,
         ];
+    }
+
+    /**
+     * @return array{token:string,expires_in:int}
+     */
+    public function generateEmbedToken(User $student, Center $center, Course $course, Video $video): array
+    {
+        $videoUuid = $video->source_id;
+        if (! is_string($videoUuid) || $videoUuid === '') {
+            $this->deny('VIDEO_NOT_READY', 'Video is not ready for playback.', 422);
+        }
+
+        $enrollmentId = $this->resolveEnrollmentId($student, $course);
+
+        return $this->embedTokenService->generate(
+            $videoUuid,
+            $student,
+            $center->id,
+            $enrollmentId,
+            $this->resolveEmbedTokenTtl()
+        );
     }
 
     public function updateProgress(User $student, PlaybackSession $session, int $percentage): void
@@ -127,6 +152,22 @@ class PlaybackService
         }
 
         return min(600, max(300, $ttl));
+    }
+
+    private function resolveEnrollmentId(User $student, Course $course): int
+    {
+        $enrollment = Enrollment::query()
+            ->where('user_id', $student->id)
+            ->where('course_id', $course->id)
+            ->where('status', Enrollment::STATUS_ACTIVE)
+            ->whereNull('deleted_at')
+            ->first();
+
+        if (! $enrollment instanceof Enrollment) {
+            $this->deny('ENROLLMENT_REQUIRED', 'Active enrollment required.', 403);
+        }
+
+        return (int) $enrollment->id;
     }
 
     /**
