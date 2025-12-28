@@ -12,7 +12,6 @@ use Psr\Http\Client\ClientInterface;
 use ToshY\BunnyNet\BunnyHttpClient;
 use ToshY\BunnyNet\Exception\Client\BunnyHttpClientResponseException;
 use ToshY\BunnyNet\Exception\Client\BunnyJsonException;
-use ToshY\BunnyNet\Model\Api\Base\StreamVideoLibrary\AddVideoLibrary;
 use ToshY\BunnyNet\Model\Api\Base\StreamVideoLibrary\ListVideoLibraries;
 
 class BunnyLibraryService
@@ -27,46 +26,8 @@ class BunnyLibraryService
         $this->client = new BunnyHttpClient(
             client: $httpClient ?? new Client,
             apiKey: $this->apiKey,
-            baseUrl: $this->normalizeBaseUrl($this->apiUrl),
+            baseUrl: rtrim($this->apiUrl, '/'),
         );
-    }
-
-    /**
-     * @return array{id:int, raw:array<string, mixed>}
-     *
-     * @throws BunnyJsonException
-     * @throws ClientExceptionInterface
-     */
-    public function createLibrary(string $name): array
-    {
-        try {
-            $response = $this->client->request(
-                new AddVideoLibrary(['Name' => $name])
-            );
-            $data = $this->decodeResponse($response->getContents());
-        } catch (BunnyHttpClientResponseException $bunnyHttpClientResponseException) {
-            Log::warning('Bunny create library request failed.', $this->resolveLogContext([
-                'source' => 'api',
-                'library_name' => $name,
-                'error' => $bunnyHttpClientResponseException->getMessage(),
-            ]));
-            $data = $this->decodeResponse($bunnyHttpClientResponseException->getMessage());
-        }
-
-        $id = $data['Id'] ?? $data['id'] ?? null;
-
-        if (! is_numeric($id)) {
-            Log::error('Bunny create library returned invalid id.', $this->resolveLogContext([
-                'source' => 'api',
-                'library_name' => $name,
-            ]));
-            throw new \RuntimeException('Failed to create Bunny library.');
-        }
-
-        return [
-            'id' => (int) $id,
-            'raw' => $data,
-        ];
     }
 
     /**
@@ -112,18 +73,6 @@ class BunnyLibraryService
         }
 
         return [];
-    }
-
-    private function normalizeBaseUrl(string $apiUrl): string
-    {
-        $apiUrl = rtrim($apiUrl, '/');
-        $host = parse_url($apiUrl, PHP_URL_HOST);
-
-        if (is_string($host) && $host !== '') {
-            return $host;
-        }
-
-        return ltrim(preg_replace('/^https?:\\/\\//', '', $apiUrl) ?? $apiUrl, '/');
     }
 
     /**

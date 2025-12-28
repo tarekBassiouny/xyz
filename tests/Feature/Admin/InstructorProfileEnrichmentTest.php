@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\Center;
 use App\Models\Instructor;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -13,7 +14,9 @@ uses(RefreshDatabase::class, AdminTestHelper::class)->group('instructors');
 
 beforeEach(function (): void {
     Config::set('filesystems.default', 'public');
-    Storage::fake('public');
+    Config::set('filesystems.default', 'local');
+    Config::set('filesystems.disks.local.url', 'https://storage.test');
+    Storage::fake('local');
 });
 
 it('allows creating instructor with avatar and metadata', function (): void {
@@ -21,8 +24,10 @@ it('allows creating instructor with avatar and metadata', function (): void {
     $this->actingAs($admin, 'admin');
 
     $avatar = UploadedFile::fake()->image('avatar.jpg');
+    $center = Center::factory()->create();
 
     $response = $this->post('/api/v1/admin/instructors', [
+        'center_id' => $center->id,
         'name_translations' => ['en' => 'John Doe'],
         'bio_translations' => ['en' => 'Bio'],
         'metadata' => [
@@ -39,8 +44,8 @@ it('allows creating instructor with avatar and metadata', function (): void {
     $avatarUrl = (string) $response->json('data.avatar_url');
     expect($avatarUrl)->not->toBe('');
     $parsedPath = parse_url($avatarUrl, PHP_URL_PATH) ?? '';
-    $path = ltrim(str_replace('/storage/', '', $parsedPath), '/');
-    Storage::disk('public')->assertExists($path);
+    $path = ltrim($parsedPath, '/');
+    Storage::disk('local')->assertExists($path);
 });
 
 it('rejects unknown metadata keys', function (): void {

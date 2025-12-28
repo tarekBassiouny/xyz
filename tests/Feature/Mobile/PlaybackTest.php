@@ -22,6 +22,7 @@ beforeEach(function (): void {
     config([
         'services.system_api_key' => 'system-key',
         'bunny.api.api_key' => 'bunny-secret',
+        'bunny.api.library_id' => 55,
     ]);
 });
 
@@ -33,7 +34,7 @@ test('it creates playback session when views remain', function (): void {
     $response = $this->apiPost("/api/v1/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}/request_playback");
 
     $response->assertOk()
-        ->assertJsonPath('data.library_id', (string) $video->library_id)
+        ->assertJsonPath('data.library_id', '55')
         ->assertJsonPath('data.video_uuid', 'video-uuid')
         ->assertJsonPath('data.session_id', fn ($value) => is_string($value) && $value !== '')
         ->assertJsonPath('data.embed_token', fn ($value) => is_string($value) && $value !== '');

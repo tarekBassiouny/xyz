@@ -22,6 +22,7 @@ beforeEach(function (): void {
     config([
         'services.system_api_key' => 'system-key',
         'bunny.api.api_key' => 'bunny-secret',
+        'bunny.api.library_id' => 55,
         'bunny.embed_token_ttl' => 600,
     ]);
 });

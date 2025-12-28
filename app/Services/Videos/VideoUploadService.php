@@ -32,11 +32,11 @@ class VideoUploadService
     public function initializeUpload(User $admin, Center $center, string $originalFilename, ?Video $video = null): VideoUploadSession
     {
         $this->centerScopeService->assertAdminSameCenter($admin, $center);
-        $libraryIdValue = is_numeric($center->bunny_library_id) ? (int) $center->bunny_library_id : null;
+        $libraryIdValue = is_numeric(config('bunny.api.library_id')) ? (int) config('bunny.api.library_id') : null;
 
         if ($libraryIdValue === null) {
             throw ValidationException::withMessages([
-                'center_id' => ['Center library is not configured.'],
+                'center_id' => ['Bunny library is not configured.'],
             ]);
         }
 
@@ -45,7 +45,17 @@ class VideoUploadService
             $this->centerScopeService->assertAdminCenterId($admin, $video->creator->center_id);
         }
 
-        $created = $this->bunnyService->createVideo(['title' => $originalFilename], $libraryIdValue);
+        $courseId = $this->resolveCourseId($video);
+        $title = $this->resolveTitle($center->id, $courseId, $video, $originalFilename);
+        $payload = [
+            'title' => $title,
+            'meta' => [
+                'center_id' => $center->id,
+                'course_id' => $courseId,
+                'env' => (string) config('app.env'),
+            ],
+        ];
+        $created = $this->bunnyService->createVideo($payload, $libraryIdValue);
         $bunnyId = $created['id'];
 
         $session = VideoUploadSession::create([
@@ -70,6 +80,30 @@ class VideoUploadService
         $session->setAttribute('upload_url', $created['upload_url']);
 
         return $session;
+    }
+
+    private function resolveCourseId(?Video $video): ?int
+    {
+        if (! $video instanceof Video) {
+            return null;
+        }
+
+        $courseId = $video->courses()->value('courses.id');
+
+        return is_numeric($courseId) ? (int) $courseId : null;
+    }
+
+    private function resolveTitle(int $centerId, ?int $courseId, ?Video $video, string $originalFilename): string
+    {
+        if ($video instanceof Video && $courseId !== null) {
+            return sprintf('center_%d/course_%d/video_%d', $centerId, $courseId, $video->id);
+        }
+
+        if ($video instanceof Video) {
+            return sprintf('center_%d/video_%d', $centerId, $video->id);
+        }
+
+        return $originalFilename;
     }
 
     /**

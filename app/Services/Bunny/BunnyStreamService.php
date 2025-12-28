@@ -46,6 +46,9 @@ class BunnyStreamService
     {
         $libraryIdValue = $libraryId ?? (is_numeric($this->libraryId) ? (int) $this->libraryId : null);
         if ($libraryIdValue === null) {
+            Log::error('Missing Bunny Stream library ID.', $this->resolveLogContext([
+                'source' => 'api',
+            ]));
             throw new \RuntimeException('Missing Bunny library ID.');
         }
 
@@ -94,6 +97,10 @@ class BunnyStreamService
     {
         $libraryIdValue = $libraryId ?? (is_numeric($this->libraryId) ? (int) $this->libraryId : null);
         if ($libraryIdValue === null) {
+            Log::error('Missing Bunny Stream library ID.', $this->resolveLogContext([
+                'source' => 'api',
+                'video_id' => $videoGuid,
+            ]));
             throw new \RuntimeException('Missing Bunny library ID.');
         }
 
