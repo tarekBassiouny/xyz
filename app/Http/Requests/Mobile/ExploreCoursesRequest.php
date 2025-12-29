@@ -25,6 +25,7 @@ class ExploreCoursesRequest extends FormRequest
             'category_id' => ['sometimes', 'integer'],
             'instructor_id' => ['sometimes', 'integer'],
             'enrolled' => ['sometimes', 'boolean'],
+            'is_featured' => ['sometimes', 'boolean'],
             'publish_from' => ['sometimes', 'date'],
             'publish_to' => ['sometimes', 'date'],
         ];
@@ -35,9 +36,11 @@ class ExploreCoursesRequest extends FormRequest
         /** @var array<string, mixed> $data */
         $data = $this->validated();
 
-        $enrolled = null;
         if (array_key_exists('enrolled', $data)) {
             $enrolled = filter_var($data['enrolled'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        }
+        if (array_key_exists('is_featured', $data)) {
+            $isFeatured = filter_var($data['is_featured'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         }
 
         return new CourseFilters(
@@ -45,7 +48,8 @@ class ExploreCoursesRequest extends FormRequest
             perPage: (int) ($data['per_page'] ?? 15),
             categoryId: isset($data['category_id']) ? (int) $data['category_id'] : null,
             instructorId: isset($data['instructor_id']) ? (int) $data['instructor_id'] : null,
-            enrolled: $enrolled,
+            enrolled: $enrolled ?? null,
+            isFeatured: $isFeatured ?? null,
             publishFrom: isset($data['publish_from']) ? (string) $data['publish_from'] : null,
             publishTo: isset($data['publish_to']) ? (string) $data['publish_to'] : null
         );

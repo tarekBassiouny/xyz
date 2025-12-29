@@ -21,6 +21,7 @@ class ListCentersRequest extends FormRequest
     {
         return [
             'search' => ['sometimes', 'string'],
+            'is_featured' => ['sometimes', 'boolean'],
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
             'page' => ['sometimes', 'integer', 'min:1'],
         ];
@@ -32,10 +33,16 @@ class ListCentersRequest extends FormRequest
         $data = $this->validated();
         $term = isset($data['search']) ? trim((string) $data['search']) : null;
 
+        $isFeatured = null;
+        if (array_key_exists('is_featured', $data)) {
+            $isFeatured = filter_var($data['is_featured'], FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
+        }
+
         return new CenterFilters(
             page: (int) ($data['page'] ?? 1),
             perPage: (int) ($data['per_page'] ?? 15),
-            search: $term !== '' ? $term : null
+            search: $term !== '' ? $term : null,
+            isFeatured: $isFeatured,
         );
     }
 
@@ -48,6 +55,10 @@ class ListCentersRequest extends FormRequest
             'search' => [
                 'description' => 'Search centers by name or description.',
                 'example' => 'Science',
+            ],
+            'is_featured' => [
+                'description' => 'Filter centers by featured status.',
+                'example' => '0',
             ],
             'per_page' => [
                 'description' => 'Items per page (max 100).',

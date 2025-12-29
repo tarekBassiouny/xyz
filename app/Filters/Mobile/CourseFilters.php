@@ -12,6 +12,7 @@ class CourseFilters
         public readonly ?int $categoryId,
         public readonly ?int $instructorId,
         public readonly ?bool $enrolled,
+        public readonly ?bool $isFeatured,
         public readonly ?string $publishFrom,
         public readonly ?string $publishTo
     ) {}
