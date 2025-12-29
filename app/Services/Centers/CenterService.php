@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Centers;
 
+use App\Filters\Mobile\CenterFilters;
 use App\Models\Center;
 use App\Models\CenterSetting;
 use App\Models\Course;
@@ -108,23 +109,26 @@ class CenterService implements CenterServiceInterface
     /**
      * @return LengthAwarePaginator<Center>
      */
-    public function listUnbranded(?string $search, int $perPage = 15): LengthAwarePaginator
+    public function listUnbranded(CenterFilters $filters): LengthAwarePaginator
     {
         $query = Center::query()
             ->with('setting')
             ->where('type', 0)
             ->orderByDesc('id');
 
-        if ($search !== null && $search !== '') {
-
+        if ($filters->search !== null && $filters->search !== '') {
             $query->whereTranslationLike(
                 ['name', 'description'],
-                $search,
+                $filters->search,
                 ['en', 'ar']
             );
         }
 
-        return $query->paginate($perPage);
+        if ($filters->isFeatured !== null) {
+            $query->where('is_featured', $filters->isFeatured);
+        }
+
+        return $query->paginate($filters->perPage);
     }
 
     /**

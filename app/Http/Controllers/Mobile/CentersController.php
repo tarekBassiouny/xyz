@@ -20,7 +20,7 @@ class CentersController extends Controller
     public function index(ListCentersRequest $request): JsonResponse
     {
         $filters = $request->filters();
-        $paginator = $this->centerService->listUnbranded($filters->search, $filters->perPage);
+        $paginator = $this->centerService->listUnbranded($filters);
 
         return response()->json([
             'success' => true,
