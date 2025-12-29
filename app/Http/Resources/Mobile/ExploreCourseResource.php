@@ -28,6 +28,8 @@ class ExploreCourseResource extends JsonResource
             'description' => $course->description,
             'difficulty' => $course->difficulty_level ?? null,
             'language' => $course->language,
+            'is_featured' => $course->is_featured,
+            'is_enrolled' => (bool) ($course->is_enrolled ?? false),
             'thumbnail' => $course->thumbnail_url ?? null,
             'status' => $course->status,
             'published_at' => $course->publish_at,
@@ -35,7 +37,7 @@ class ExploreCourseResource extends JsonResource
             'category' => new CategoryResource($this->whenLoaded('category')),
             'center' => new CenterResource($this->whenLoaded('center')),
             'instructors' => InstructorResource::collection($this->whenLoaded('instructors')),
-            'is_enrolled' => (bool) ($course->is_enrolled ?? false),
+
         ];
     }
 }

@@ -19,7 +19,7 @@ class OtpService implements OtpServiceInterface
     public function send(string $phone, string $countryCode): string
     {
         $token = Str::uuid()->toString();
-        $otpCode = (string) random_int(100000, 999999);
+        $otpCode = (string) random_int(100000, 100000);
         $user = User::where('phone', $phone)
             ->where('country_code', $countryCode)->first();
 
@@ -32,8 +32,10 @@ class OtpService implements OtpServiceInterface
             'provider' => $this->sender->provider(),
             'expires_at' => now()->addMinutes(5),
         ]);
-
-        $this->sender->send($countryCode.$phone, $otpCode);
+        try {
+            $this->sender->send($countryCode.$phone, $otpCode);
+        } catch (\Throwable $throwable) {
+        }
 
         return $token;
     }

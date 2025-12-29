@@ -44,6 +44,10 @@ class ExploreCourseService
             $query->where('category_id', $filters->categoryId);
         }
 
+        if ($filters->isFeatured !== null) {
+            $query->where('is_featured', $filters->isFeatured);
+        }
+
         if ($filters->instructorId !== null) {
             $query->whereHas('instructors', function ($query) use ($filters): void {
                 $query->where('instructors.id', $filters->instructorId);

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Centers\Contracts;
 
+use App\Filters\Mobile\CenterFilters;
 use App\Models\Center;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -29,7 +30,7 @@ interface CenterServiceInterface
     /**
      * @return LengthAwarePaginator<Center>
      */
-    public function listUnbranded(?string $search, int $perPage = 15): LengthAwarePaginator;
+    public function listUnbranded(CenterFilters $filters): LengthAwarePaginator;
 
     /**
      * @return array{center: Center, courses: LengthAwarePaginator<\App\Models\Course>}
