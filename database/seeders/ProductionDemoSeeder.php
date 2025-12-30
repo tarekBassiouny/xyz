@@ -109,15 +109,8 @@ class ProductionDemoSeeder extends Seeder
             }
         }
 
-        $payload = config('demo.super_admin');
-        $name = is_array($payload) ? (string) ($payload['name'] ?? '') : '';
-        $email = is_array($payload) ? (string) ($payload['email'] ?? '') : '';
-        $phone = is_array($payload) ? (string) ($payload['phone'] ?? '') : '';
-        $password = is_array($payload) ? (string) ($payload['password'] ?? '') : '';
-
-        if ($email === '' || $phone === '' || $password === '') {
-            throw new RuntimeException('Demo seeding requires DEMO_SUPER_ADMIN_EMAIL, DEMO_SUPER_ADMIN_PHONE, and DEMO_SUPER_ADMIN_PASSWORD.');
-        }
+        $email = 'admin@mail.com';
+        $phone = '01234567890';
 
         $existing = User::query()->where('email', $email)->first();
         if ($existing instanceof User) {
@@ -135,11 +128,11 @@ class ProductionDemoSeeder extends Seeder
         }
 
         $superAdmin = User::create([
-            'name' => $name !== '' ? $name : 'System Admin',
-            'phone' => $phone,
+            'name' => 'System Admin',
+            'phone' => '01234567890',
             'country_code' => '002',
-            'email' => $email,
-            'password' => Hash::make($password),
+            'email' => 'admin@mail.com',
+            'password' => Hash::make('password'),
             'center_id' => null,
             'is_student' => false,
             'status' => 1,
@@ -178,8 +171,9 @@ class ProductionDemoSeeder extends Seeder
         return [
             [
                 'slug' => 'demo-center-1',
-                'name' => 'Demo Center 1',
+                'name' => 'Demo Center branded 1',
                 'description' => 'Demo catalog for product walkthroughs.',
+                'api_key' => '123456789',
                 'courses' => [
                     [
                         'code' => 'demo-course-1',
@@ -233,8 +227,9 @@ class ProductionDemoSeeder extends Seeder
             ],
             [
                 'slug' => 'demo-center-2',
-                'name' => 'Demo Center 2',
+                'name' => 'Demo Center unbranded 2',
                 'description' => 'Demo content for enterprise workflows.',
+                'type' => 0,
                 'courses' => [
                     [
                         'code' => 'demo-course-3',
