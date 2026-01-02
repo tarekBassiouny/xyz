@@ -107,12 +107,12 @@ class VideoUploadService
         }
 
         return sprintf(
-                'center_%d_course_%d_video_%d_%s',
-                $centerId,
-                $courseId,
-                $video->id ?? 0,
-                $originalFilename
-            );
+            'center_%d_course_%d_video_%d_%s',
+            $centerId,
+            $courseId,
+            $video->id ?? 0,
+            $originalFilename
+        );
     }
 
     /**
