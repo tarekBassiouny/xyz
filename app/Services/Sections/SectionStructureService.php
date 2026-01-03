@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Video;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Sections\Contracts\SectionStructureServiceInterface;
+use App\Services\Videos\VideoUploadService;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -327,6 +328,17 @@ class SectionStructureService implements SectionStructureServiceInterface
             throw ValidationException::withMessages([
                 'video_id' => ['Video is not ready to be attached.'],
             ]);
+        }
+
+        if ($video->upload_session_id !== null) {
+            $video->loadMissing('uploadSession');
+            $status = $video->uploadSession?->upload_status;
+
+            if ($status !== VideoUploadService::STATUS_READY) {
+                throw ValidationException::withMessages([
+                    'video_id' => ['Video upload session is not ready.'],
+                ]);
+            }
         }
     }
 

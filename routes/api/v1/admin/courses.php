@@ -16,3 +16,13 @@ Route::middleware('require.permission:course.manage')->group(function (): void {
 
 Route::post('/courses/{course}/publish', [CourseOperationController::class, 'publish'])
     ->middleware('require.permission:course.publish');
+
+Route::middleware('require.permission:course.manage')->group(function (): void {
+    Route::post('/centers/{center}/courses/{course}/videos', [CourseOperationController::class, 'assignVideo'])->whereNumber('center');
+    Route::delete('/centers/{center}/courses/{course}/videos/{video}', [CourseOperationController::class, 'removeVideo'])->whereNumber('center');
+});
+
+Route::middleware('require.permission:course.manage')->group(function (): void {
+    Route::post('/centers/{center}/courses/{course}/pdfs', [CourseOperationController::class, 'assignPdf'])->whereNumber('center');
+    Route::delete('/centers/{center}/courses/{course}/pdfs/{pdf}', [CourseOperationController::class, 'removePdf'])->whereNumber('center');
+});

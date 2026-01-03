@@ -173,14 +173,17 @@ it('toggles section visibility', function (): void {
 });
 
 it('assigns video', function (): void {
-    $course = Course::factory()->create();
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
     $video = Video::factory()->create([
+        'center_id' => $center->id,
         'created_by' => $course->created_by,
         'encoding_status' => 3,
         'lifecycle_status' => 2,
+        'upload_session_id' => null,
     ]);
 
-    $response = $this->postJson("/api/v1/admin/courses/{$course->id}/videos", [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/videos", [
         'video_id' => $video->id,
     ], $this->adminHeaders());
 
@@ -189,8 +192,12 @@ it('assigns video', function (): void {
 });
 
 it('removes video', function (): void {
-    $course = Course::factory()->create();
-    $video = Video::factory()->create(['created_by' => $course->created_by]);
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $course->created_by,
+    ]);
     CourseVideo::create([
         'course_id' => $course->id,
         'video_id' => $video->id,
@@ -198,17 +205,21 @@ it('removes video', function (): void {
         'visible' => true,
     ]);
 
-    $response = $this->deleteJson("/api/v1/admin/courses/{$course->id}/videos/{$video->id}", [], $this->adminHeaders());
+    $response = $this->deleteJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/videos/{$video->id}", [], $this->adminHeaders());
 
     $response->assertOk()->assertJsonPath('success', true);
     $this->assertSoftDeleted('course_video', ['course_id' => $course->id, 'video_id' => $video->id]);
 });
 
 it('assigns pdf', function (): void {
-    $course = Course::factory()->create();
-    $pdf = Pdf::factory()->create(['created_by' => $course->created_by]);
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $pdf = Pdf::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $course->created_by,
+    ]);
 
-    $response = $this->postJson("/api/v1/admin/courses/{$course->id}/pdfs", [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/pdfs", [
         'pdf_id' => $pdf->id,
     ], $this->adminHeaders());
 
@@ -217,8 +228,12 @@ it('assigns pdf', function (): void {
 });
 
 it('removes pdf', function (): void {
-    $course = Course::factory()->create();
-    $pdf = Pdf::factory()->create(['created_by' => $course->created_by]);
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
+    $pdf = Pdf::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $course->created_by,
+    ]);
     CoursePdf::create([
         'course_id' => $course->id,
         'pdf_id' => $pdf->id,
@@ -226,7 +241,7 @@ it('removes pdf', function (): void {
         'visible' => true,
     ]);
 
-    $response = $this->deleteJson("/api/v1/admin/courses/{$course->id}/pdfs/{$pdf->id}", [], $this->adminHeaders());
+    $response = $this->deleteJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/pdfs/{$pdf->id}", [], $this->adminHeaders());
 
     $response->assertOk()->assertJsonPath('success', true);
     $this->assertSoftDeleted('course_pdf', ['course_id' => $course->id, 'pdf_id' => $pdf->id]);
@@ -236,6 +251,7 @@ it('publishes course', function (): void {
     $course = Course::factory()->create(['status' => 0, 'is_published' => false]);
     Section::factory()->create(['course_id' => $course->id]);
     $video = Video::factory()->create([
+        'center_id' => $course->center_id,
         'lifecycle_status' => 2,
         'encoding_status' => 3,
         'upload_session_id' => null,

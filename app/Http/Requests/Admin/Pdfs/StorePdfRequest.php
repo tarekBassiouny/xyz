@@ -14,17 +14,20 @@ class StorePdfRequest extends FormRequest
     }
 
     /**
-     * @return array<string, mixed>
+     * @return array<string, array<int, string>|string>
      */
     public function rules(): array
     {
         return [
-            'title_translations' => ['required', 'array'],
-            'description_translations' => ['sometimes', 'nullable', 'array'],
-            'file' => ['required', 'file', 'mimetypes:application/pdf', 'max:51200'],
-            'course_id' => ['sometimes', 'integer', 'exists:courses,id'],
-            'section_id' => ['sometimes', 'integer', 'exists:sections,id'],
-            'video_id' => ['sometimes', 'integer', 'exists:videos,id'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['sometimes', 'nullable', 'string'],
+            'title_translations' => ['sometimes', 'array'],
+            'description_translations' => ['sometimes', 'array'],
+            'upload_session_id' => ['sometimes', 'integer', 'exists:pdf_upload_sessions,id'],
+            'source_id' => ['required_without:upload_session_id', 'string', 'max:2048'],
+            'source_url' => ['sometimes', 'nullable', 'string', 'max:2048'],
+            'file_extension' => ['required_without:upload_session_id', 'string', 'max:10'],
+            'file_size_kb' => ['sometimes', 'nullable', 'integer', 'min:1'],
         ];
     }
 
@@ -34,29 +37,50 @@ class StorePdfRequest extends FormRequest
     public function bodyParameters(): array
     {
         return [
+            'title' => [
+                'description' => 'PDF title in the request locale.',
+                'example' => 'Lesson Notes',
+            ],
+            'description' => [
+                'description' => 'Optional description in the request locale.',
+                'example' => 'Downloadable notes.',
+            ],
             'title_translations' => [
-                'description' => 'Localized title for the PDF.',
-                'example' => ['en' => 'Lesson Notes', 'ar' => 'ملاحظات الدرس'],
+                'description' => 'Optional localized titles keyed by locale.',
+                'example' => ['en' => 'Lesson Notes'],
             ],
             'description_translations' => [
-                'description' => 'Optional localized description.',
-                'example' => ['en' => 'Downloadable PDF for lesson 1'],
+                'description' => 'Optional localized descriptions keyed by locale.',
+                'example' => ['en' => 'Downloadable notes'],
             ],
-            'file' => [
-                'description' => 'PDF file to upload (max 50MB).',
+            'upload_session_id' => [
+                'description' => 'Upload session ID used to finalize the PDF.',
+                'example' => 12,
             ],
-            'course_id' => [
-                'description' => 'Optional course to attach the PDF to.',
-                'example' => 1,
+            'source_id' => [
+                'description' => 'Object key for a finalized upload when no session is provided.',
+                'example' => 'centers/1/pdfs/demo.pdf',
             ],
-            'section_id' => [
-                'description' => 'Optional section to attach the PDF to (must belong to the course).',
-                'example' => 2,
+            'source_url' => [
+                'description' => 'Optional public URL if externally hosted.',
+                'example' => 'https://cdn.example.com/demo.pdf',
             ],
-            'video_id' => [
-                'description' => 'Optional video association (must belong to the course).',
-                'example' => 3,
+            'file_extension' => [
+                'description' => 'File extension when no upload session is provided.',
+                'example' => 'pdf',
+            ],
+            'file_size_kb' => [
+                'description' => 'Optional file size in KB.',
+                'example' => 1024,
             ],
         ];
+    }
+
+    /**
+     * @return array<string, array<string, string>>
+     */
+    public function queryParameters(): array
+    {
+        return [];
     }
 }

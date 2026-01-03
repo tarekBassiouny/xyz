@@ -18,7 +18,13 @@ it('assigns and removes video via pivot model', function (): void {
     $center = Center::factory()->create();
     $course = Course::factory()->create(['center_id' => $center->id]);
     $actor = User::factory()->create(['center_id' => $center->id]);
-    $video = Video::factory()->create(['encoding_status' => 3, 'lifecycle_status' => 2]);
+    $video = Video::factory()->create([
+        'encoding_status' => 3,
+        'lifecycle_status' => 2,
+        'upload_session_id' => null,
+        'center_id' => $center->id,
+        'created_by' => $actor->id,
+    ]);
 
     $service->assignVideo($course, $video->id, $actor);
     expect(CourseVideo::where('course_id', $course->id)->where('video_id', $video->id)->exists())->toBeTrue();
@@ -32,7 +38,7 @@ it('assigns and removes pdf via pivot model', function (): void {
     $center = Center::factory()->create();
     $course = Course::factory()->create(['center_id' => $center->id]);
     $actor = User::factory()->create(['center_id' => $center->id]);
-    $pdf = Pdf::factory()->create();
+    $pdf = Pdf::factory()->create(['center_id' => $center->id, 'created_by' => $actor->id]);
 
     $service->assignPdf($course, $pdf->id, $actor);
     expect(CoursePdf::where('course_id', $course->id)->where('pdf_id', $pdf->id)->exists())->toBeTrue();

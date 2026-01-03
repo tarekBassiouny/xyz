@@ -23,8 +23,16 @@ class PdfResource extends JsonResource
 
         return [
             'id' => $pdf->id,
+            'center_id' => $pdf->center_id,
             'title' => $pdf->title,
             'description' => $pdf->description,
+            'source_type' => $pdf->source_type,
+            'source_provider' => $pdf->source_provider,
+            'source_id' => $pdf->source_id,
+            'file_extension' => $pdf->file_extension,
+            'file_size_kb' => $pdf->file_size_kb,
+            'created_by' => $pdf->created_by,
+            'created_at' => $pdf->created_at,
         ];
     }
 }

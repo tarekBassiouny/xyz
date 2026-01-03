@@ -23,6 +23,7 @@ it('publishes course when ready', function (): void {
     $actor = User::factory()->create(['center_id' => $course->center_id]);
     Section::factory()->create(['course_id' => $course->id]);
     $video = Video::factory()->create(['lifecycle_status' => 2, 'encoding_status' => 3, 'upload_session_id' => null]);
+    $video->update(['center_id' => $center->id]);
     CourseVideo::create([
         'course_id' => $course->id,
         'video_id' => $video->id,
@@ -52,7 +53,9 @@ it('clones course with pivots', function (): void {
     $actor = User::factory()->create(['center_id' => $course->center_id]);
     $section = Section::factory()->create(['course_id' => $course->id]);
     $video = Video::factory()->create(['lifecycle_status' => 2, 'encoding_status' => 3, 'upload_session_id' => null]);
+    $video->update(['center_id' => $center->id]);
     $pdf = Pdf::factory()->create();
+    $pdf->update(['center_id' => $center->id]);
     CourseVideo::create([
         'course_id' => $course->id,
         'video_id' => $video->id,

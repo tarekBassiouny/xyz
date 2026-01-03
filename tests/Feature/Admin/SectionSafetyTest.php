@@ -42,9 +42,11 @@ it('blocks attaching video to section from another course', function (): void {
     $courseB = Course::factory()->create(['center_id' => $center->id]);
     $sectionB = Section::factory()->create(['course_id' => $courseB->id]);
     $video = Video::factory()->create([
+        'center_id' => $center->id,
         'encoding_status' => 3,
         'lifecycle_status' => 2,
         'created_by' => $courseA->created_by,
+        'upload_session_id' => null,
     ]);
 
     $response = $this->postJson(
@@ -62,11 +64,13 @@ it('restores section attachments', function (): void {
     $course = Course::factory()->create(['center_id' => $center->id]);
     $section = Section::factory()->create(['course_id' => $course->id]);
     $video = Video::factory()->create([
+        'center_id' => $center->id,
         'encoding_status' => 3,
         'lifecycle_status' => 2,
         'created_by' => $course->created_by,
+        'upload_session_id' => null,
     ]);
-    $pdf = Pdf::factory()->create(['created_by' => $course->created_by]);
+    $pdf = Pdf::factory()->create(['center_id' => $center->id, 'created_by' => $course->created_by]);
 
     CourseVideo::create([
         'course_id' => $course->id,

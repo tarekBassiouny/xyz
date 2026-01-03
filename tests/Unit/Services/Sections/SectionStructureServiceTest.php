@@ -23,6 +23,7 @@ it('blocks attaching videos to deleted sections', function (): void {
     $section->delete();
 
     $video = Video::factory()->create([
+        'center_id' => $center->id,
         'encoding_status' => 3,
         'lifecycle_status' => 2,
         'created_by' => $admin->id,

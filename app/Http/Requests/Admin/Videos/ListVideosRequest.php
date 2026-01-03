@@ -21,7 +21,6 @@ class ListVideosRequest extends FormRequest
         return [
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:100'],
             'page' => ['sometimes', 'integer', 'min:1'],
-            'center_id' => ['sometimes', 'integer'],
             'course_id' => ['sometimes', 'integer'],
             'search' => ['sometimes', 'string'],
         ];
@@ -40,10 +39,6 @@ class ListVideosRequest extends FormRequest
             'page' => [
                 'description' => 'Page number to retrieve.',
                 'example' => '1',
-            ],
-            'center_id' => [
-                'description' => 'Filter videos by center ID (super admin only).',
-                'example' => '2',
             ],
             'course_id' => [
                 'description' => 'Filter videos by course ID.',

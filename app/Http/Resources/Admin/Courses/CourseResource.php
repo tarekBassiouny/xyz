@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace App\Http\Resources\Admin\Courses;
 
 use App\Http\Resources\Admin\Centers\CenterResource;
+use App\Http\Resources\Admin\InstructorResource;
 use App\Http\Resources\Admin\Sections\SectionResource;
 use App\Http\Resources\CategoryResource;
-use App\Http\Resources\InstructorResource;
 use App\Models\Course;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;

@@ -5,48 +5,75 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin\Videos;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Videos\ListVideoUploadSessionsRequest;
-use App\Http\Resources\Admin\Videos\VideoUploadSessionResource;
+use App\Http\Requests\Admin\Videos\StoreVideoUploadSessionRequest;
+use App\Models\Center;
 use App\Models\User;
-use App\Services\Videos\VideoUploadSessionQueryService;
+use App\Models\Video;
+use App\Services\Videos\VideoUploadService;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 
 class VideoUploadSessionController extends Controller
 {
-    public function __construct(
-        private readonly VideoUploadSessionQueryService $queryService
-    ) {}
+    public function __construct(private readonly VideoUploadService $uploadService) {}
 
-    public function index(ListVideoUploadSessionsRequest $request): JsonResponse
+    public function store(StoreVideoUploadSessionRequest $request, Center $center): JsonResponse
     {
-        /** @var User|null $admin */
-        $admin = $request->user();
+        $admin = $this->requireAdmin();
+        $video = Video::findOrFail((int) $request->integer('video_id'));
+
+        if ((int) $video->center_id !== (int) $center->id) {
+            $this->notFound();
+        }
+
+        $session = $this->uploadService->initializeUpload(
+            admin: $admin,
+            center: $center,
+            originalFilename: (string) $request->input('original_filename'),
+            video: $video
+        );
+
+        /** @var string|null $uploadUrl */
+        $uploadUrl = $session->getAttribute('upload_url');
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'upload_session_id' => $session->id,
+                'provider' => 'bunny',
+                'remote_id' => $session->bunny_upload_id,
+                'upload_endpoint' => $uploadUrl,
+                'required_headers' => [],
+                'expires_at' => null,
+            ],
+        ], 201);
+    }
+
+    private function requireAdmin(): User
+    {
+        $admin = request()->user();
 
         if (! $admin instanceof User) {
-            return response()->json([
+            throw new HttpResponseException(response()->json([
                 'success' => false,
                 'error' => [
                     'code' => 'UNAUTHORIZED',
                     'message' => 'Authentication required.',
                 ],
-            ], 401);
+            ], 401));
         }
 
-        $perPage = (int) $request->integer('per_page', 15);
-        /** @var array<string, mixed> $filters */
-        $filters = $request->only(['status', 'center_id']);
+        return $admin;
+    }
 
-        $paginator = $this->queryService->paginate($admin, $perPage, $filters);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Video upload sessions retrieved successfully',
-            'data' => VideoUploadSessionResource::collection($paginator->items()),
-            'meta' => [
-                'page' => $paginator->currentPage(),
-                'per_page' => $paginator->perPage(),
-                'total' => $paginator->total(),
+    private function notFound(): void
+    {
+        throw new HttpResponseException(response()->json([
+            'success' => false,
+            'error' => [
+                'code' => 'NOT_FOUND',
+                'message' => 'Video not found.',
             ],
-        ]);
+        ], 404));
     }
 }

@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @property int $id
+ * @property int $center_id
  * @property array<string, string> $title_translations
  * @property array<string, string>|null $description_translations
  * @property int $source_type
@@ -24,6 +25,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string $file_extension
  * @property int $created_by
  * @property-read User $creator
+ * @property-read Center $center
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Course> $courses
  */
 class Pdf extends Model
@@ -35,6 +37,7 @@ class Pdf extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'center_id',
         'title_translations',
         'description_translations',
         'source_type',
@@ -48,6 +51,7 @@ class Pdf extends Model
     ];
 
     protected $casts = [
+        'center_id' => 'integer',
         'title_translations' => 'array',
         'description_translations' => 'array',
         'file_size_kb' => 'integer',
@@ -65,6 +69,12 @@ class Pdf extends Model
     public function creator(): BelongsTo
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /** @return BelongsTo<Center, self> */
+    public function center(): BelongsTo
+    {
+        return $this->belongsTo(Center::class);
     }
 
     /** @return BelongsToMany<Course, self> */

@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Video;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseAttachmentServiceInterface;
+use App\Services\Videos\VideoUploadService;
 use Illuminate\Validation\ValidationException;
 
 class CourseAttachmentService implements CourseAttachmentServiceInterface
@@ -144,6 +145,17 @@ class CourseAttachmentService implements CourseAttachmentServiceInterface
             throw ValidationException::withMessages([
                 'video_id' => ['Video is not ready to be attached.'],
             ]);
+        }
+
+        if ($video->upload_session_id !== null) {
+            $video->loadMissing('uploadSession');
+            $status = $video->uploadSession?->upload_status;
+
+            if ($status !== VideoUploadService::STATUS_READY) {
+                throw ValidationException::withMessages([
+                    'video_id' => ['Video upload session is not ready.'],
+                ]);
+            }
         }
     }
 }

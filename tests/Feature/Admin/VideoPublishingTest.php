@@ -31,6 +31,7 @@ it('blocks publishing when any video is not ready', function (): void {
     Section::factory()->create(['course_id' => $course->id]);
 
     $video = Video::factory()->create([
+        'center_id' => $center->id,
         'encoding_status' => 1,
         'lifecycle_status' => 1,
         'created_by' => $admin->id,
@@ -56,6 +57,7 @@ it('allows publishing when videos are ready and latest session ready', function 
     ]);
 
     $video = Video::factory()->create([
+        'center_id' => $center->id,
         'encoding_status' => 3,
         'lifecycle_status' => 2,
         'upload_session_id' => $session->id,

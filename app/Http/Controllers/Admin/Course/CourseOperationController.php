@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\Courses\AssignPdfRequest;
 use App\Http\Requests\Admin\Courses\AssignVideoRequest;
 use App\Http\Requests\Admin\Courses\CloneCourseRequest;
 use App\Http\Resources\Admin\Courses\CourseResource;
+use App\Models\Center;
 use App\Models\Course;
 use App\Models\User;
 use App\Services\Courses\Contracts\CourseAttachmentServiceInterface;
@@ -20,10 +21,12 @@ class CourseOperationController extends Controller
 {
     public function assignVideo(
         AssignVideoRequest $request,
+        Center $center,
         Course $course,
         CourseAttachmentServiceInterface $courseAttachmentService
     ): JsonResponse {
         $admin = $this->requireAdmin();
+        $this->assertCourseBelongsToCenter($center, $course);
         /** @var array{video_id:int,order_index?:int|null} $data */
         $data = $request->validated();
         $courseAttachmentService->assignVideo($course, (int) $data['video_id'], $admin);
@@ -36,11 +39,13 @@ class CourseOperationController extends Controller
     }
 
     public function removeVideo(
+        Center $center,
         Course $course,
         int $video,
         CourseAttachmentServiceInterface $courseAttachmentService
     ): JsonResponse {
         $admin = $this->requireAdmin();
+        $this->assertCourseBelongsToCenter($center, $course);
         $courseAttachmentService->removeVideo($course, $video, $admin);
 
         return response()->json([
@@ -52,10 +57,12 @@ class CourseOperationController extends Controller
 
     public function assignPdf(
         AssignPdfRequest $request,
+        Center $center,
         Course $course,
         CourseAttachmentServiceInterface $courseAttachmentService
     ): JsonResponse {
         $admin = $this->requireAdmin();
+        $this->assertCourseBelongsToCenter($center, $course);
         /** @var array{pdf_id:int,order_index?:int|null} $data */
         $data = $request->validated();
         $courseAttachmentService->assignPdf($course, (int) $data['pdf_id'], $admin);
@@ -68,11 +75,13 @@ class CourseOperationController extends Controller
     }
 
     public function removePdf(
+        Center $center,
         Course $course,
         int $pdf,
         CourseAttachmentServiceInterface $courseAttachmentService
     ): JsonResponse {
         $admin = $this->requireAdmin();
+        $this->assertCourseBelongsToCenter($center, $course);
         $courseAttachmentService->removePdf($course, $pdf, $admin);
 
         return response()->json([
@@ -134,5 +143,18 @@ class CourseOperationController extends Controller
         }
 
         return $admin;
+    }
+
+    private function assertCourseBelongsToCenter(Center $center, Course $course): void
+    {
+        if ((int) $course->center_id !== (int) $center->id) {
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'NOT_FOUND',
+                    'message' => 'Course not found.',
+                ],
+            ], 404));
+        }
     }
 }
