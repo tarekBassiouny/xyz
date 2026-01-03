@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\Admin\Course\CourseOperationController;
-use App\Http\Controllers\Admin\VideoController;
-use App\Http\Controllers\Admin\VideoUploadController;
-use App\Http\Controllers\Admin\VideoUploadSessionController;
+use App\Http\Controllers\Admin\Videos\VideoController;
+use App\Http\Controllers\Admin\Videos\VideoUploadController;
+use App\Http\Controllers\Admin\Videos\VideoUploadSessionController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('require.permission:video.manage')->group(function (): void {

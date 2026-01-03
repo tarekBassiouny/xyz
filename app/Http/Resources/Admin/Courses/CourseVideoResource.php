@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\Admin\Courses;
 
-use App\Http\Resources\VideoResource;
+use App\Http\Resources\Admin\Videos\VideoResource;
 use App\Models\Pivots\CourseVideo;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
