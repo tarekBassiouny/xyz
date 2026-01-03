@@ -12,7 +12,7 @@ use App\Actions\Sections\UpdateSectionWithStructureAction;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Sections\CreateSectionWithStructureRequest;
 use App\Http\Requests\Sections\UpdateSectionWithStructureRequest;
-use App\Http\Resources\Sections\SectionResource;
+use App\Http\Resources\Admin\Sections\SectionResource;
 use App\Models\Section;
 use App\Models\User;
 use Illuminate\Http\Exceptions\HttpResponseException;

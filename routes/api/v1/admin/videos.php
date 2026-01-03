@@ -1,6 +1,6 @@
 <?php
 
-use App\Http\Controllers\Admin\CourseController;
+use App\Http\Controllers\Admin\Course\CourseOperationController;
 use App\Http\Controllers\Admin\VideoController;
 use App\Http\Controllers\Admin\VideoUploadController;
 use App\Http\Controllers\Admin\VideoUploadSessionController;
@@ -12,8 +12,8 @@ Route::middleware('require.permission:video.manage')->group(function (): void {
 });
 
 Route::middleware('require.permission:course.manage')->group(function (): void {
-    Route::post('/courses/{course}/videos', [CourseController::class, 'assignVideo']);
-    Route::delete('/courses/{course}/videos/{video}', [CourseController::class, 'removeVideo']);
+    Route::post('/courses/{course}/videos', [CourseOperationController::class, 'assignVideo']);
+    Route::delete('/courses/{course}/videos/{video}', [CourseOperationController::class, 'removeVideo']);
 });
 
 Route::middleware('require.permission:video.upload')->group(function (): void {

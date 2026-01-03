@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources;
 
-use App\Http\Resources\Courses\CourseSummaryResource;
+use App\Http\Resources\Admin\Courses\CourseSummaryResource;
 use App\Models\Enrollment;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;

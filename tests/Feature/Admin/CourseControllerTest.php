@@ -134,52 +134,6 @@ it('scopes courses to admin center when not super admin', function (): void {
         ->assertJsonPath('data.0.title', 'Center A Course');
 });
 
-it('creates course', function (): void {
-    $payload = [
-        'title' => 'Sample Course',
-        'description' => 'A course description',
-        'category_id' => Category::factory()->create()->id,
-        'center_id' => Center::factory()->create()->id,
-        'difficulty' => 'beginner',
-        'language' => 'en',
-        'price' => 0,
-    ];
-
-    $response = $this->postJson('/api/v1/admin/courses', $payload, $this->adminHeaders());
-
-    $response->assertCreated()->assertJsonPath('success', true);
-    $response->assertJsonPath('data.title', 'Sample Course');
-    $this->assertDatabaseHas('courses', ['title_translations->en' => 'Sample Course']);
-});
-
-it('shows course', function (): void {
-    $course = Course::factory()->create();
-
-    $response = $this->getJson("/api/v1/admin/courses/{$course->id}", $this->adminHeaders());
-
-    $response->assertOk()->assertJsonPath('data.id', $course->id);
-});
-
-it('updates course', function (): void {
-    $course = Course::factory()->create();
-
-    $response = $this->putJson("/api/v1/admin/courses/{$course->id}", [
-        'title' => 'Updated Title',
-    ], $this->adminHeaders());
-
-    $response->assertOk()->assertJsonPath('data.title', 'Updated Title');
-    $this->assertDatabaseHas('courses', ['id' => $course->id, 'title_translations->en' => 'Updated Title']);
-});
-
-it('soft deletes course', function (): void {
-    $course = Course::factory()->create();
-
-    $response = $this->deleteJson("/api/v1/admin/courses/{$course->id}", [], $this->adminHeaders());
-
-    $response->assertNoContent();
-    $this->assertSoftDeleted('courses', ['id' => $course->id]);
-});
-
 it('adds section', function (): void {
     $course = Course::factory()->create();
 

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Courses;
 
+use App\Actions\Concerns\NormalizesTranslations;
 use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
@@ -15,6 +16,8 @@ use Illuminate\Support\Collection;
 
 class CourseService implements CourseServiceInterface
 {
+    use NormalizesTranslations;
+
     public function __construct(private readonly CenterScopeService $centerScopeService) {}
 
     /** @return LengthAwarePaginator<Course> */
@@ -36,6 +39,12 @@ class CourseService implements CourseServiceInterface
     /** @param array<string, mixed> $data */
     public function create(array $data, ?User $actor = null): Course
     {
+        $data = $this->normalizeTranslations($data, [
+            'title_translations',
+            'description_translations',
+            'college_translations',
+        ]);
+
         if ($actor instanceof User) {
             $centerId = isset($data['center_id']) && is_numeric($data['center_id']) ? (int) $data['center_id'] : null;
             $this->centerScopeService->assertAdminCenterId($actor, $centerId);
@@ -49,6 +58,16 @@ class CourseService implements CourseServiceInterface
     /** @param array<string, mixed> $data */
     public function update(Course $course, array $data, ?User $actor = null): Course
     {
+        $data = $this->normalizeTranslations($data, [
+            'title_translations',
+            'description_translations',
+            'college_translations',
+        ], [
+            'title_translations' => $course->title_translations ?? [],
+            'description_translations' => $course->description_translations ?? [],
+            'college_translations' => $course->college_translations ?? [],
+        ]);
+
         if ($actor instanceof User) {
             $this->centerScopeService->assertAdminSameCenter($actor, $course);
         }
