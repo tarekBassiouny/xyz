@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace App\Services\Sections;
 
+use App\Actions\Concerns\NormalizesTranslations;
 use App\Models\Course;
+use App\Models\Pivots\CoursePdf;
+use App\Models\Pivots\CourseVideo;
 use App\Models\Section;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
@@ -14,6 +17,8 @@ use Illuminate\Support\Facades\DB;
 
 class SectionService implements SectionServiceInterface
 {
+    use NormalizesTranslations;
+
     /** @return Collection<int, Section> */
     public function listForCourse(int $courseId, ?User $actor = null): Collection
     {
@@ -43,6 +48,14 @@ class SectionService implements SectionServiceInterface
     /** @param array<string, mixed> $data */
     public function create(array $data, ?User $actor = null): Section
     {
+        $localeValue = request()->attributes->get('locale', app()->getLocale());
+        $locale = is_string($localeValue) ? $localeValue : (string) app()->getLocale();
+        $data['locale'] = $locale;
+        $data = $this->normalizeTranslations($data, [
+            'title_translations',
+            'description_translations',
+        ], [], 'locale');
+
         $courseId = isset($data['course_id']) && is_numeric($data['course_id']) ? (int) $data['course_id'] : 0;
 
         if ($actor instanceof User) {
@@ -65,6 +78,17 @@ class SectionService implements SectionServiceInterface
     /** @param array<string, mixed> $data */
     public function update(Section $section, array $data, ?User $actor = null): Section
     {
+        $localeValue = request()->attributes->get('locale', app()->getLocale());
+        $locale = is_string($localeValue) ? $localeValue : (string) app()->getLocale();
+        $data['locale'] = $locale;
+        $data = $this->normalizeTranslations($data, [
+            'title_translations',
+            'description_translations',
+        ], [
+            'title_translations' => $section->title_translations ?? [],
+            'description_translations' => $section->description_translations ?? [],
+        ], 'locale');
+
         if ($actor instanceof User) {
             $section->loadMissing('course');
             $this->centerScopeService->assertAdminSameCenter($actor, $section->course);
@@ -92,7 +116,19 @@ class SectionService implements SectionServiceInterface
             $this->centerScopeService->assertAdminSameCenter($actor, $section->course);
         }
 
-        $section->restore();
+        DB::transaction(function () use ($section): void {
+            $section->restore();
+
+            CourseVideo::withTrashed()
+                ->where('course_id', $section->course_id)
+                ->where('section_id', $section->id)
+                ->restore();
+
+            CoursePdf::withTrashed()
+                ->where('course_id', $section->course_id)
+                ->where('section_id', $section->id)
+                ->restore();
+        });
 
         return $section->fresh(['videos', 'pdfs']) ?? $section;
     }

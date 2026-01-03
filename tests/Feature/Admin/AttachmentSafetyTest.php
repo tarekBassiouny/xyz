@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Models\Center;
 use App\Models\Course;
 use App\Models\Section;
 use App\Models\Video;
@@ -27,7 +28,8 @@ it('blocks attaching non-ready video to course', function (): void {
 
 it('blocks attaching non-ready video to section', function (): void {
     $admin = $this->asAdmin();
-    $course = Course::factory()->create(['created_by' => $admin->id]);
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['created_by' => $admin->id, 'center_id' => $center->id]);
     $section = Section::factory()->create(['course_id' => $course->id]);
     $video = Video::factory()->create([
         'encoding_status' => 1,
@@ -35,7 +37,7 @@ it('blocks attaching non-ready video to section', function (): void {
         'created_by' => $admin->id,
     ]);
 
-    $response = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/courses/{$course->id}/sections/{$section->id}/videos", [
+    $response = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/sections/{$section->id}/videos", [
         'video_id' => $video->id,
     ], $this->adminHeaders());
 
@@ -44,7 +46,8 @@ it('blocks attaching non-ready video to section', function (): void {
 
 it('allows attaching ready video', function (): void {
     $admin = $this->asAdmin();
-    $course = Course::factory()->create(['created_by' => $admin->id]);
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['created_by' => $admin->id, 'center_id' => $center->id]);
     $section = Section::factory()->create(['course_id' => $course->id]);
     $video = Video::factory()->create([
         'encoding_status' => 3,
@@ -57,7 +60,7 @@ it('allows attaching ready video', function (): void {
     ], $this->adminHeaders());
     $courseAttach->assertCreated();
 
-    $sectionAttach = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/courses/{$course->id}/sections/{$section->id}/videos", [
+    $sectionAttach = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/sections/{$section->id}/videos", [
         'video_id' => $video->id,
     ], $this->adminHeaders());
     $sectionAttach->assertCreated();

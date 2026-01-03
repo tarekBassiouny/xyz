@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Pdf\StorePdfRequest;
-use App\Http\Resources\PdfResource;
+use App\Http\Requests\Admin\Pdfs\StorePdfRequest;
+use App\Http\Resources\Admin\PdfResource;
 use App\Models\Course;
 use App\Models\Section;
 use App\Models\Video;

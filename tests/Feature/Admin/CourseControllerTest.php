@@ -135,9 +135,10 @@ it('scopes courses to admin center when not super admin', function (): void {
 });
 
 it('adds section', function (): void {
-    $course = Course::factory()->create();
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
 
-    $response = $this->postJson("/api/v1/admin/courses/{$course->id}/sections", [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/sections", [
         'title' => 'Section 1',
         'description' => 'Description',
     ], $this->adminHeaders());
@@ -147,11 +148,12 @@ it('adds section', function (): void {
 });
 
 it('reorders sections', function (): void {
-    $course = Course::factory()->create();
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
     $sections = Section::factory()->count(2)->create(['course_id' => $course->id]);
     $ordered = $sections->pluck('id')->reverse()->values()->all();
 
-    $response = $this->putJson("/api/v1/admin/courses/{$course->id}/sections/reorder", [
+    $response = $this->putJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/sections/reorder", [
         'sections' => $ordered,
     ], $this->adminHeaders());
 
@@ -159,10 +161,11 @@ it('reorders sections', function (): void {
 });
 
 it('toggles section visibility', function (): void {
-    $course = Course::factory()->create();
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
     $section = Section::factory()->create(['course_id' => $course->id, 'visible' => true]);
 
-    $response = $this->patchJson("/api/v1/admin/courses/{$course->id}/sections/{$section->id}/visibility", [], $this->adminHeaders());
+    $response = $this->patchJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/sections/{$section->id}/visibility", [], $this->adminHeaders());
 
     $response->assertOk()->assertJsonPath('success', true);
     $section->refresh();

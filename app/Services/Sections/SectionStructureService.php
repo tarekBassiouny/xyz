@@ -43,6 +43,7 @@ class SectionStructureService implements SectionStructureServiceInterface
     public function attachVideo(Section $section, Video $video, ?User $actor = null): void
     {
         $this->assertCenterScope($section, $actor);
+        $this->assertSectionActive($section);
         $this->assertVideoBelongsToCourse($section, $video);
         $this->assertVideoReady($video);
 
@@ -110,6 +111,7 @@ class SectionStructureService implements SectionStructureServiceInterface
     public function attachPdf(Section $section, Pdf $pdf, ?User $actor = null): void
     {
         $this->assertCenterScope($section, $actor);
+        $this->assertSectionActive($section);
         $this->assertPdfBelongsToCourse($section, $pdf);
 
         $pivot = CoursePdf::withTrashed()
@@ -350,5 +352,14 @@ class SectionStructureService implements SectionStructureServiceInterface
 
         $section->loadMissing('course');
         $this->centerScopeService->assertAdminSameCenter($actor, $section->course);
+    }
+
+    private function assertSectionActive(Section $section): void
+    {
+        if (method_exists($section, 'trashed') && $section->trashed()) {
+            throw ValidationException::withMessages([
+                'section_id' => ['Section is deleted.'],
+            ]);
+        }
     }
 }
