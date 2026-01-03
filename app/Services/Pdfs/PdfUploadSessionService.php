@@ -13,6 +13,14 @@ use App\Services\Storage\StoragePathResolver;
 
 class PdfUploadSessionService
 {
+    public const STATUS_PENDING = 0;
+
+    public const STATUS_UPLOADING = 1;
+
+    public const STATUS_READY = 2;
+
+    public const STATUS_FAILED = 3;
+
     public function __construct(
         private readonly StorageServiceInterface $storageService,
         private readonly StoragePathResolver $pathResolver,
@@ -38,12 +46,39 @@ class PdfUploadSessionService
             'center_id' => $center->id,
             'created_by' => $admin->id,
             'object_key' => $objectKey,
+            'upload_status' => self::STATUS_PENDING,
+            'error_message' => null,
             'file_extension' => $extension,
             'file_size_kb' => $fileSizeKb,
             'expires_at' => $expiresAt,
         ]);
 
         $session->setAttribute('upload_url', $this->storageService->temporaryUploadUrl($objectKey, $ttl));
+
+        return $session;
+    }
+
+    public function finalize(PdfUploadSession $session, User $admin, ?string $errorMessage = null): PdfUploadSession
+    {
+        if (! $admin->hasRole('super_admin')) {
+            $this->centerScopeService->assertAdminCenterId($admin, $session->center_id);
+        }
+
+        if ($session->upload_status === self::STATUS_FAILED) {
+            return $session;
+        }
+
+        if (! $this->storageService->exists($session->object_key)) {
+            $session->upload_status = self::STATUS_FAILED;
+            $session->error_message = $errorMessage ?? 'Uploaded object not found.';
+            $session->save();
+
+            return $session;
+        }
+
+        $session->upload_status = self::STATUS_READY;
+        $session->error_message = null;
+        $session->save();
 
         return $session;
     }

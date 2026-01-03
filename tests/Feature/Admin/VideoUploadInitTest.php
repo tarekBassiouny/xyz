@@ -151,3 +151,53 @@ it('rejects upload when center library is missing', function (): void {
 
     $response->assertStatus(422);
 });
+
+it('creates a new upload session on retry', function (): void {
+    config(['bunny.api.library_id' => 123]);
+
+    $center = Center::factory()->create();
+
+    $admin = $this->asAdmin();
+    $admin->update(['center_id' => $center->id]);
+    $video = Video::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'encoding_status' => 0,
+        'lifecycle_status' => 0,
+        'upload_session_id' => null,
+    ]);
+
+    $this->mock(BunnyStreamService::class)
+        ->shouldReceive('createVideo')
+        ->twice()
+        ->andReturn(
+            [
+                'id' => 'bunny-111',
+                'upload_url' => 'https://video.bunnycdn.com/library/123/videos/bunny-111',
+                'library_id' => 123,
+            ],
+            [
+                'id' => 'bunny-222',
+                'upload_url' => 'https://video.bunnycdn.com/library/123/videos/bunny-222',
+                'library_id' => 123,
+            ]
+        );
+
+    $first = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$center->id}/videos/upload-sessions", [
+        'video_id' => $video->id,
+        'original_filename' => 'sample.mp4',
+    ], $this->adminHeaders());
+    $first->assertCreated();
+
+    $second = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$center->id}/videos/upload-sessions", [
+        'video_id' => $video->id,
+        'original_filename' => 'sample.mp4',
+    ], $this->adminHeaders());
+    $second->assertCreated();
+
+    $video->refresh();
+    expect($video->upload_session_id)->not->toBeNull()
+        ->and($video->source_id)->toBe('bunny-222');
+
+    $this->assertDatabaseCount('video_upload_sessions', 2);
+});

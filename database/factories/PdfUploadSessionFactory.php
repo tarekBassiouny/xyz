@@ -21,6 +21,8 @@ class PdfUploadSessionFactory extends Factory
             'center_id' => $center,
             'created_by' => User::factory()->for($center, 'center'),
             'object_key' => 'centers/1/pdfs/demo.pdf',
+            'upload_status' => $this->faker->numberBetween(0, 3),
+            'error_message' => null,
             'file_extension' => 'pdf',
             'file_size_kb' => 1024,
             'expires_at' => now()->addMinutes(10),

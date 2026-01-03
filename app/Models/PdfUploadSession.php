@@ -14,6 +14,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property int $center_id
  * @property int $created_by
  * @property string $object_key
+ * @property int $upload_status
+ * @property string|null $error_message
  * @property string $file_extension
  * @property int|null $file_size_kb
  * @property \Illuminate\Support\CarbonImmutable|null $expires_at
@@ -31,6 +33,8 @@ class PdfUploadSession extends Model
         'center_id',
         'created_by',
         'object_key',
+        'upload_status',
+        'error_message',
         'file_extension',
         'file_size_kb',
         'expires_at',
@@ -41,6 +45,7 @@ class PdfUploadSession extends Model
         'created_by' => 'integer',
         'file_size_kb' => 'integer',
         'expires_at' => 'immutable_datetime',
+        'upload_status' => 'integer',
     ];
 
     /** @return BelongsTo<Center, self> */

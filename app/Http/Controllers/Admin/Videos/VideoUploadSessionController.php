@@ -6,9 +6,11 @@ namespace App\Http\Controllers\Admin\Videos;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Videos\StoreVideoUploadSessionRequest;
+use App\Http\Requests\Admin\Videos\UpdateVideoUploadSessionRequest;
 use App\Models\Center;
 use App\Models\User;
 use App\Models\Video;
+use App\Models\VideoUploadSession;
 use App\Services\Videos\VideoUploadService;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
@@ -49,6 +51,35 @@ class VideoUploadSessionController extends Controller
         ], 201);
     }
 
+    public function update(
+        UpdateVideoUploadSessionRequest $request,
+        Center $center,
+        VideoUploadSession $videoUploadSession
+    ): JsonResponse {
+        $admin = $this->requireAdmin();
+
+        if ((int) $videoUploadSession->center_id !== (int) $center->id) {
+            $this->notFound();
+        }
+
+        $session = $this->uploadService->transition(
+            $admin,
+            $videoUploadSession,
+            (string) $request->input('status'),
+            $request->validated()
+        );
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $session->id,
+                'upload_status' => $session->upload_status,
+                'progress_percent' => $session->progress_percent,
+                'error_message' => $session->error_message,
+            ],
+        ]);
+    }
+
     private function requireAdmin(): User
     {
         $admin = request()->user();
@@ -72,7 +103,7 @@ class VideoUploadSessionController extends Controller
             'success' => false,
             'error' => [
                 'code' => 'NOT_FOUND',
-                'message' => 'Video not found.',
+                'message' => 'Video upload session not found.',
             ],
         ], 404));
     }

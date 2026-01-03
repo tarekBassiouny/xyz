@@ -12,6 +12,7 @@ use App\Models\User;
 use App\Models\Video;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\Contracts\CourseAttachmentServiceInterface;
+use App\Services\Pdfs\PdfUploadSessionService;
 use App\Services\Videos\VideoUploadService;
 use Illuminate\Validation\ValidationException;
 
@@ -74,6 +75,7 @@ class CourseAttachmentService implements CourseAttachmentServiceInterface
         $this->centerScopeService->assertAdminSameCenter($actor, $course);
         $pdf = Pdf::findOrFail($pdfId);
         $this->assertSameCenter($course, $pdf);
+        $this->assertPdfReady($pdf);
 
         $existing = CoursePdf::withTrashed()
             ->where('course_id', $course->id)
@@ -156,6 +158,24 @@ class CourseAttachmentService implements CourseAttachmentServiceInterface
                     'video_id' => ['Video upload session is not ready.'],
                 ]);
             }
+        }
+    }
+
+    private function assertPdfReady(Pdf $pdf): void
+    {
+        if ($pdf->upload_session_id === null) {
+            throw ValidationException::withMessages([
+                'pdf_id' => ['PDF is not ready to be attached.'],
+            ]);
+        }
+
+        $pdf->loadMissing('uploadSession');
+        $status = $pdf->uploadSession?->upload_status;
+
+        if ($status !== PdfUploadSessionService::STATUS_READY) {
+            throw ValidationException::withMessages([
+                'pdf_id' => ['PDF upload session is not ready.'],
+            ]);
         }
     }
 }

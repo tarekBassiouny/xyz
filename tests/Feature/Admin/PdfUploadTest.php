@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Models\Pdf;
 use App\Models\PdfUploadSession;
+use App\Services\Pdfs\PdfUploadSessionService;
 use App\Services\Storage\Contracts\StorageServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
@@ -54,5 +55,59 @@ it('creates pdf from upload session', function (): void {
     expect($pdf)->not->toBeNull()
         ->and($pdf?->source_type)->toBe(1)
         ->and($pdf?->source_provider)->toBe('spaces')
+        ->and($pdf?->source_id)->toBe($session->object_key);
+});
+
+it('fails finalize when uploaded object is missing', function (): void {
+    $center = \App\Models\Center::factory()->create();
+    $admin = $this->asAdmin();
+    $admin->update(['center_id' => $center->id]);
+    $session = PdfUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'upload_status' => PdfUploadSessionService::STATUS_PENDING,
+    ]);
+
+    $storage = Mockery::mock(StorageServiceInterface::class);
+    $storage->shouldReceive('exists')->once()->with($session->object_key)->andReturn(false);
+    $this->app->instance(StorageServiceInterface::class, $storage);
+
+    $response = $this->actingAs($admin, 'admin')->postJson(
+        "/api/v1/admin/centers/{$center->id}/pdfs/upload-sessions/{$session->id}/finalize",
+        ['title' => 'Doc'],
+        $this->adminHeaders()
+    );
+
+    $response->assertStatus(422);
+
+    $session->refresh();
+    expect($session->upload_status)->toBe(PdfUploadSessionService::STATUS_FAILED);
+});
+
+it('finalizes upload session and creates pdf when object exists', function (): void {
+    $center = \App\Models\Center::factory()->create();
+    $admin = $this->asAdmin();
+    $admin->update(['center_id' => $center->id]);
+    $session = PdfUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'upload_status' => PdfUploadSessionService::STATUS_PENDING,
+    ]);
+
+    $storage = Mockery::mock(StorageServiceInterface::class);
+    $storage->shouldReceive('exists')->once()->with($session->object_key)->andReturn(true);
+    $this->app->instance(StorageServiceInterface::class, $storage);
+
+    $response = $this->actingAs($admin, 'admin')->postJson(
+        "/api/v1/admin/centers/{$center->id}/pdfs/upload-sessions/{$session->id}/finalize",
+        ['title' => 'Doc'],
+        $this->adminHeaders()
+    );
+
+    $response->assertOk()->assertJsonPath('data.upload_status', PdfUploadSessionService::STATUS_READY);
+
+    $pdf = Pdf::first();
+    expect($pdf)->not->toBeNull()
+        ->and($pdf?->upload_session_id)->toBe($session->id)
         ->and($pdf?->source_id)->toBe($session->object_key);
 });

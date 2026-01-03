@@ -7,6 +7,7 @@ use App\Models\Center;
 use App\Models\Course;
 use App\Models\Instructor;
 use App\Models\Pdf;
+use App\Models\PdfUploadSession;
 use App\Models\Permission;
 use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
@@ -14,6 +15,7 @@ use App\Models\Role;
 use App\Models\Section;
 use App\Models\User;
 use App\Models\Video;
+use App\Services\Pdfs\PdfUploadSessionService;
 use Illuminate\Auth\Middleware\Authenticate;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
@@ -214,9 +216,15 @@ it('removes video', function (): void {
 it('assigns pdf', function (): void {
     $center = Center::factory()->create();
     $course = Course::factory()->create(['center_id' => $center->id]);
+    $session = PdfUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $course->created_by,
+        'upload_status' => PdfUploadSessionService::STATUS_READY,
+    ]);
     $pdf = Pdf::factory()->create([
         'center_id' => $center->id,
         'created_by' => $course->created_by,
+        'upload_session_id' => $session->id,
     ]);
 
     $response = $this->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/pdfs", [

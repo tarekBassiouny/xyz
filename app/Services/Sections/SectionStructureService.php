@@ -11,6 +11,7 @@ use App\Models\Section;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Centers\CenterScopeService;
+use App\Services\Pdfs\PdfUploadSessionService;
 use App\Services\Sections\Contracts\SectionStructureServiceInterface;
 use App\Services\Videos\VideoUploadService;
 use Illuminate\Support\Collection;
@@ -114,6 +115,7 @@ class SectionStructureService implements SectionStructureServiceInterface
         $this->assertCenterScope($section, $actor);
         $this->assertSectionActive($section);
         $this->assertPdfBelongsToCourse($section, $pdf);
+        $this->assertPdfReady($pdf);
 
         $pivot = CoursePdf::withTrashed()
             ->where('pdf_id', $pdf->id)
@@ -352,6 +354,24 @@ class SectionStructureService implements SectionStructureServiceInterface
         if ($attachedToOtherCourse) {
             throw ValidationException::withMessages([
                 'course_id' => ['PDF is already attached to another course.'],
+            ]);
+        }
+    }
+
+    private function assertPdfReady(Pdf $pdf): void
+    {
+        if ($pdf->upload_session_id === null) {
+            throw ValidationException::withMessages([
+                'pdf_id' => ['PDF is not ready to be attached.'],
+            ]);
+        }
+
+        $pdf->loadMissing('uploadSession');
+        $status = $pdf->uploadSession?->upload_status;
+
+        if ($status !== PdfUploadSessionService::STATUS_READY) {
+            throw ValidationException::withMessages([
+                'pdf_id' => ['PDF upload session is not ready.'],
             ]);
         }
     }

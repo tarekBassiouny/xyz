@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 use App\Models\Center;
 use App\Models\Course;
+use App\Models\Pdf;
+use App\Models\PdfUploadSession;
 use App\Models\Section;
 use App\Models\Video;
 use App\Models\VideoUploadSession;
+use App\Services\Pdfs\PdfUploadSessionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class)->group('videos');
@@ -73,6 +76,51 @@ it('blocks attaching non-ready video to section', function (): void {
     $response->assertStatus(422);
 });
 
+it('blocks attaching non-ready pdf to course', function (): void {
+    $admin = $this->asAdmin();
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['created_by' => $admin->id, 'center_id' => $center->id]);
+    $session = PdfUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'upload_status' => PdfUploadSessionService::STATUS_UPLOADING,
+    ]);
+    $pdf = Pdf::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'upload_session_id' => $session->id,
+    ]);
+
+    $response = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/pdfs", [
+        'pdf_id' => $pdf->id,
+    ], $this->adminHeaders());
+
+    $response->assertStatus(422);
+});
+
+it('blocks attaching non-ready pdf to section', function (): void {
+    $admin = $this->asAdmin();
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['created_by' => $admin->id, 'center_id' => $center->id]);
+    $section = Section::factory()->create(['course_id' => $course->id]);
+    $session = PdfUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'upload_status' => PdfUploadSessionService::STATUS_UPLOADING,
+    ]);
+    $pdf = Pdf::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'upload_session_id' => $session->id,
+    ]);
+
+    $response = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/sections/{$section->id}/pdfs", [
+        'pdf_id' => $pdf->id,
+    ], $this->adminHeaders());
+
+    $response->assertStatus(422);
+});
+
 it('allows attaching ready video', function (): void {
     $admin = $this->asAdmin();
     $center = Center::factory()->create();
@@ -93,6 +141,33 @@ it('allows attaching ready video', function (): void {
 
     $sectionAttach = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/sections/{$section->id}/videos", [
         'video_id' => $video->id,
+    ], $this->adminHeaders());
+    $sectionAttach->assertCreated();
+});
+
+it('allows attaching ready pdf to course and section', function (): void {
+    $admin = $this->asAdmin();
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['created_by' => $admin->id, 'center_id' => $center->id]);
+    $section = Section::factory()->create(['course_id' => $course->id]);
+    $session = PdfUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'upload_status' => PdfUploadSessionService::STATUS_READY,
+    ]);
+    $pdf = Pdf::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $admin->id,
+        'upload_session_id' => $session->id,
+    ]);
+
+    $courseAttach = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/pdfs", [
+        'pdf_id' => $pdf->id,
+    ], $this->adminHeaders());
+    $courseAttach->assertCreated();
+
+    $sectionAttach = $this->actingAs($admin, 'admin')->postJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}/sections/{$section->id}/pdfs", [
+        'pdf_id' => $pdf->id,
     ], $this->adminHeaders());
     $sectionAttach->assertCreated();
 });

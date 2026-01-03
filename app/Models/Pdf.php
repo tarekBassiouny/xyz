@@ -23,9 +23,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property string|null $source_url
  * @property int|null $file_size_kb
  * @property string $file_extension
+ * @property int|null $upload_session_id
  * @property int $created_by
  * @property-read User $creator
  * @property-read Center $center
+ * @property-read PdfUploadSession|null $uploadSession
  * @property-read \Illuminate\Database\Eloquent\Collection<int, Course> $courses
  */
 class Pdf extends Model
@@ -46,6 +48,7 @@ class Pdf extends Model
         'source_url',
         'file_size_kb',
         'file_extension',
+        'upload_session_id',
         'is_demo',
         'created_by',
     ];
@@ -57,6 +60,7 @@ class Pdf extends Model
         'file_size_kb' => 'integer',
         'source_type' => 'integer',
         'is_demo' => 'boolean',
+        'upload_session_id' => 'integer',
     ];
 
     /** @var array<int, string> */
@@ -75,6 +79,12 @@ class Pdf extends Model
     public function center(): BelongsTo
     {
         return $this->belongsTo(Center::class);
+    }
+
+    /** @return BelongsTo<PdfUploadSession, self> */
+    public function uploadSession(): BelongsTo
+    {
+        return $this->belongsTo(PdfUploadSession::class, 'upload_session_id');
     }
 
     /** @return BelongsToMany<Course, self> */

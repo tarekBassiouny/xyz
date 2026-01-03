@@ -3,12 +3,14 @@
 use App\Models\Center;
 use App\Models\Course;
 use App\Models\Pdf;
+use App\Models\PdfUploadSession;
 use App\Models\Pivots\CoursePdf;
 use App\Models\Pivots\CourseVideo;
 use App\Models\User;
 use App\Models\Video;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Courses\CourseAttachmentService;
+use App\Services\Pdfs\PdfUploadSessionService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(Tests\TestCase::class, RefreshDatabase::class)->group('course', 'services', 'content', 'admin');
@@ -38,7 +40,16 @@ it('assigns and removes pdf via pivot model', function (): void {
     $center = Center::factory()->create();
     $course = Course::factory()->create(['center_id' => $center->id]);
     $actor = User::factory()->create(['center_id' => $center->id]);
-    $pdf = Pdf::factory()->create(['center_id' => $center->id, 'created_by' => $actor->id]);
+    $session = PdfUploadSession::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $actor->id,
+        'upload_status' => PdfUploadSessionService::STATUS_READY,
+    ]);
+    $pdf = Pdf::factory()->create([
+        'center_id' => $center->id,
+        'created_by' => $actor->id,
+        'upload_session_id' => $session->id,
+    ]);
 
     $service->assignPdf($course, $pdf->id, $actor);
     expect(CoursePdf::where('course_id', $course->id)->where('pdf_id', $pdf->id)->exists())->toBeTrue();

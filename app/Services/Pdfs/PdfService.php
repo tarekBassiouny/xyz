@@ -54,6 +54,7 @@ class PdfService
             $payload['source_url'] = null;
             $payload['file_extension'] = $session->file_extension;
             $payload['file_size_kb'] = $session->file_size_kb;
+            $payload['upload_session_id'] = $session->id;
         } else {
             if (! isset($data['source_id']) || ! is_string($data['source_id']) || $data['source_id'] === '') {
                 throw ValidationException::withMessages([

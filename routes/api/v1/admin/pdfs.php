@@ -11,4 +11,5 @@ Route::middleware('require.permission:pdf.manage')->group(function (): void {
     Route::put('/centers/{center}/pdfs/{pdf}', [PdfController::class, 'update'])->whereNumber('center');
     Route::delete('/centers/{center}/pdfs/{pdf}', [PdfController::class, 'destroy'])->whereNumber('center');
     Route::post('/centers/{center}/pdfs/upload-sessions', [PdfUploadSessionController::class, 'store'])->whereNumber('center');
+    Route::post('/centers/{center}/pdfs/upload-sessions/{pdfUploadSession}/finalize', [PdfUploadSessionController::class, 'finalize'])->whereNumber('center');
 });
