@@ -10,7 +10,7 @@
     ],
     "info": {
         "name": "XYZ-LMS API Documentation",
-        "_postman_id": "cac3076e-7f12-4b51-9673-85d26aa30a6b",
+        "_postman_id": "8b262b28-6ea0-4e5d-8f12-494ae229233e",
         "description": "",
         "schema": "https:\/\/schema.getpostman.com\/json\/collection\/v2.1.0\/collection.json"
     },
@@ -322,9 +322,9 @@
                                 },
                                 {
                                     "key": "is_featured",
-                                    "value": "1",
+                                    "value": "",
                                     "description": "",
-                                    "disabled": false
+                                    "disabled": true
                                 },
                                 {
                                     "key": "publish_from",
@@ -339,7 +339,7 @@
                                     "disabled": false
                                 }
                             ],
-                            "raw": "{{baseUrl}}\/api\/v1\/courses\/explore?per_page=15&page=1&category_id=3&instructor_id=5&enrolled=1&is_featured=1&publish_from=2025-01-01&publish_to=2025-01-31"
+                            "raw": "{{baseUrl}}\/api\/v1\/courses\/explore?per_page=15&page=1&category_id=3&instructor_id=5&enrolled=1&is_featured=&publish_from=2025-01-01&publish_to=2025-01-31"
                         },
                         "method": "GET",
                         "header": [

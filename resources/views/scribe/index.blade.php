@@ -439,7 +439,7 @@
     </ul>
 
     <ul class="toc-footer" id="last-updated">
-        <li>Last updated: January 22, 2026</li>
+        <li>Last updated: January 24, 2026</li>
     </ul>
 </div>
 
@@ -1615,7 +1615,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
 
 <div class="bash-example">
     <pre><code class="language-bash">curl --request GET \
-    --get "http://xyz-lms.test/api/v1/courses/explore?per_page=15&amp;page=1&amp;category_id=3&amp;instructor_id=5&amp;enrolled=1&amp;is_featured=1&amp;publish_from=2025-01-01&amp;publish_to=2025-01-31" \
+    --get "http://xyz-lms.test/api/v1/courses/explore?per_page=15&amp;page=1&amp;category_id=3&amp;instructor_id=5&amp;enrolled=1&amp;is_featured=&amp;publish_from=2025-01-01&amp;publish_to=2025-01-31" \
     --header "Content-Type: application/json" \
     --header "Accept: application/json" \
     --header "X-Locale: {{locale}}" \
@@ -1633,7 +1633,7 @@ const params = {
     "category_id": "3",
     "instructor_id": "5",
     "enrolled": "1",
-    "is_featured": "1",
+    "is_featured": "0",
     "publish_from": "2025-01-01",
     "publish_to": "2025-01-31",
 };
@@ -1842,7 +1842,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
             <code>false</code>
         </label>
     <br>
-<p>Example: <code>true</code></p>
+<p>Example: <code>false</code></p>
             </div>
                                     <div style="padding-left: 28px; clear: unset;">
                 <b style="line-height: 2;"><code>publish_from</code></b>&nbsp;&nbsp;
@@ -7373,7 +7373,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --header "Accept: application/json" \
     --header "X-Locale: {{locale}}" \
     --header "X-Api-Key: {{api_key}}" \
-    --form "logo=@/tmp/phpgigo7mmbatou504jeb7" </code></pre></div>
+    --form "logo=@/tmp/phpavma5kgul7b7agtXW3L" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -7520,7 +7520,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpgigo7mmbatou504jeb7</code></p>
+<p>Center logo image file. Must be an image. Must not be greater than 5120 kilobytes. Example: <code>/tmp/phpavma5kgul7b7agtXW3L</code></p>
         </div>
         </form>
 
@@ -16780,7 +16780,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Math"\
     --form "metadata[languages][]=en"\
-    --form "avatar=@/tmp/phpe1fmgjuoso1uePsYwQB" </code></pre></div>
+    --form "avatar=@/tmp/phpd36hd7fqe4dleDV6c27" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -16987,7 +16987,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpe1fmgjuoso1uePsYwQB</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpd36hd7fqe4dleDV6c27</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;
@@ -17222,7 +17222,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
     --form "phone=+1234567890"\
     --form "social_links[]=https://linkedin.com/in/johndoe"\
     --form "metadata[specialization]=Physics"\
-    --form "avatar=@/tmp/phpngj9kbkh965ideIlmE2" </code></pre></div>
+    --form "avatar=@/tmp/phpc05iq0c5t8186ZtOS7E" </code></pre></div>
 
 
 <div class="javascript-example">
@@ -17445,7 +17445,7 @@ You can check the Dev Tools console for debugging information.</code></pre>
                value=""
                data-component="body">
     <br>
-<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpngj9kbkh965ideIlmE2</code></p>
+<p>Profile image file upload. Must be a file. Must be an image. Must not be greater than 512000 kilobytes. Example: <code>/tmp/phpc05iq0c5t8186ZtOS7E</code></p>
         </div>
                 <div style=" padding-left: 28px;  clear: unset;">
             <b style="line-height: 2;"><code>email</code></b>&nbsp;&nbsp;

@@ -13,11 +13,12 @@ use App\Models\User;
 use App\Models\Video;
 use App\Services\Bunny\BunnyEmbedTokenService;
 use App\Services\Contracts\ViewLimitServiceInterface;
+use App\Services\Playback\Contracts\PlaybackServiceInterface;
 use App\Support\ErrorCodes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
-class PlaybackService
+class PlaybackService implements PlaybackServiceInterface
 {
     private const BUNNY_EMBED_BASE_URL = 'https://iframe.mediadelivery.net/embed';
 
@@ -261,6 +262,8 @@ class PlaybackService
 
         // Check lock status after saving, so the current session's full play is counted
         if ($becameFullPlay) {
+            $this->incrementVideoViewCount($session->video);
+
             $isLocked = $this->viewLimitService->isLocked($student, $session->video, $session->course);
             if ($isLocked) {
                 $session->update(['is_locked' => true]);
@@ -336,6 +339,14 @@ class PlaybackService
         }
 
         return (int) $enrollment->id;
+    }
+
+    /**
+     * Increment the cached view count on the video.
+     */
+    private function incrementVideoViewCount(Video $video): void
+    {
+        $video->increment('views_count');
     }
 
     /**

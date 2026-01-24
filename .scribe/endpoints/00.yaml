@@ -435,7 +435,7 @@ endpoints:
         name: is_featured
         description: ''
         required: false
-        example: true
+        example: false
         type: boolean
         enumValues: []
         exampleWasSpecified: false
@@ -469,7 +469,7 @@ endpoints:
       category_id: 3
       instructor_id: 5
       enrolled: true
-      is_featured: true
+      is_featured: false
       publish_from: '2025-01-01'
       publish_to: '2025-01-31'
     bodyParameters: []
