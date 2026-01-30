@@ -28,6 +28,14 @@ Route::post('/auth/refresh', [AuthController::class, 'refresh']);
 
 /*
 |--------------------------------------------------------------------------
+| Device Change (Public, requires OTP verification)
+|--------------------------------------------------------------------------
+*/
+Route::post('/device-change/submit', [DeviceChangeRequestController::class, 'submitWithOtp'])
+    ->middleware('throttle:otp-verify');
+
+/*
+|--------------------------------------------------------------------------
 | Authenticated Mobile Routes
 |--------------------------------------------------------------------------
 */
@@ -125,13 +133,6 @@ Route::middleware('jwt.mobile')->group(function (): void {
         '/centers/{center}/courses/{course}/videos/{video}/extra-view',
         [ExtraViewRequestController::class, 'store']
     );
-
-    /*
-    |--------------------------------------------------------------------------
-    | Device Change Requests
-    |--------------------------------------------------------------------------
-    */
-    Route::post('/settings/device-change', [DeviceChangeRequestController::class, 'store']);
 
     /*
     |--------------------------------------------------------------------------
