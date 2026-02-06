@@ -29,10 +29,7 @@ class AuditLogQueryService
 
         $query = $this->applyScope($query, $admin);
         if ($admin->hasRole('super_admin') && $filters->centerId !== null) {
-            $centerId = $filters->centerId;
-            $query->whereHas('user', static function (Builder $builder) use ($centerId): void {
-                $builder->where('center_id', $centerId);
-            });
+            $query = $this->applyCenterFilter($query, $filters->centerId);
         }
 
         $query = $this->applyFilters($query, $filters);
@@ -91,8 +88,23 @@ class AuditLogQueryService
         $centerId = $admin->center_id;
         $this->centerScopeService->assertAdminCenterId($admin, is_numeric($centerId) ? (int) $centerId : null);
 
-        return $query->whereHas('user', static function (Builder $builder) use ($centerId): void {
-            $builder->where('center_id', (int) $centerId);
+        return $this->applyCenterFilter($query, (int) $centerId);
+    }
+
+    /**
+     * @param  Builder<AuditLog>  $query
+     * @return Builder<AuditLog>
+     */
+    private function applyCenterFilter(Builder $query, int $centerId): Builder
+    {
+        return $query->where(static function (Builder $builder) use ($centerId): void {
+            $builder->where('center_id', $centerId)
+                ->orWhere(static function (Builder $fallback) use ($centerId): void {
+                    $fallback->whereNull('center_id')
+                        ->whereHas('user', static function (Builder $userQuery) use ($centerId): void {
+                            $userQuery->where('center_id', $centerId);
+                        });
+                });
         });
     }
 }

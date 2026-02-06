@@ -124,15 +124,37 @@ class AdminAuthController extends Controller
 
     public function refresh(): JsonResponse
     {
-        /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
-        $guard = Auth::guard('admin');
-        $newToken = $guard->refresh();
+        try {
+            /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
+            $guard = Auth::guard('admin');
+            $token = $guard->getToken();
 
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'token' => $newToken,
-            ],
-        ]);
+            if (! $token) {
+                return response()->json([
+                    'success' => false,
+                    'error' => [
+                        'code' => 'TOKEN_MISSING',
+                        'message' => 'Token not provided.',
+                    ],
+                ], 400);
+            }
+
+            $newToken = $guard->refresh();
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'token' => $newToken,
+                ],
+            ]);
+        } catch (\Throwable $throwable) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'REFRESH_FAILED',
+                    'message' => 'Failed to refresh token.',
+                ],
+            ], 401);
+        }
     }
 }

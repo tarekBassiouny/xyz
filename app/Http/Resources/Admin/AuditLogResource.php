@@ -25,7 +25,8 @@ class AuditLogResource extends JsonResource
         return [
             'id' => $log->id,
             'user_id' => $log->user_id,
-            'center_id' => $log->user?->center_id,
+            'center_id' => $log->center_id ?? $log->user?->center_id,
+            'course_id' => $log->course_id ?? data_get($log->metadata, 'course_id'),
             'user' => new UserSummaryResource($this->whenLoaded('user')),
             'action' => $log->action,
             'entity_type' => $log->entity_type,
