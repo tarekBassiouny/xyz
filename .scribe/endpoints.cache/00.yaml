@@ -3245,6 +3245,77 @@ endpoints:
   -
     custom: []
     httpMethods:
+      - POST
+    uri: api/v1/admin/enrollments/bulk
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Bulk approve enrollments.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      center_id:
+        custom: []
+        name: center_id
+        description: 'Center ID to scope enrollment approvals. The <code>id</code> of an existing record in the centers table.'
+        required: true
+        example: 2
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      course_id:
+        custom: []
+        name: course_id
+        description: 'Course ID to enroll students into. The <code>id</code> of an existing record in the courses table.'
+        required: true
+        example: 12
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      user_ids:
+        custom: []
+        name: user_ids
+        description: 'The <code>id</code> of an existing record in the users table.'
+        required: false
+        example:
+          - 16
+        type: 'integer[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      center_id: 2
+      course_id: 12
+      user_ids:
+        - 16
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
       - PUT
     uri: 'api/v1/admin/enrollments/{enrollment_id}'
     metadata:
@@ -9695,6 +9766,99 @@ endpoints:
     custom: []
     httpMethods:
       - GET
+    uri: api/v1/admin/analytics/students
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Get analytics for a single student.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      student_id:
+        custom: []
+        name: student_id
+        description: 'Student ID to retrieve analytics for. The <code>id</code> of an existing record in the users table.'
+        required: true
+        example: 42
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      center_id:
+        custom: []
+        name: center_id
+        description: 'Filter analytics by center ID (super admin only). The <code>id</code> of an existing record in the centers table.'
+        required: false
+        example: 12
+        type: integer
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      from:
+        custom: []
+        name: from
+        description: 'Start date (YYYY-MM-DD). Must be a valid date.'
+        required: false
+        example: '2026-01-01'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      to:
+        custom: []
+        name: to
+        description: 'End date (YYYY-MM-DD). Must be a valid date. Must be a date after or equal to <code>from</code>.'
+        required: false
+        example: '2026-01-31'
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      timezone:
+        custom: []
+        name: timezone
+        description: 'Timezone for date filters (default UTC). Must be a valid time zone, such as <code>Africa/Accra</code>.'
+        required: false
+        example: UTC
+        type: string
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      student_id: 42
+      center_id: 12
+      from: '2026-01-01'
+      to: '2026-01-31'
+      timezone: UTC
+    bodyParameters: []
+    cleanBodyParameters: []
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - GET
     uri: api/v1/admin/extra-view-requests
     metadata:
       custom: []
@@ -11759,9 +11923,9 @@ endpoints:
       search:
         custom: []
         name: search
-        description: 'Search students by name, username, or email.'
+        description: 'Search students by name, username, email, or phone.'
         required: false
-        example: Sara
+        example: '010'
         type: string
         enumValues: []
         exampleWasSpecified: false
@@ -11772,7 +11936,7 @@ endpoints:
       page: 1
       center_id: 2
       status: 1
-      search: Sara
+      search: '010'
     bodyParameters: []
     cleanBodyParameters: []
     fileParameters: []
@@ -11859,6 +12023,68 @@ endpoints:
       name: 'Student One'
       email: student@example.com
       status: 1
+    fileParameters: []
+    responses: []
+    responseFields: []
+    auth: []
+    controller: null
+    method: null
+    route: null
+  -
+    custom: []
+    httpMethods:
+      - POST
+    uri: api/v1/admin/students/bulk-status
+    metadata:
+      custom: []
+      groupName: Endpoints
+      groupDescription: ''
+      subgroup: ''
+      subgroupDescription: ''
+      title: 'Bulk update student statuses.'
+      description: ''
+      authenticated: false
+      deprecated: false
+    headers:
+      Content-Type: application/json
+      Accept: application/json
+      X-Locale: '@{{locale}}'
+      X-Api-Key: '@{{api_key}}'
+    urlParameters: []
+    cleanUrlParameters: []
+    queryParameters:
+      status:
+        custom: []
+        name: status
+        description: 'Student status (0 inactive, 1 active, 2 banned).'
+        required: true
+        example: 1
+        type: integer
+        enumValues:
+          - '0'
+          - '1'
+          - '2'
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+      student_ids:
+        custom: []
+        name: student_ids
+        description: 'The <code>id</code> of an existing record in the users table.'
+        required: false
+        example:
+          - 16
+        type: 'integer[]'
+        enumValues: []
+        exampleWasSpecified: false
+        nullable: false
+        deprecated: false
+    cleanQueryParameters:
+      status: 1
+      student_ids:
+        - 16
+    bodyParameters: []
+    cleanBodyParameters: []
     fileParameters: []
     responses: []
     responseFields: []

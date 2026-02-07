@@ -95,7 +95,7 @@ final class AnalyticsStudentListSummaryService
                 'active_enrollments' => (int) ($enrollmentRow->active_enrollments ?? 0),
                 'total_sessions' => (int) ($sessionRow->total_sessions ?? 0),
                 'full_play_sessions' => (int) ($sessionRow->full_play_sessions ?? 0),
-                'viewed_videos' => (int) ($viewCounts[$student->id] ?? 0),
+                'viewed_videos' => $viewCounts[$student->id] ?? 0,
                 'last_activity_at' => $sessionRow?->last_activity_at !== null
                     ? (string) $sessionRow->last_activity_at
                     : null,

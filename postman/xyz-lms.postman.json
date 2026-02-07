@@ -1,7 +1,7 @@
 {
   "info": {
     "name": "XYZ LMS API (v1)",
-    "_postman_id": "b54f3d6e-1402-42a6-a9b4-133733b3f332",
+    "_postman_id": "c757f245-1f61-4d87-95f7-4dc5e9bce604",
     "description": "",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
@@ -691,6 +691,73 @@
                 }
               ],
               "raw": "{{baseUrl}}/api/v1/admin/analytics/devices-requests?center_id=12&from=2026-01-01&to=2026-01-31&timezone=UTC"
+            },
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get analytics for a single student.",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/analytics/students",
+              "query": [
+                {
+                  "key": "student_id",
+                  "value": "42",
+                  "description": "Student ID to retrieve analytics for. The id of an existing record in the users table.",
+                  "disabled": false
+                },
+                {
+                  "key": "center_id",
+                  "value": "12",
+                  "description": "Filter analytics by center ID (super admin only). The id of an existing record in the centers table.",
+                  "disabled": false
+                },
+                {
+                  "key": "from",
+                  "value": "2026-01-01",
+                  "description": "Start date (YYYY-MM-DD). Must be a valid date.",
+                  "disabled": false
+                },
+                {
+                  "key": "to",
+                  "value": "2026-01-31",
+                  "description": "End date (YYYY-MM-DD). Must be a valid date. Must be a date after or equal to from.",
+                  "disabled": false
+                },
+                {
+                  "key": "timezone",
+                  "value": "UTC",
+                  "description": "Timezone for date filters (default UTC). Must be a valid time zone, such as Africa/Accra.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/admin/analytics/students?student_id=42&center_id=12&from=2026-01-01&to=2026-01-31&timezone=UTC"
             },
             "method": "GET",
             "header": [
@@ -3637,6 +3704,61 @@
           "response": []
         },
         {
+          "name": "Bulk approve enrollments.",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/enrollments/bulk",
+              "query": [
+                {
+                  "key": "center_id",
+                  "value": "2",
+                  "description": "Center ID to scope enrollment approvals. The id of an existing record in the centers table.",
+                  "disabled": false
+                },
+                {
+                  "key": "course_id",
+                  "value": "12",
+                  "description": "Course ID to enroll students into. The id of an existing record in the courses table.",
+                  "disabled": false
+                },
+                {
+                  "key": "user_ids[0]",
+                  "value": "16",
+                  "description": "The id of an existing record in the users table.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/admin/enrollments/bulk?center_id=2&course_id=12&user_ids[0]=16"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
           "name": "Update an enrollment status.",
           "request": {
             "url": {
@@ -5872,12 +5994,12 @@
                 },
                 {
                   "key": "search",
-                  "value": "Sara",
-                  "description": "Search students by name, username, or email.",
+                  "value": "010",
+                  "description": "Search students by name, username, email, or phone.",
                   "disabled": false
                 }
               ],
-              "raw": "{{baseUrl}}/api/v1/admin/students?per_page=15&page=1&center_id=2&status=1&search=Sara"
+              "raw": "{{baseUrl}}/api/v1/admin/students?per_page=15&page=1&center_id=2&status=1&search=010"
             },
             "method": "GET",
             "header": [
@@ -5946,6 +6068,55 @@
               "mode": "raw",
               "raw": "{\"name\":\"Student One\",\"email\":\"student@example.com\",\"status\":1}"
             },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Bulk update student statuses.",
+          "request": {
+            "url": {
+              "host": "{{baseUrl}}",
+              "path": "api/v1/admin/students/bulk-status",
+              "query": [
+                {
+                  "key": "status",
+                  "value": "1",
+                  "description": "Student status (0 inactive, 1 active, 2 banned).",
+                  "disabled": false
+                },
+                {
+                  "key": "student_ids[0]",
+                  "value": "16",
+                  "description": "The id of an existing record in the users table.",
+                  "disabled": false
+                }
+              ],
+              "raw": "{{baseUrl}}/api/v1/admin/students/bulk-status?status=1&student_ids[0]=16"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json"
+              },
+              {
+                "key": "X-Locale",
+                "value": "{{locale}}"
+              },
+              {
+                "key": "X-Api-Key",
+                "value": "{{api_key}}"
+              }
+            ],
+            "body": null,
             "description": "",
             "auth": {
               "type": "noauth"

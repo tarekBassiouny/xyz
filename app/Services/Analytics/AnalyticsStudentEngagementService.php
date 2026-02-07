@@ -176,7 +176,6 @@ final class AnalyticsStudentEngagementService implements AnalyticsStudentEngagem
                 })->values()->all();
 
                 $courseStats = collect($courseViews)->map(function ($views, $courseId) use ($courses, $perVideoRows): array {
-                    $courseId = (int) $courseId;
                     $course = $courses->get($courseId);
                     $totalSessions = $perVideoRows
                         ->where('course_id', $courseId)
@@ -185,7 +184,7 @@ final class AnalyticsStudentEngagementService implements AnalyticsStudentEngagem
                     return [
                         'course_id' => $courseId,
                         'course_title' => $course instanceof Course ? $course->translate('title') : null,
-                        'views' => (int) $views,
+                        'views' => $views,
                         'total_sessions' => (int) $totalSessions,
                     ];
                 })->values()->all();

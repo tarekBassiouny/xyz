@@ -113,7 +113,7 @@ class AnalyticsController extends Controller
         }
 
         $this->centerScopeService->assertAdminSameCenter($admin, $student);
-        if ($filters->centerId !== null && (int) $filters->centerId !== (int) $student->center_id) {
+        if ($filters->centerId !== null && $filters->centerId !== (int) $student->center_id) {
             throw new HttpResponseException(response()->json([
                 'success' => false,
                 'error' => [
