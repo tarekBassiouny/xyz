@@ -15,6 +15,7 @@ use App\Http\Controllers\Mobile\MeController;
 use App\Http\Controllers\Mobile\PdfController;
 use App\Http\Controllers\Mobile\PlaybackController;
 use App\Http\Controllers\Mobile\SearchController;
+use App\Http\Controllers\Mobile\SurveyController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -150,5 +151,14 @@ Route::middleware('jwt.mobile')->group(function (): void {
         '/centers/{center}/courses/{course}/enroll-request',
         [EnrollmentRequestController::class, 'store']
     );
+
+    /*
+    |--------------------------------------------------------------------------
+    | Surveys
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/surveys/assigned', [SurveyController::class, 'assigned']);
+    Route::get('/surveys/{survey}', [SurveyController::class, 'show']);
+    Route::post('/surveys/{survey}/submit', [SurveyController::class, 'submit']);
 
 });
