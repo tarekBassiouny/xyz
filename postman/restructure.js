@@ -26,6 +26,7 @@ const tree = {
   adminStudents: folder("🧑‍💼 Admin – Students"),
   adminSettings: folder("🧑‍💼 Admin – Settings"),
   adminAudit: folder("🧑‍💼 Admin – Audit Logs"),
+  adminSurveys: folder("🧑‍💼 Admin – Surveys"),
 
   /* -------- PUBLIC -------- */
   public: folder("🔔 Public"),
@@ -38,6 +39,7 @@ const tree = {
   studentRequests: folder("📱 Student – Requests"),
   studentPdfs: folder("📄 Student – PDFs"),
   studentEnrollments: folder("🎓 Student – Enrollments"),
+  mobileSurveys: folder("📱 Mobile – Surveys"),
   instructors: folder("👨‍🏫 Instructors"),
 
   /* -------- HEALTH -------- */
@@ -62,6 +64,7 @@ function route(item) {
   /* ========= ADMIN ========= */
 
   if (has(path, "/api/v1/admin/auth")) return tree.adminAuth;
+  if (has(path, "/api/v1/admin/surveys")) return tree.adminSurveys;
   // Categories & PDFs under centers must be checked BEFORE adminCenters
   if (path.match(/^\/api\/v1\/admin\/centers\/[^/]+\/categories/)) return tree.adminCategories;
   if (path.match(/^\/api\/v1\/admin\/centers\/[^/]+\/pdfs/)) return tree.adminPdfs;
@@ -116,6 +119,9 @@ function route(item) {
   // Enrolled courses
   if (path === "/api/v1/courses/enrolled") return tree.studentCourses;
   if (path === "/api/v1/courses/enrolled/by-instructor") return tree.studentCourses;
+
+  // Surveys
+  if (has(path, "/api/v1/surveys")) return tree.mobileSurveys;
 
   // Explore
   if (path === "/api/v1/courses/explore") return tree.studentCourses;

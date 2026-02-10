@@ -56,6 +56,12 @@ use App\Services\Storage\Contracts\StorageServiceInterface;
 use App\Services\Storage\SpacesStorageService;
 use App\Services\Students\Contracts\StudentNotificationServiceInterface;
 use App\Services\Students\StudentNotificationService;
+use App\Services\Surveys\Contracts\SurveyAssignmentServiceInterface;
+use App\Services\Surveys\Contracts\SurveyResponseServiceInterface;
+use App\Services\Surveys\Contracts\SurveyServiceInterface;
+use App\Services\Surveys\SurveyAssignmentService;
+use App\Services\Surveys\SurveyResponseService;
+use App\Services\Surveys\SurveyService;
 use App\Services\Videos\AdminVideoQueryService;
 use App\Services\Videos\Contracts\AdminVideoQueryServiceInterface;
 use App\Services\Videos\Contracts\VideoServiceInterface;
@@ -105,6 +111,9 @@ class AppServiceProvider extends ServiceProvider
             RoleServiceInterface::class => RoleService::class,
             PermissionServiceInterface::class => PermissionService::class,
             StudentNotificationServiceInterface::class => StudentNotificationService::class,
+            SurveyServiceInterface::class => SurveyService::class,
+            SurveyAssignmentServiceInterface::class => SurveyAssignmentService::class,
+            SurveyResponseServiceInterface::class => SurveyResponseService::class,
         ];
 
         foreach ($bindings as $abstract => $implementation) {

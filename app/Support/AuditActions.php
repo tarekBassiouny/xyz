@@ -167,4 +167,18 @@ final class AuditActions
     public const VIDEO_UPLOAD_SESSION_CREATED = 'video_upload_session_created';
 
     public const VIDEO_UPLOAD_SESSION_TRANSITIONED = 'video_upload_session_transitioned';
+
+    public const SURVEY_CREATED = 'survey_created';
+
+    public const SURVEY_UPDATED = 'survey_updated';
+
+    public const SURVEY_DELETED = 'survey_deleted';
+
+    public const SURVEY_CLOSED = 'survey_closed';
+
+    public const SURVEY_ASSIGNED = 'survey_assigned';
+
+    public const SURVEY_ASSIGNMENT_REMOVED = 'survey_assignment_removed';
+
+    public const SURVEY_SUBMITTED = 'survey_submitted';
 }
