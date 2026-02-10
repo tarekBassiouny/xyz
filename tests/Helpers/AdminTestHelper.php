@@ -47,6 +47,7 @@ trait AdminTestHelper
             'extra_view.manage',
             'instructor.manage',
             'student.manage',
+            'survey.manage',
         ];
 
         $permissionIds = [];
