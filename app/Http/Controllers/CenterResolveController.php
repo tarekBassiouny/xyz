@@ -23,8 +23,8 @@ class CenterResolveController extends Controller
         }
 
         $resolvedCenterId = $request->attributes->get('resolved_center_id');
-        if (! is_numeric($resolvedCenterId) || (int) $resolvedCenterId !== (int) $center->id) {
-            return $this->deny('CENTER_MISMATCH', 'API key does not match center.', 403);
+        if ($resolvedCenterId !== null) {
+            return $this->deny('SYSTEM_API_KEY_REQUIRED', 'System API key is required.', 403);
         }
 
         if ($center->onboarding_status !== Center::ONBOARDING_ACTIVE) {

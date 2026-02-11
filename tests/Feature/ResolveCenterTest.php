@@ -33,7 +33,7 @@ it('returns public center discovery data', function (): void {
     ]);
 
     $response = $this->getJson('/api/v1/resolve/centers/alpha-center', [
-        'X-Api-Key' => 'center-key',
+        'X-Api-Key' => 'system-test-key',
     ]);
 
     $response->assertOk()
@@ -41,9 +41,9 @@ it('returns public center discovery data', function (): void {
         ->assertJsonPath('data.slug', 'alpha-center')
         ->assertJsonPath('data.type', 'branded')
         ->assertJsonPath('data.tier', 'premium')
+        ->assertJsonPath('data.api_key', 'center-key')
         ->assertJsonPath('data.branding.logo_url', 'https://example.com/logo.png')
         ->assertJsonPath('data.branding.primary_color', '#445566');
-    $response->assertJsonMissing(['api_key' => 'center-key']);
 });
 
 it('returns unbranded center data', function (): void {
@@ -58,11 +58,12 @@ it('returns unbranded center data', function (): void {
     ]);
 
     $response = $this->getJson('/api/v1/resolve/centers/unbranded-center', [
-        'X-Api-Key' => 'unbranded-key',
+        'X-Api-Key' => 'system-test-key',
     ]);
 
     $response->assertOk()
         ->assertJsonPath('data.id', $center->id)
+        ->assertJsonPath('data.api_key', 'unbranded-key')
         ->assertJsonPath('data.type', 'unbranded')
         ->assertJsonPath('data.tier', 'standard')
         ->assertJsonPath('data.branding.logo_url', 'https://example.com/unbranded.png')
@@ -86,7 +87,7 @@ it('rejects invalid api key', function (): void {
         ->assertJsonPath('error.code', 'INVALID_API_KEY');
 });
 
-it('rejects api key for another center', function (): void {
+it('rejects center api key and requires system api key', function (): void {
     Center::factory()->create([
         'slug' => 'alpha-center',
         'type' => 1,
@@ -106,7 +107,7 @@ it('rejects api key for another center', function (): void {
 
     $response->assertStatus(403)
         ->assertJsonPath('success', false)
-        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
+        ->assertJsonPath('error.code', 'SYSTEM_API_KEY_REQUIRED');
 });
 
 it('rejects inactive centers', function (): void {
@@ -118,7 +119,7 @@ it('rejects inactive centers', function (): void {
     ]);
 
     $response = $this->getJson('/api/v1/resolve/centers/alpha-center', [
-        'X-Api-Key' => 'alpha-key',
+        'X-Api-Key' => 'system-test-key',
     ]);
 
     $response->assertStatus(403)
@@ -135,7 +136,7 @@ it('returns not found for unknown center slug', function (): void {
     ]);
 
     $response = $this->getJson('/api/v1/resolve/centers/missing-center', [
-        'X-Api-Key' => 'alpha-key',
+        'X-Api-Key' => 'system-test-key',
     ]);
 
     $response->assertStatus(404)
