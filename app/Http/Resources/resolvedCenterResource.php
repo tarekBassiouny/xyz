@@ -33,6 +33,7 @@ class resolvedCenterResource extends JsonResource
         return [
             'id' => $center->id,
             'slug' => $center->slug,
+            'api_key' => $center->api_key,
             'name' => $center->translate('name'),
             'type' => $this->resolveType($center->type),
             'tier' => $this->resolveTier($center->tier),
