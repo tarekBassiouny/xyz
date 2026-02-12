@@ -1,10 +1,12 @@
 <?php
 
 use App\Http\Controllers\Admin\StudentController;
+use App\Http\Controllers\Admin\StudentProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('require.permission:student.manage')->group(function (): void {
     Route::get('/students', [StudentController::class, 'index']);
+    Route::get('/students/{user}/profile', [StudentProfileController::class, 'show']);
     Route::put('/students/{user}', [StudentController::class, 'update']);
     Route::post('/students/bulk-status', [StudentController::class, 'bulkUpdateStatus']);
 });

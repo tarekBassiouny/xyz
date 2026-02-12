@@ -7,21 +7,25 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Surveys\AssignSurveyRequest;
 use App\Http\Requests\Admin\Surveys\ListSurveysRequest;
+use App\Http\Requests\Admin\Surveys\ListSurveyTargetStudentsRequest;
 use App\Http\Requests\Admin\Surveys\StoreSurveyRequest;
 use App\Http\Requests\Admin\Surveys\UpdateSurveyRequest;
 use App\Http\Resources\Admin\SurveyAnalyticsResource;
 use App\Http\Resources\Admin\SurveyResource;
+use App\Http\Resources\Admin\SurveyTargetStudentResource;
 use App\Models\Survey;
 use App\Models\User;
 use App\Services\Surveys\Contracts\SurveyAssignmentServiceInterface;
 use App\Services\Surveys\Contracts\SurveyServiceInterface;
+use App\Services\Surveys\SurveyTargetStudentService;
 use Illuminate\Http\JsonResponse;
 
 class SurveyController extends Controller
 {
     public function __construct(
         private readonly SurveyServiceInterface $surveyService,
-        private readonly SurveyAssignmentServiceInterface $assignmentService
+        private readonly SurveyAssignmentServiceInterface $assignmentService,
+        private readonly SurveyTargetStudentService $targetStudentService
     ) {}
 
     /**
@@ -50,6 +54,49 @@ class SurveyController extends Controller
             'success' => true,
             'message' => 'Operation completed',
             'data' => SurveyResource::collection($paginator->items()),
+            'meta' => [
+                'page' => $paginator->currentPage(),
+                'per_page' => $paginator->perPage(),
+                'total' => $paginator->total(),
+                'last_page' => $paginator->lastPage(),
+            ],
+        ]);
+    }
+
+    /**
+     * List students that can be targeted by survey assignments.
+     */
+    public function targetStudents(ListSurveyTargetStudentsRequest $request): JsonResponse
+    {
+        /** @var User|null $admin */
+        $admin = $request->user();
+
+        if (! $admin instanceof User) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Authentication required.',
+                ],
+            ], 401);
+        }
+
+        $filters = $request->filters();
+
+        $paginator = $this->targetStudentService->paginate(
+            actor: $admin,
+            scopeType: $filters['scope_type'],
+            centerId: $filters['center_id'],
+            status: $filters['status'],
+            search: $filters['search'],
+            perPage: $filters['per_page'],
+            page: $filters['page']
+        );
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Students retrieved successfully',
+            'data' => SurveyTargetStudentResource::collection($paginator->items()),
             'meta' => [
                 'page' => $paginator->currentPage(),
                 'per_page' => $paginator->perPage(),
