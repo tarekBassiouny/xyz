@@ -5,14 +5,16 @@ declare(strict_types=1);
 namespace App\Http\Resources\Admin;
 
 use App\Enums\UserStatus;
+use App\Http\Resources\Admin\Summary\CenterSummaryResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Str;
 
 /**
  * @mixin User
  */
-class StudentProfileResource extends JsonResource
+class SurveyTargetStudentResource extends JsonResource
 {
     /**
      * @return array<string, mixed>
@@ -21,16 +23,9 @@ class StudentProfileResource extends JsonResource
     {
         /** @var User $student */
         $student = $this->resource;
-
         $status = $student->status instanceof UserStatus
             ? $student->status
             : ($student->status !== null ? UserStatus::tryFrom((int) $student->status) : null);
-
-        // Build enrollment resources with context
-        $enrollmentResources = $student->enrollments->map(function ($enrollment) use ($student): \App\Http\Resources\Admin\StudentEnrollmentResource {
-            return (new StudentEnrollmentResource($enrollment))
-                ->setContext($student, $student->playbackSessions);
-        });
 
         return [
             'id' => $student->id,
@@ -38,15 +33,11 @@ class StudentProfileResource extends JsonResource
             'username' => $student->username,
             'email' => $student->email,
             'phone' => $student->phone,
-            'country_code' => $student->country_code,
-            'avatar_url' => $student->avatar_url,
+            'center_id' => $student->center_id,
+            'center' => new CenterSummaryResource($this->whenLoaded('center')),
             'status' => $status?->value ?? $student->status,
+            'status_key' => $status !== null ? Str::snake($status->name) : null,
             'status_label' => $status?->name,
-            'center' => $this->when($student->relationLoaded('center') && $student->center !== null, fn (): array => [
-                'id' => $student->center->id,
-                'name' => $student->center->translate('name'),
-            ]),
-            'enrollments' => $enrollmentResources,
         ];
     }
 }

@@ -2,12 +2,16 @@
 
 declare(strict_types=1);
 
+use App\Enums\CenterType;
+use App\Enums\SurveyAssignableType;
 use App\Enums\SurveyQuestionType;
 use App\Enums\SurveyScopeType;
 use App\Enums\SurveyType;
 use App\Models\Center;
+use App\Models\Course;
 use App\Models\Survey;
 use App\Models\SurveyQuestion;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class)->group('surveys', 'admin');
@@ -95,6 +99,81 @@ it('creates a system survey with questions', function (): void {
     ]);
 
     expect(SurveyQuestion::where('survey_id', $response->json('data.id'))->count())->toBe(2);
+});
+
+it('creates a system survey with all assignment and resolves assignment names', function (): void {
+    $this->asAdmin();
+
+    $eligibleStudent = User::factory()->create([
+        'is_student' => true,
+        'center_id' => null,
+        'name' => 'Eligible Student',
+    ]);
+
+    $brandedCenter = Center::factory()->create(['type' => CenterType::Branded]);
+    User::factory()->create([
+        'is_student' => true,
+        'center_id' => $brandedCenter->id,
+    ]);
+
+    $response = $this->postJson('/api/v1/admin/surveys', [
+        'scope_type' => SurveyScopeType::System->value,
+        'title_translations' => ['en' => 'All Assignment Survey', 'ar' => 'استبيان الكل'],
+        'type' => SurveyType::Feedback->value,
+        'is_active' => true,
+        'assignments' => [
+            ['type' => SurveyAssignableType::All->value],
+        ],
+        'questions' => [
+            [
+                'question_translations' => ['en' => 'How satisfied are you?', 'ar' => 'ما مدى رضاك؟'],
+                'type' => SurveyQuestionType::Rating->value,
+                'is_required' => true,
+            ],
+        ],
+    ], $this->adminHeaders());
+
+    $response->assertCreated()
+        ->assertJsonPath('success', true)
+        ->assertJsonCount(1, 'data.assignments')
+        ->assertJsonPath('data.assignments.0.type', SurveyAssignableType::All->value)
+        ->assertJsonPath('data.assignments.0.assignable_id', $eligibleStudent->id)
+        ->assertJsonPath('data.assignments.0.assignable_name', $eligibleStudent->name);
+});
+
+it('creates a center survey when assignment id is a numeric string', function (): void {
+    $this->asAdmin();
+    $center = Center::factory()->create();
+    $course = Course::factory()->create(['center_id' => $center->id]);
+
+    $response = $this->postJson('/api/v1/admin/surveys', [
+        'scope_type' => SurveyScopeType::Center->value,
+        'center_id' => $center->id,
+        'title_translations' => ['en' => 'String ID Assignment', 'ar' => 'تعيين بمعرف نصي'],
+        'type' => SurveyType::Feedback->value,
+        'is_active' => true,
+        'assignments' => [
+            ['type' => SurveyAssignableType::Course->value, 'id' => (string) $course->id],
+        ],
+        'questions' => [
+            [
+                'question_translations' => ['en' => 'How satisfied are you?', 'ar' => 'ما مدى رضاك؟'],
+                'type' => SurveyQuestionType::Rating->value,
+                'is_required' => true,
+            ],
+        ],
+    ], $this->adminHeaders());
+
+    $response->assertCreated()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.assignments.0.type', SurveyAssignableType::Course->value)
+        ->assertJsonPath('data.assignments.0.assignable_id', $course->id);
+
+    $this->assertDatabaseHas('survey_assignments', [
+        'survey_id' => $response->json('data.id'),
+        'assignable_type' => SurveyAssignableType::Course->value,
+        'assignable_id' => $course->id,
+    ]);
 });
 
 it('creates a survey with far future schedule dates', function (): void {

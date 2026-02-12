@@ -45,7 +45,7 @@ class StudentEnrollmentResource extends JsonResource
         $videos = $course->sections->flatMap(fn ($section) => $section->videos);
 
         // Build video resources with context
-        $videoResources = $videos->map(function ($video) use ($course) {
+        $videoResources = $videos->map(function ($video) use ($course): \App\Http\Resources\Admin\StudentCourseVideoResource {
             $resource = new StudentCourseVideoResource($video);
             if ($this->student !== null && $this->playbackSessions !== null) {
                 $resource->setContext($this->student, $course, $this->playbackSessions);
