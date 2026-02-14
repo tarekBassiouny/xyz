@@ -4,13 +4,14 @@ This document defines the survey behavior currently enforced by backend code and
 
 ## Scope and Roles
 
-- `scope_type=1` (`System`):
-  - Can be created/managed by `super_admin` only.
+- System routes (`/api/v1/admin/surveys*`) are for Najaah App scope.
+  - Can be created/managed by system super admin.
+  - Survey is always system (`scope_type=1`, `center_id=null`) regardless of payload.
   - Targets only:
     - students in unbranded centers
     - students with `center_id = null`
-- `scope_type=2` (`Center`):
-  - Created/managed in a specific center context.
+- Center routes (`/api/v1/admin/centers/{center}/surveys*`) are for branded center scope.
+  - Survey is always center-scoped (`scope_type=2`, `center_id={route center}`) regardless of payload.
   - Targets only students/content within the selected center.
 
 ## Assignment Types
@@ -49,15 +50,26 @@ Removed:
 
 Admin base: `/api/v1/admin`
 
-- `GET /surveys`
-- `POST /surveys`
-- `GET /surveys/{survey}`
-- `PUT /surveys/{survey}`
-- `DELETE /surveys/{survey}`
-- `POST /surveys/{survey}/assign`
-- `POST /surveys/{survey}/close`
-- `GET /surveys/{survey}/analytics`
-- `GET /surveys/target-students` (new, for assignment user picker)
+- System scope endpoints:
+  - `GET /surveys`
+  - `POST /surveys`
+  - `GET /surveys/{survey}`
+  - `PUT /surveys/{survey}`
+  - `DELETE /surveys/{survey}`
+  - `POST /surveys/{survey}/assign`
+  - `POST /surveys/{survey}/close`
+  - `GET /surveys/{survey}/analytics`
+  - `GET /surveys/target-students`
+- Center scope endpoints:
+  - `GET /centers/{center}/surveys`
+  - `POST /centers/{center}/surveys`
+  - `GET /centers/{center}/surveys/{survey}`
+  - `PUT /centers/{center}/surveys/{survey}`
+  - `DELETE /centers/{center}/surveys/{survey}`
+  - `POST /centers/{center}/surveys/{survey}/assign`
+  - `POST /centers/{center}/surveys/{survey}/close`
+  - `GET /centers/{center}/surveys/{survey}/analytics`
+  - `GET /centers/{center}/surveys/target-students`
 
 Mobile base: `/api/v1`
 
@@ -67,28 +79,27 @@ Mobile base: `/api/v1`
 
 ## New Endpoint: Target Students
 
-`GET /api/v1/admin/surveys/target-students`
+System route: `GET /api/v1/admin/surveys/target-students`  
+Center route: `GET /api/v1/admin/centers/{center}/surveys/target-students`
 
 Purpose:
 - Fetch only students eligible for the selected survey scope before submitting assignments.
 
-Required query params:
-- `scope_type`:
-  - `1` for system targeting
-  - `2` for center targeting
-
 Optional query params:
 - `center_id`
-  - required when `scope_type=2`
-  - optional for `scope_type=1` (if sent, must be unbranded center)
+  - for system route: optional (if sent, must be unbranded center)
+  - for center route: optional but must match route center
+- `scope_type`
+  - optional
+  - if sent, must match route scope (`1` for system route, `2` for center route)
 - `status` (`0,1,2`)
 - `search`
 - `page`
 - `per_page` (max `50`, recommended `20`)
 
 Authorization rules:
-- `scope_type=1`: super admin only
-- `scope_type=2`: admins can query only centers they administrate
+- system route: system super admin only
+- center route: admins can query only centers they administrate
 
 Response shape:
 - `data[]` item:
@@ -113,13 +124,13 @@ Use these endpoints before submit:
 
 2. For system survey assignment (`scope_type=1`):
    - centers: `GET /api/v1/admin/centers?type=0` (unbranded only)
-   - students (user assignment): `GET /api/v1/admin/surveys/target-students?scope_type=1[&center_id=...]`
+   - students (user assignment): `GET /api/v1/admin/surveys/target-students[?center_id=...]`
    - courses:
      - select unbranded center first
      - then `GET /api/v1/admin/centers/{center}/courses`
 
 3. For center survey assignment (`scope_type=2`):
-   - students: `GET /api/v1/admin/surveys/target-students?scope_type=2&center_id={centerId}`
+   - students: `GET /api/v1/admin/centers/{centerId}/surveys/target-students`
    - courses: `GET /api/v1/admin/centers/{centerId}/courses`
    - videos: `GET /api/v1/admin/centers/{centerId}/videos`
 
@@ -127,11 +138,13 @@ Use these endpoints before submit:
 
 Use paginated loading for survey page lists. Do not request bulk pages like `per_page=100`.
 
-- Endpoint: `GET /api/v1/admin/surveys`
+- Endpoint:
+  - system scope: `GET /api/v1/admin/surveys`
+  - center scope: `GET /api/v1/admin/centers/{center}/surveys`
 - Query:
   - `page` (start at `1`)
   - `per_page` (recommended `20`, maximum `50`)
-  - optional filters: `scope_type`, `center_id`, `is_active`, `type`
+  - optional filters: `is_active`, `type`
 - Continue loading while:
   - `page <= meta.last_page`
   - or loaded count `< meta.total`

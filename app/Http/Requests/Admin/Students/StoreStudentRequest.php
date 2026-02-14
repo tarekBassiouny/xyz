@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Admin\Students;
 
+use App\Models\Center;
 use App\Models\User;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -65,6 +66,15 @@ class StoreStudentRequest extends FormRequest
 
     private function resolveCenterId(): ?int
     {
+        $routeCenter = $this->route('center');
+        if ($routeCenter instanceof Center) {
+            return (int) $routeCenter->id;
+        }
+
+        if (is_numeric($routeCenter)) {
+            return (int) $routeCenter;
+        }
+
         $centerId = $this->input('center_id');
 
         if (is_numeric($centerId)) {

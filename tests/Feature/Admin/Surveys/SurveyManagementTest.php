@@ -33,16 +33,17 @@ it('lists surveys for super admin', function (): void {
         ]);
 });
 
-it('super admin sees both system and center surveys', function (): void {
+it('super admin sees system surveys on system endpoint', function (): void {
     $this->asAdmin();
     $center = Center::factory()->create();
     Survey::factory()->system()->count(2)->create();
     Survey::factory()->center($center)->count(3)->create();
 
+    // System endpoint returns only system surveys
     $response = $this->getJson('/api/v1/admin/surveys', $this->adminHeaders());
 
     $response->assertOk();
-    expect($response->json('data'))->toHaveCount(5);
+    expect($response->json('data'))->toHaveCount(2);
 });
 
 it('super admin can filter surveys by scope type', function (): void {
@@ -146,9 +147,7 @@ it('creates a center survey when assignment id is a numeric string', function ()
     $center = Center::factory()->create();
     $course = Course::factory()->create(['center_id' => $center->id]);
 
-    $response = $this->postJson('/api/v1/admin/surveys', [
-        'scope_type' => SurveyScopeType::Center->value,
-        'center_id' => $center->id,
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/surveys", [
         'title_translations' => ['en' => 'String ID Assignment', 'ar' => 'تعيين بمعرف نصي'],
         'type' => SurveyType::Feedback->value,
         'is_active' => true,

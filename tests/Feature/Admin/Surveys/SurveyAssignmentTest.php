@@ -95,7 +95,7 @@ it('assigns center survey to course within same center', function (): void {
     $survey = Survey::factory()->center($center)->create();
     $course = Course::factory()->create(['center_id' => $center->id]);
 
-    $response = $this->postJson("/api/v1/admin/surveys/{$survey->id}/assign", [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/surveys/{$survey->id}/assign", [
         'assignments' => [
             ['type' => SurveyAssignableType::Course->value, 'id' => $course->id],
         ],
@@ -114,7 +114,7 @@ it('rejects section assignment type', function (): void {
     $center = Center::factory()->create();
     $survey = Survey::factory()->center($center)->create();
 
-    $response = $this->postJson("/api/v1/admin/surveys/{$survey->id}/assign", [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/surveys/{$survey->id}/assign", [
         'assignments' => [
             ['type' => 'section', 'id' => 1],
         ],
@@ -132,7 +132,7 @@ it('prevents cross-center assignment', function (): void {
     $survey = Survey::factory()->center($center1)->create();
     $course = Course::factory()->create(['center_id' => $center2->id]);
 
-    $response = $this->postJson("/api/v1/admin/surveys/{$survey->id}/assign", [
+    $response = $this->postJson("/api/v1/admin/centers/{$center1->id}/surveys/{$survey->id}/assign", [
         'assignments' => [
             ['type' => SurveyAssignableType::Course->value, 'id' => $course->id],
         ],
@@ -152,7 +152,7 @@ it('assigns multiple entities at once', function (): void {
     $course1 = Course::factory()->create(['center_id' => $center->id]);
     $course2 = Course::factory()->create(['center_id' => $center->id]);
 
-    $response = $this->postJson("/api/v1/admin/surveys/{$survey->id}/assign", [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/surveys/{$survey->id}/assign", [
         'assignments' => [
             ['type' => SurveyAssignableType::Course->value, 'id' => $course1->id],
             ['type' => SurveyAssignableType::Course->value, 'id' => $course2->id],
@@ -170,14 +170,14 @@ it('prevents duplicate assignments', function (): void {
     $course = Course::factory()->create(['center_id' => $center->id]);
 
     // First assignment
-    $this->postJson("/api/v1/admin/surveys/{$survey->id}/assign", [
+    $this->postJson("/api/v1/admin/centers/{$center->id}/surveys/{$survey->id}/assign", [
         'assignments' => [
             ['type' => SurveyAssignableType::Course->value, 'id' => $course->id],
         ],
     ], $this->adminHeaders());
 
     // Second assignment (same)
-    $this->postJson("/api/v1/admin/surveys/{$survey->id}/assign", [
+    $this->postJson("/api/v1/admin/centers/{$center->id}/surveys/{$survey->id}/assign", [
         'assignments' => [
             ['type' => SurveyAssignableType::Course->value, 'id' => $course->id],
         ],
@@ -204,7 +204,7 @@ it('rejects assigning center-scoped survey by center type', function (): void {
     $center = Center::factory()->create();
     $survey = Survey::factory()->center($center)->create();
 
-    $response = $this->postJson("/api/v1/admin/surveys/{$survey->id}/assign", [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/surveys/{$survey->id}/assign", [
         'assignments' => [
             ['type' => SurveyAssignableType::Center->value, 'id' => $center->id],
         ],
@@ -224,7 +224,7 @@ it('rejects assigning center survey to a different center', function (): void {
     $center2 = Center::factory()->create();
     $survey = Survey::factory()->center($center1)->create();
 
-    $response = $this->postJson("/api/v1/admin/surveys/{$survey->id}/assign", [
+    $response = $this->postJson("/api/v1/admin/centers/{$center1->id}/surveys/{$survey->id}/assign", [
         'assignments' => [
             ['type' => SurveyAssignableType::Center->value, 'id' => $center2->id],
         ],
@@ -275,7 +275,7 @@ it('assigns center survey to multiple specific students', function (): void {
     $studentA = User::factory()->create(['is_student' => true, 'center_id' => $center->id]);
     $studentB = User::factory()->create(['is_student' => true, 'center_id' => $center->id]);
 
-    $response = $this->postJson("/api/v1/admin/surveys/{$survey->id}/assign", [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/surveys/{$survey->id}/assign", [
         'assignments' => [
             ['type' => SurveyAssignableType::User->value, 'id' => $studentA->id],
             ['type' => SurveyAssignableType::User->value, 'id' => $studentB->id],
@@ -303,7 +303,7 @@ it('rejects assigning survey directly to non-student user', function (): void {
     $survey = Survey::factory()->center($center)->create();
     $adminLikeUser = User::factory()->create(['is_student' => false, 'center_id' => $center->id]);
 
-    $response = $this->postJson("/api/v1/admin/surveys/{$survey->id}/assign", [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/surveys/{$survey->id}/assign", [
         'assignments' => [
             ['type' => SurveyAssignableType::User->value, 'id' => $adminLikeUser->id],
         ],
@@ -324,7 +324,7 @@ it('rejects assigning center survey to student from different center', function 
     $survey = Survey::factory()->center($centerA)->create();
     $student = User::factory()->create(['is_student' => true, 'center_id' => $centerB->id]);
 
-    $response = $this->postJson("/api/v1/admin/surveys/{$survey->id}/assign", [
+    $response = $this->postJson("/api/v1/admin/centers/{$centerA->id}/surveys/{$survey->id}/assign", [
         'assignments' => [
             ['type' => SurveyAssignableType::User->value, 'id' => $student->id],
         ],
@@ -369,7 +369,7 @@ it('supports all assignment in assign endpoint without id', function (): void {
     User::factory()->create(['is_student' => true, 'center_id' => $center->id]);
     User::factory()->create(['is_student' => true, 'center_id' => Center::factory()->create()->id]);
 
-    $response = $this->postJson("/api/v1/admin/surveys/{$survey->id}/assign", [
+    $response = $this->postJson("/api/v1/admin/centers/{$center->id}/surveys/{$survey->id}/assign", [
         'assignments' => [
             ['type' => SurveyAssignableType::All->value],
         ],

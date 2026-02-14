@@ -233,7 +233,8 @@ it('allows center admin to view their students profile', function (): void {
         'is_student' => false,
     ]);
 
-    $response = $this->getJson("/api/v1/admin/students/{$student->id}/profile", [
+    // Center admin uses center-scoped route
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}/students/{$student->id}/profile", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
         'X-Api-Key' => config('services.system_api_key'),
@@ -274,14 +275,15 @@ it('denies center admin from viewing students in another center', function (): v
         'is_student' => false,
     ]);
 
-    $response = $this->getJson("/api/v1/admin/students/{$student->id}/profile", [
+    // Center admin cannot access other center via center route
+    $response = $this->getJson("/api/v1/admin/centers/{$centerB->id}/students/{$student->id}/profile", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
         'X-Api-Key' => config('services.system_api_key', 'system-test-key'),
     ]);
 
-    $response->assertStatus(403)
-        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
+    // Blocked by scope middleware
+    $response->assertStatus(403);
 });
 
 it('enforces center api key scope for student profile', function (): void {
@@ -309,12 +311,10 @@ it('enforces center api key scope for student profile', function (): void {
         ->assertJsonPath('error.code', 'CENTER_MISMATCH');
 });
 
-it('allows center api key scope when student belongs to same center', function (): void {
+it('allows super admin to access student profile via system route', function (): void {
     $this->asAdmin();
 
-    $center = Center::factory()->create([
-        'api_key' => 'center-profile-key',
-    ]);
+    $center = Center::factory()->create();
 
     $student = User::factory()->create([
         'is_student' => true,
@@ -322,9 +322,10 @@ it('allows center api key scope when student belongs to same center', function (
         'phone' => '19990000113',
     ]);
 
+    // Super admin can use system route
     $response = $this->getJson(
         "/api/v1/admin/students/{$student->id}/profile",
-        $this->adminHeaders(['X-Api-Key' => 'center-profile-key'])
+        $this->adminHeaders()
     );
 
     $response->assertOk()

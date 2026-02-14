@@ -174,7 +174,8 @@ it('scopes students to admin center', function (): void {
         'is_student' => false,
     ]);
 
-    $response = $this->getJson('/api/v1/admin/students?center_id='.$centerB->id, [
+    // Center-scoped admin can only access their own center's students via center route
+    $response = $this->getJson("/api/v1/admin/centers/{$centerA->id}/students", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
         'X-Api-Key' => config('services.system_api_key'),
@@ -183,6 +184,15 @@ it('scopes students to admin center', function (): void {
     $response->assertOk()
         ->assertJsonCount(1, 'data')
         ->assertJsonPath('data.0.center_id', $centerA->id);
+
+    // Center-scoped admin cannot access other center's students
+    $blockedResponse = $this->getJson("/api/v1/admin/centers/{$centerB->id}/students", [
+        'Authorization' => 'Bearer '.$token,
+        'Accept' => 'application/json',
+        'X-Api-Key' => config('services.system_api_key'),
+    ]);
+
+    $blockedResponse->assertForbidden();
 });
 
 it('filters students by status and search', function (): void {
@@ -306,7 +316,8 @@ it('updates students within the admin center only', function (): void {
         'is_student' => false,
     ]);
 
-    $updated = $this->putJson("/api/v1/admin/students/{$studentA->id}", [
+    // Center-scoped admin can update students within their center via center route
+    $updated = $this->putJson("/api/v1/admin/centers/{$centerA->id}/students/{$studentA->id}", [
         'name' => 'Updated Student',
         'status' => 0,
     ], [
@@ -319,7 +330,8 @@ it('updates students within the admin center only', function (): void {
         ->assertJsonPath('data.name', 'Updated Student')
         ->assertJsonPath('data.status', 0);
 
-    $blocked = $this->putJson("/api/v1/admin/students/{$studentB->id}", [
+    // Center-scoped admin cannot update students from other centers
+    $blocked = $this->putJson("/api/v1/admin/centers/{$centerB->id}/students/{$studentB->id}", [
         'name' => 'Blocked Student',
     ], [
         'Authorization' => 'Bearer '.$token,

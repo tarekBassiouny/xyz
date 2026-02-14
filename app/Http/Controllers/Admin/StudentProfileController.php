@@ -6,9 +6,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\StudentProfileResource;
+use App\Models\Center;
 use App\Models\User;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Students\StudentProfileQueryService;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -30,6 +32,29 @@ class StudentProfileController extends Controller
      * Display the specified student profile with courses and videos.
      */
     public function show(Request $request, User $user): JsonResponse
+    {
+        return $this->showStudentProfile($request, $user, null);
+    }
+
+    /**
+     * Display the specified center student profile.
+     */
+    public function centerShow(Request $request, Center $center, User $user): JsonResponse
+    {
+        if ((int) $user->center_id !== (int) $center->id) {
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'NOT_FOUND',
+                    'message' => 'Student not found.',
+                ],
+            ], 404));
+        }
+
+        return $this->showStudentProfile($request, $user, $center);
+    }
+
+    private function showStudentProfile(Request $request, User $user, ?Center $center): JsonResponse
     {
         if (! $user->is_student) {
             return response()->json([
@@ -53,6 +78,15 @@ class StudentProfileController extends Controller
         }
 
         $this->centerScopeService->assertAdminSameCenter($admin, $user);
+        if ($center instanceof Center && (int) $user->center_id !== (int) $center->id) {
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'NOT_FOUND',
+                    'message' => 'Student not found.',
+                ],
+            ], 404));
+        }
 
         $resolvedCenterId = $request->attributes->get('resolved_center_id');
         $this->studentProfileQueryService->assertMatchesResolvedCenterScope(

@@ -1,192 +1,165 @@
 # Admin Routing Scope Contract
 
-This document defines the agreed admin API routing model for Najaah LMS.
+This document defines the canonical admin routing and scope rules for Najaah LMS.
 
-## Core Scope Rule
+## Scope Identity
 
-- `admin.center_id = null` means system scope (system admin context).
-- `admin.center_id != null` means center scope (center admin context).
+- `super_admin` + `center_id = null` => **system super admin**
+- `super_admin` + `center_id != null` => **center-scoped super admin**
+- `center_id != null` (non-super-admin) => **center-scoped admin**
 
-## Design Principles
+## Routing Rules
 
-- No duplicated endpoint patterns for the same data ownership model.
-- No mixed contract such as both:
-  - `/api/v1/admin/courses?center_id=...`
-  - `/api/v1/admin/centers/{center}/courses`
-- Center-owned data must be routed through center paths.
-- System-only data must be routed through system paths.
-- Default rule: if an endpoint is not explicitly global/system-admin, it must be center-scoped under `/api/v1/admin/centers/{center}/...`.
+- Global/system modules use `/api/v1/admin/*`
+- Center-owned modules use `/api/v1/admin/centers/{center}/*`
+- No mixed duplicates for center-owned modules
+- Route `{center}` is authoritative for center-owned endpoints
 
-## Route Ownership Model
+## Security Rules
 
-1. Global Admin Resources
+- Center-scoped admins can access only `/centers/{their_center_id}/...`
+- Center mismatch returns `403 CENTER_MISMATCH`
+- Entity mismatch inside a center route returns `404 NOT_FOUND`
+- Client-provided `center_id` is ignored for center-scoped writes where route center exists
+- System super admin can access global modules and any center route
+- API key scope is enforced:
+  - system modules require system API key (`resolved_center_id = null`)
+  - center API key can access only `/centers/{same_center_id}/...`
+  - center API key cannot access system modules
+  - login/session endpoints also validate admin-vs-api-key center compatibility
 
-- Prefix: `/api/v1/admin/...`
-- Purpose: platform-level resources, not tenant-owned records.
-- Examples:
-  - `/api/v1/admin/auth/*`
-  - `/api/v1/admin/centers` (registry/management)
-  - `/api/v1/admin/roles`
-  - `/api/v1/admin/permissions`
+## Global Modules (System Scope)
 
-2. Center-Owned Resources
+- `/api/v1/admin/analytics/*`
+- `/api/v1/admin/audit-logs`
+- `/api/v1/admin/centers*` (registry/CRUD)
+- `/api/v1/admin/users*` (system-scope admin user management)
+- `/api/v1/admin/settings/preview`
+- `/api/v1/admin/agents/*`
 
-- Prefix: `/api/v1/admin/centers/{center}/...`
-- Purpose: any entity owned by a specific center.
-- Examples:
-  - courses, videos, categories, sections, PDFs
-  - students (center students)
-  - enrollments
-  - extra-view requests
-  - device-change requests (center students)
+## Roles and Admins
 
-3. System-Admin Aggregation Resources
+- Roles and permissions stay globally defined.
+- Center-scoped super admin is allowed to:
+  - read roles and permissions
+  - assign roles to admins in the same center scope
+- Role/permission mutations are system-scope only.
+- Admin user management is dual-scoped:
+  - system scope:
+    - `GET /api/v1/admin/users`
+    - `POST /api/v1/admin/users`
+    - `PUT /api/v1/admin/users/{user}`
+    - `DELETE /api/v1/admin/users/{user}`
+    - `PUT /api/v1/admin/users/{user}/roles`
+  - center scope:
+    - `GET /api/v1/admin/centers/{center}/users`
+    - `POST /api/v1/admin/centers/{center}/users`
+    - `PUT /api/v1/admin/centers/{center}/users/{user}`
+    - `DELETE /api/v1/admin/centers/{center}/users/{user}`
+    - `PUT /api/v1/admin/centers/{center}/users/{user}/roles`
 
-- Prefix: `/api/v1/admin/...` (system admin only)
-- Purpose: cross-center list/filter views used by the Najaah App sidebar.
-- Notes:
-  - These are aggregation entry points for system admin UX.
-  - Mutations should still target canonical center ownership paths where applicable.
-  - This is the only exception to the center-path default.
+## Students
 
-## Access Enforcement Rules
+### Global (system super admin only)
 
-- System admin (`center_id = null`):
-  - Can access any `/centers/{center}/...` path.
-- Center admin (`center_id = X`):
-  - Can access only `/centers/X/...`.
-  - Any other center path must return `403 CENTER_MISMATCH`.
+- `GET /api/v1/admin/students`
+- `POST /api/v1/admin/students`
+- `PUT /api/v1/admin/students/{user}`
+- `DELETE /api/v1/admin/students/{user}`
+- `POST /api/v1/admin/students/bulk-status`
+- `GET /api/v1/admin/students/{user}/profile`
 
-## Canonical Endpoint Examples
+`center_id` is nullable on global create/update semantics:
+- `center_id = null` => Najaah App (shared/unbranded student pool)
+- `center_id = X` => branded center student
 
-### Courses, Videos, Categories
+### Center Path
 
-```http
-GET    /api/v1/admin/centers/{center}/courses
-POST   /api/v1/admin/centers/{center}/courses
-GET    /api/v1/admin/centers/{center}/videos
-POST   /api/v1/admin/centers/{center}/videos
-GET    /api/v1/admin/centers/{center}/categories
-POST   /api/v1/admin/centers/{center}/categories
-```
+- `GET /api/v1/admin/centers/{center}/students`
+- `POST /api/v1/admin/centers/{center}/students`
+- `PUT /api/v1/admin/centers/{center}/students/{user}`
+- `DELETE /api/v1/admin/centers/{center}/students/{user}`
+- `POST /api/v1/admin/centers/{center}/students/bulk-status`
+- `GET /api/v1/admin/centers/{center}/students/{user}/profile`
 
-### Students
+## Surveys
 
-```http
-GET    /api/v1/admin/centers/{center}/students
-POST   /api/v1/admin/centers/{center}/students
-GET    /api/v1/admin/centers/{center}/students/{student}
-PUT    /api/v1/admin/centers/{center}/students/{student}
-DELETE /api/v1/admin/centers/{center}/students/{student}
-```
+Surveys are split by route scope:
 
-System-admin aggregation list:
+### System Scope (Najaah App)
 
-```http
-GET /api/v1/admin/students
-```
+- `GET /api/v1/admin/surveys`
+- `POST /api/v1/admin/surveys`
+- `GET /api/v1/admin/surveys/{survey}`
+- `PUT /api/v1/admin/surveys/{survey}`
+- `DELETE /api/v1/admin/surveys/{survey}`
+- `POST /api/v1/admin/surveys/{survey}/assign`
+- `POST /api/v1/admin/surveys/{survey}/close`
+- `GET /api/v1/admin/surveys/{survey}/analytics`
+- `GET /api/v1/admin/surveys/target-students`
 
-- System admin: list/filter all students across branded, unbranded, and system (`center_id = null`).
-- Center admin: either disabled or implicitly scoped to their center by policy.
+Rules:
+- system routes manage **system surveys only** (`scope_type=system`, `center_id=null`)
+- system target students include Najaah App students (`center_id=null`) and students in unbranded centers
+- optional `center_id` filter on system target-students must be an unbranded center
 
-### Enrollments
+### Center Scope (Branded Center App)
 
-```http
-GET    /api/v1/admin/centers/{center}/enrollments
-POST   /api/v1/admin/centers/{center}/enrollments
-POST   /api/v1/admin/centers/{center}/enrollments/bulk
-GET    /api/v1/admin/centers/{center}/enrollments/{enrollment}
-PUT    /api/v1/admin/centers/{center}/enrollments/{enrollment}
-DELETE /api/v1/admin/centers/{center}/enrollments/{enrollment}
-```
+- `GET /api/v1/admin/centers/{center}/surveys`
+- `POST /api/v1/admin/centers/{center}/surveys`
+- `GET /api/v1/admin/centers/{center}/surveys/{survey}`
+- `PUT /api/v1/admin/centers/{center}/surveys/{survey}`
+- `DELETE /api/v1/admin/centers/{center}/surveys/{survey}`
+- `POST /api/v1/admin/centers/{center}/surveys/{survey}/assign`
+- `POST /api/v1/admin/centers/{center}/surveys/{survey}/close`
+- `GET /api/v1/admin/centers/{center}/surveys/{survey}/analytics`
+- `GET /api/v1/admin/centers/{center}/surveys/target-students`
 
-### Extra View Requests
+Rules:
+- center routes manage **center surveys only** (`scope_type=center`, `center_id={route center}`)
+- any `scope_type`/`center_id` payload that conflicts with route scope is rejected
+- survey entity mismatch with route center returns `404 NOT_FOUND`
 
-```http
-GET  /api/v1/admin/centers/{center}/extra-view-requests
-POST /api/v1/admin/centers/{center}/extra-view-requests/{request}/approve
-POST /api/v1/admin/centers/{center}/extra-view-requests/{request}/reject
-```
+## Center-Owned Canonical Modules
 
-### Device Change Requests
+- Courses:
+  - `/api/v1/admin/centers/{center}/courses*`
+  - includes clone/publish and attachments (videos/pdfs)
+- Sections:
+  - `/api/v1/admin/centers/{center}/courses/{course}/sections*`
+- Videos:
+  - `/api/v1/admin/centers/{center}/videos*`
+- PDFs:
+  - `/api/v1/admin/centers/{center}/pdfs*`
+- Categories:
+  - `/api/v1/admin/centers/{center}/categories*`
+- Instructors:
+  - `/api/v1/admin/centers/{center}/instructors*`
+  - `/api/v1/admin/centers/{center}/courses/{course}/instructors*`
+- Enrollments:
+  - `/api/v1/admin/centers/{center}/enrollments*`
+- Device change requests:
+  - `/api/v1/admin/centers/{center}/device-change-requests*`
+  - `/api/v1/admin/centers/{center}/students/{student}/device-change-requests`
+- Extra view requests:
+  - `/api/v1/admin/centers/{center}/extra-view-requests*`
+- Surveys:
+  - `/api/v1/admin/centers/{center}/surveys*`
+- Audit logs:
+  - `/api/v1/admin/centers/{center}/audit-logs`
+- Admin users:
+  - `/api/v1/admin/centers/{center}/users*`
 
-Center-owned:
+## Auth Contract
 
-```http
-GET  /api/v1/admin/centers/{center}/device-change-requests
-POST /api/v1/admin/centers/{center}/device-change-requests/{request}/approve
-POST /api/v1/admin/centers/{center}/device-change-requests/{request}/reject
-POST /api/v1/admin/centers/{center}/device-change-requests/{request}/pre-approve
-```
+`GET /api/v1/admin/auth/me` response includes:
 
-System-admin aggregation list (optional, read-only entry point):
+- `scope_type`: `system | center`
+- `scope_center_id`: `number | null`
+- `is_system_super_admin`: `boolean`
+- `is_center_super_admin`: `boolean`
 
-```http
-GET /api/v1/admin/device-change-requests
-```
+## Migration Policy
 
-## Frontend Contract
-
-- Frontend reads admin scope from `/api/v1/admin/auth/me`:
-  - `scope_type: "system" | "center"`
-  - `scope_center_id: number | null`
-- Center scope UI:
-  - no center selector
-  - requests use fixed `/centers/{scope_center_id}/...`
-- System scope UI:
-  - can choose center for center-owned modules
-  - uses global aggregation endpoints for cross-center views
-
-## Najaah App Sidebar Mapping (System Admin)
-
-This maps the system-admin sidebar to endpoint ownership:
-
-1. Dashboard
-- Ownership: global aggregation
-- Endpoint family: `/api/v1/admin/analytics/*`
-
-2. Analysis
-- Ownership: global aggregation with center/type filters
-- Endpoint family: `/api/v1/admin/analytics/*`
-
-3. Centers (CRUD)
-- Ownership: global
-- Endpoint family: `/api/v1/admin/centers*`
-
-4. Surveys (CRUD)
-- Ownership: global (includes center-scoped and system-scoped surveys)
-- Endpoint family: `/api/v1/admin/surveys*`
-- Filters: `scope_type`, `center_id`
-
-5. Agents
-- Ownership: global orchestration
-- Endpoint family: `/api/v1/admin/agents/*`
-
-6. Roles & Permissions
-- Ownership: global
-- Endpoint family: `/api/v1/admin/roles*`, `/api/v1/admin/permissions`
-
-7. Admins (CRUD)
-- Ownership: global with center affiliation
-- Endpoint family: `/api/v1/admin/users*`
-
-8. Students (CRUD)
-- Ownership: center-scoped operations, with system-admin entry via global aggregation list
-- Endpoint family:
-  - list/filter: `/api/v1/admin/students`
-  - CRUD: `/api/v1/admin/centers/{center}/students*`
-
-9. Settings (platform)
-- Ownership: global
-- Endpoint family: `/api/v1/admin/settings/*`
-
-10. Audit Log
-- Ownership: global aggregation
-- Endpoint family: `/api/v1/admin/audit-logs`
-
-## Migration Notes
-
-- Canonical routes should be introduced first.
-- Legacy mixed routes can be kept temporarily as compatibility aliases.
-- Compatibility aliases should return deprecation metadata and be removed after frontend migration.
-- During migration, any non-sidebar operational endpoint should be moved to center paths and removed from flat `/api/v1/admin/{resource}` forms.
+- Hard cut policy is active.
+- Legacy mixed admin endpoints for center-owned modules are removed.

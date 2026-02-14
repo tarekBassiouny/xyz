@@ -18,6 +18,9 @@ class SurveyTargetStudentService
         private readonly CenterScopeService $centerScopeService
     ) {}
 
+    /**
+     * @return LengthAwarePaginator<User>
+     */
     public function paginate(
         User $actor,
         SurveyScopeType $scopeType,
@@ -46,6 +49,10 @@ class SurveyTargetStudentService
         }
 
         if ($scopeType === SurveyScopeType::System) {
+            if (! $this->centerScopeService->isSystemSuperAdmin($actor)) {
+                throw new \InvalidArgumentException('Only system super admins can target system survey students.');
+            }
+
             $query->where(function (Builder $builder): void {
                 $builder->whereNull('center_id')
                     ->orWhereIn('center_id', Center::query()

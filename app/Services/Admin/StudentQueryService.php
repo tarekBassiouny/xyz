@@ -49,14 +49,52 @@ class StudentQueryService
             });
         }
 
-        if ($admin->hasRole('super_admin')) {
+        if ($this->centerScopeService->isSystemSuperAdmin($admin)) {
             if ($filters->centerId !== null) {
                 $query->where('center_id', $filters->centerId);
             }
         } else {
-            $centerId = $admin->center_id;
-            $this->centerScopeService->assertAdminCenterId($admin, is_numeric($centerId) ? (int) $centerId : null);
+            $centerId = $this->centerScopeService->resolveAdminCenterId($admin);
+            $this->centerScopeService->assertAdminCenterId($admin, $centerId);
             $query->where('center_id', (int) $centerId);
+        }
+
+        return $query;
+    }
+
+    /**
+     * @return Builder<User>
+     */
+    public function buildForCenter(User $admin, int $centerId, StudentFilters $filters): Builder
+    {
+        $this->centerScopeService->assertAdminCenterId($admin, $centerId);
+
+        $query = User::query()
+            ->with('center')
+            ->with([
+                'devices' => static function ($relation): void {
+                    $relation
+                        ->where('status', UserDeviceStatus::Active->value)
+                        ->orderByDesc('last_used_at')
+                        ->orderByDesc('id');
+                },
+            ])
+            ->where('is_student', true)
+            ->where('center_id', $centerId)
+            ->orderByDesc('created_at');
+
+        if ($filters->status !== null) {
+            $query->where('status', $filters->status);
+        }
+
+        if ($filters->search !== null) {
+            $term = $filters->search;
+            $query->where(static function (Builder $builder) use ($term): void {
+                $builder->where('name', 'like', '%'.$term.'%')
+                    ->orWhere('username', 'like', '%'.$term.'%')
+                    ->orWhere('email', 'like', '%'.$term.'%')
+                    ->orWhere('phone', 'like', '%'.$term.'%');
+            });
         }
 
         return $query;
@@ -68,6 +106,19 @@ class StudentQueryService
     public function paginate(User $admin, StudentFilters $filters): LengthAwarePaginator
     {
         return $this->build($admin, $filters)->paginate(
+            $filters->perPage,
+            ['*'],
+            'page',
+            $filters->page
+        );
+    }
+
+    /**
+     * @return LengthAwarePaginator<User>
+     */
+    public function paginateForCenter(User $admin, int $centerId, StudentFilters $filters): LengthAwarePaginator
+    {
+        return $this->buildForCenter($admin, $centerId, $filters)->paginate(
             $filters->perPage,
             ['*'],
             'page',

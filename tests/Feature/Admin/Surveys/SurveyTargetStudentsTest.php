@@ -34,7 +34,7 @@ it('lists only unbranded and null-center students for system survey targeting', 
     ]);
 
     $response = $this->getJson(
-        '/api/v1/admin/surveys/target-students?scope_type='.SurveyScopeType::System->value.'&per_page=100',
+        '/api/v1/admin/surveys/target-students?scope_type='.SurveyScopeType::System->value.'&per_page=50',
         $this->adminHeaders()
     );
 
@@ -130,8 +130,9 @@ it('lists only selected center students for center survey targeting', function (
         'center_id' => $centerB->id,
     ]);
 
+    // Super admin uses center-scoped route for center surveys
     $response = $this->getJson(
-        '/api/v1/admin/surveys/target-students?scope_type='.SurveyScopeType::Center->value.'&center_id='.$centerA->id,
+        "/api/v1/admin/centers/{$centerA->id}/surveys/target-students",
         $this->adminHeaders()
     );
 
@@ -183,7 +184,7 @@ it('forbids non-super admin from system survey target-students endpoint', functi
 
     $response->assertForbidden()
         ->assertJsonPath('success', false)
-        ->assertJsonPath('error.code', 'FORBIDDEN');
+        ->assertJsonPath('error.code', 'PERMISSION_DENIED');
 });
 
 it('allows center admin to list only own center target students for center scope', function (): void {
@@ -226,8 +227,9 @@ it('allows center admin to list only own center target students for center scope
         Config::set('services.system_api_key', $systemKey);
     }
 
+    // Center admin uses center-scoped route
     $response = $this->getJson(
-        '/api/v1/admin/surveys/target-students?scope_type='.SurveyScopeType::Center->value.'&center_id='.$center->id,
+        "/api/v1/admin/centers/{$center->id}/surveys/target-students",
         [
             'Authorization' => 'Bearer '.$token,
             'Accept' => 'application/json',

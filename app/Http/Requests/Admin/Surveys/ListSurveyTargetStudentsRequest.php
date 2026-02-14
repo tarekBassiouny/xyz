@@ -21,17 +21,7 @@ class ListSurveyTargetStudentsRequest extends AdminListRequest
         /** @var User|null $user */
         $user = $this->user();
 
-        if (! $user instanceof User) {
-            return false;
-        }
-
-        $scopeType = (int) $this->input('scope_type');
-
-        if ($scopeType === SurveyScopeType::System->value) {
-            return $user->hasRole('super_admin');
-        }
-
-        return true;
+        return $user instanceof User;
     }
 
     /**
@@ -41,13 +31,8 @@ class ListSurveyTargetStudentsRequest extends AdminListRequest
     {
         return array_merge($this->listRules(), [
             'per_page' => ['sometimes', 'integer', 'min:1', 'max:50'],
-            'scope_type' => ['required', 'integer', Rule::in(array_column(SurveyScopeType::cases(), 'value'))],
-            'center_id' => [
-                'nullable',
-                'integer',
-                'exists:centers,id',
-                'required_if:scope_type,'.SurveyScopeType::Center->value,
-            ],
+            'scope_type' => ['sometimes', 'integer', Rule::in(array_column(SurveyScopeType::cases(), 'value'))],
+            'center_id' => ['sometimes', 'nullable', 'integer', 'exists:centers,id'],
             'status' => ['sometimes', 'integer', 'in:0,1,2'],
             'search' => ['sometimes', 'string'],
         ]);
@@ -56,10 +41,27 @@ class ListSurveyTargetStudentsRequest extends AdminListRequest
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
-            $scopeType = (int) $this->input('scope_type');
+            $routeCenterId = $this->routeCenterId();
+            $scopeType = $this->has('scope_type') ? (int) $this->input('scope_type') : null;
             $centerId = FilterInput::intOrNull($this->all(), 'center_id');
 
-            if ($scopeType !== SurveyScopeType::System->value || $centerId === null) {
+            if ($routeCenterId !== null) {
+                if ($scopeType !== null && $scopeType !== SurveyScopeType::Center->value) {
+                    $validator->errors()->add('scope_type', 'Center routes only accept center-scoped targeting.');
+                }
+
+                if ($centerId !== null && $centerId !== $routeCenterId) {
+                    $validator->errors()->add('center_id', 'Center ID must match the route center.');
+                }
+
+                return;
+            }
+
+            if ($scopeType !== null && $scopeType !== SurveyScopeType::System->value) {
+                $validator->errors()->add('scope_type', 'System routes only accept system-scoped targeting.');
+            }
+
+            if ($centerId === null) {
                 return;
             }
 
@@ -90,10 +92,13 @@ class ListSurveyTargetStudentsRequest extends AdminListRequest
     {
         /** @var array<string, mixed> $data */
         $data = $this->validated();
+        $routeCenterId = $this->routeCenterId();
+        $scopeType = $routeCenterId !== null ? SurveyScopeType::Center : SurveyScopeType::System;
+        $centerId = $routeCenterId ?? FilterInput::intOrNull($data, 'center_id');
 
         return [
-            'scope_type' => SurveyScopeType::from((int) $data['scope_type']),
-            'center_id' => FilterInput::intOrNull($data, 'center_id'),
+            'scope_type' => $scopeType,
+            'center_id' => $centerId,
             'status' => FilterInput::intOrNull($data, 'status'),
             'search' => FilterInput::stringOrNull($data, 'search'),
             'page' => FilterInput::page($data),
@@ -108,11 +113,11 @@ class ListSurveyTargetStudentsRequest extends AdminListRequest
     {
         return [
             'scope_type' => [
-                'description' => 'Required scope type: 1 for system targeting, 2 for center targeting.',
-                'example' => '1',
+                'description' => 'Optional. Must match route scope if provided (1 system, 2 center).',
+                'example' => '2',
             ],
             'center_id' => [
-                'description' => 'Required when scope_type=2. Optional when scope_type=1 (unbranded only).',
+                'description' => 'Optional. For center routes it must match route center. For system routes, if provided, it must be an unbranded center.',
                 'example' => '10',
             ],
             'status' => [
@@ -160,8 +165,23 @@ class ListSurveyTargetStudentsRequest extends AdminListRequest
             'success' => false,
             'error' => [
                 'code' => 'FORBIDDEN',
-                'message' => 'Only super admins can target students for system surveys.',
+                'message' => 'You are not authorized to list target students.',
             ],
         ], 403));
+    }
+
+    private function routeCenterId(): ?int
+    {
+        $routeCenter = $this->route('center');
+
+        if ($routeCenter instanceof Center) {
+            return (int) $routeCenter->id;
+        }
+
+        if (is_numeric($routeCenter)) {
+            return (int) $routeCenter;
+        }
+
+        return null;
     }
 }
