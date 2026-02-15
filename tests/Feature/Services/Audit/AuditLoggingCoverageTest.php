@@ -68,7 +68,7 @@ it('audits student lifecycle actions', function (): void {
     $createResponse = $this->postJson('/api/v1/admin/students', [
         'name' => 'Audit Student',
         'email' => 'audit.student@example.com',
-        'phone' => '19991110001',
+        'phone' => '1225291843',
         'country_code' => '+20',
         'center_id' => $center->id,
     ], $this->adminHeaders());

@@ -46,7 +46,7 @@ class StoreStudentRequest extends FormRequest
             'phone' => [
                 'required',
                 'string',
-                'max:30',
+                'regex:/^[1-9][0-9]{9}$/',
                 Rule::unique('users', 'phone')
                     ->where(function ($query) use ($resolvedCenterId): void {
                         $query->where('is_student', true)
@@ -59,7 +59,7 @@ class StoreStudentRequest extends FormRequest
                         }
                     }),
             ],
-            'country_code' => ['required', 'string', 'max:8'],
+            'country_code' => ['required', 'string', 'max:8', 'regex:/^(\+\d{1,6}|00\d{1,6})$/'],
             'center_id' => ['nullable', 'integer', 'exists:centers,id'],
         ];
     }
@@ -105,11 +105,11 @@ class StoreStudentRequest extends FormRequest
                 'example' => 'student@example.com',
             ],
             'phone' => [
-                'description' => 'Student phone number.',
-                'example' => '19990000001',
+                'description' => 'Student base phone number only (10 digits, no leading zero, no country code).',
+                'example' => '1225291841',
             ],
             'country_code' => [
-                'description' => 'Student country code.',
+                'description' => 'Student country dialing code with + or 00 prefix.',
                 'example' => '+20',
             ],
             'center_id' => [
@@ -129,5 +129,16 @@ class StoreStudentRequest extends FormRequest
                 'details' => $validator->errors(),
             ],
         ], 422));
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $phone = preg_replace('/\D+/', '', (string) $this->input('phone'));
+        $countryCode = preg_replace('/[^\d+]+/', '', (string) $this->input('country_code'));
+
+        $this->merge([
+            'phone' => trim((string) $phone),
+            'country_code' => trim((string) $countryCode),
+        ]);
     }
 }

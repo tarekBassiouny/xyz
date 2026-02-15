@@ -44,7 +44,7 @@ it('allows super admin to create and delete students', function (): void {
     $create = $this->postJson('/api/v1/admin/students', [
         'name' => 'Student One',
         'email' => 'student.one@example.com',
-        'phone' => '19990000010',
+        'phone' => '1225291841',
         'country_code' => '+20',
         'center_id' => $center->id,
     ], $this->adminHeaders());
@@ -73,6 +73,43 @@ it('allows super admin to create and delete students', function (): void {
     $this->assertSoftDeleted('users', ['id' => $studentId]);
 });
 
+it('validates student phone as base number and country code format', function (): void {
+    $this->asAdmin();
+    $center = Center::factory()->create();
+
+    $leadingZero = $this->postJson('/api/v1/admin/students', [
+        'name' => 'Invalid Phone Student',
+        'email' => 'invalid.phone@example.com',
+        'phone' => '01225291841',
+        'country_code' => '+20',
+        'center_id' => $center->id,
+    ], $this->adminHeaders());
+
+    $leadingZero->assertStatus(422)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+        ->assertJsonStructure([
+            'error' => [
+                'details' => ['phone'],
+            ],
+        ]);
+
+    $withCountryInPhone = $this->postJson('/api/v1/admin/students', [
+        'name' => 'Invalid Base Phone Student',
+        'email' => 'invalid.base.phone@example.com',
+        'phone' => '201225291841',
+        'country_code' => '20',
+        'center_id' => $center->id,
+    ], $this->adminHeaders());
+
+    $withCountryInPhone->assertStatus(422)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+        ->assertJsonStructure([
+            'error' => [
+                'details' => ['phone', 'country_code'],
+            ],
+        ]);
+});
+
 it('prevents non-super admins from creating students', function (): void {
     $permission = Permission::firstOrCreate(['name' => 'student.manage'], [
         'description' => 'Permission: student.manage',
@@ -99,7 +136,7 @@ it('prevents non-super admins from creating students', function (): void {
     $response = $this->postJson('/api/v1/admin/students', [
         'name' => 'Student Two',
         'email' => 'student.two@example.com',
-        'phone' => '19990000011',
+        'phone' => '1225291842',
         'country_code' => '+20',
         'center_id' => $center->id,
     ], [
@@ -226,10 +263,55 @@ it('filters students by status and search', function (): void {
         ->assertJsonPath('data.0.name', 'Alpha Student');
 });
 
+it('filters students by center type (branded/unbranded)', function (): void {
+    $this->asAdmin();
+
+    $centerA = Center::factory()->create();
+    $centerB = Center::factory()->create();
+
+    $centerStudentA = User::factory()->create([
+        'name' => 'Center Student A',
+        'is_student' => true,
+        'center_id' => $centerA->id,
+        'phone' => '19990000061',
+    ]);
+    $centerStudentB = User::factory()->create([
+        'name' => 'Center Student B',
+        'is_student' => true,
+        'center_id' => $centerB->id,
+        'phone' => '19990000062',
+    ]);
+    $systemStudent = User::factory()->create([
+        'name' => 'System Student',
+        'is_student' => true,
+        'center_id' => null,
+        'phone' => '19990000063',
+    ]);
+
+    $brandedResponse = $this->getJson('/api/v1/admin/students?type=branded&per_page=50', $this->adminHeaders());
+    $brandedIds = collect($brandedResponse->json('data'))->pluck('id')->all();
+
+    $brandedResponse->assertOk();
+    expect($brandedIds)
+        ->toContain($centerStudentA->id)
+        ->toContain($centerStudentB->id)
+        ->not->toContain($systemStudent->id);
+
+    $unbrandedResponse = $this->getJson('/api/v1/admin/students?type=unbranded&per_page=50', $this->adminHeaders());
+    $unbrandedIds = collect($unbrandedResponse->json('data'))->pluck('id')->all();
+
+    $unbrandedResponse->assertOk();
+    expect($unbrandedIds)
+        ->toContain($systemStudent->id)
+        ->not->toContain($centerStudentA->id)
+        ->not->toContain($centerStudentB->id);
+});
+
 it('includes analytics summary in student list responses', function (): void {
     $this->asAdmin();
 
     $center = Center::factory()->create();
+    $lastLoginAt = now()->subMinutes(15)->startOfSecond();
     $course = Course::factory()->for($center, 'center')->create([
         'center_id' => $center->id,
         'category_id' => \App\Models\Category::factory()->for($center, 'center'),
@@ -245,6 +327,7 @@ it('includes analytics summary in student list responses', function (): void {
         'is_student' => true,
         'center_id' => $center->id,
         'phone' => '19990000050',
+        'last_login_at' => $lastLoginAt,
     ]);
 
     $device = UserDevice::factory()->create([
@@ -276,7 +359,8 @@ it('includes analytics summary in student list responses', function (): void {
     $response->assertOk()
         ->assertJsonPath('data.0.analytics.active_enrollments', 1)
         ->assertJsonPath('data.0.analytics.viewed_videos', 1)
-        ->assertJsonPath('data.0.analytics.total_sessions', 1);
+        ->assertJsonPath('data.0.analytics.total_sessions', 1)
+        ->assertJsonPath('data.0.analytics.last_activity_at', $lastLoginAt->toIso8601String());
 });
 
 it('updates students within the admin center only', function (): void {

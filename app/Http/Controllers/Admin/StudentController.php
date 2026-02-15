@@ -86,7 +86,8 @@ class StudentController extends Controller
             perPage: $requestFilters->perPage,
             centerId: (int) $center->id,
             status: $requestFilters->status,
-            search: $requestFilters->search
+            search: $requestFilters->search,
+            centerType: $requestFilters->centerType
         );
 
         $paginator = $this->queryService->paginateForCenter($admin, (int) $center->id, $filters);

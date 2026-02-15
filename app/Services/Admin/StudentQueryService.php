@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services\Admin;
 
+use App\Enums\CenterType;
 use App\Enums\UserDeviceStatus;
 use App\Filters\Admin\StudentFilters;
 use App\Models\User;
@@ -48,6 +49,8 @@ class StudentQueryService
                     ->orWhere('phone', 'like', '%'.$term.'%');
             });
         }
+
+        $this->applyCenterTypeFilter($query, $filters);
 
         if ($this->centerScopeService->isSystemSuperAdmin($admin)) {
             if ($filters->centerId !== null) {
@@ -97,6 +100,8 @@ class StudentQueryService
             });
         }
 
+        $this->applyCenterTypeFilter($query, $filters);
+
         return $query;
     }
 
@@ -124,5 +129,23 @@ class StudentQueryService
             'page',
             $filters->page
         );
+    }
+
+    /**
+     * @param  Builder<User>  $query
+     */
+    private function applyCenterTypeFilter(Builder $query, StudentFilters $filters): void
+    {
+        if ($filters->centerType === null) {
+            return;
+        }
+
+        if ($filters->centerType === CenterType::Unbranded->value) {
+            $query->whereNull('center_id');
+
+            return;
+        }
+
+        $query->whereNotNull('center_id');
     }
 }
