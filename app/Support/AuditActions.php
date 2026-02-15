@@ -181,4 +181,10 @@ final class AuditActions
     public const SURVEY_ASSIGNMENT_REMOVED = 'survey_assignment_removed';
 
     public const SURVEY_SUBMITTED = 'survey_submitted';
+
+    public const SYSTEM_SETTING_CREATED = 'system_setting_created';
+
+    public const SYSTEM_SETTING_UPDATED = 'system_setting_updated';
+
+    public const SYSTEM_SETTING_DELETED = 'system_setting_deleted';
 }

@@ -18,6 +18,8 @@ use App\Services\Centers\Contracts\CenterScopeServiceInterface;
 use App\Services\Centers\Contracts\CenterServiceInterface;
 use App\Services\Courses\Contracts\CourseInstructorServiceInterface;
 use App\Services\Courses\CourseInstructorService;
+use App\Services\Dashboard\Contracts\DashboardServiceInterface;
+use App\Services\Dashboard\DashboardService;
 use App\Services\Devices\Contracts\DeviceChangeServiceInterface;
 use App\Services\Devices\Contracts\DeviceServiceInterface;
 use App\Services\Devices\DeviceChangeService;
@@ -53,7 +55,9 @@ use App\Services\Sections\SectionWorkflowService;
 use App\Services\Settings\CenterSettingsService;
 use App\Services\Settings\Contracts\CenterSettingsServiceInterface;
 use App\Services\Settings\Contracts\SettingsResolverServiceInterface;
+use App\Services\Settings\Contracts\SystemSettingServiceInterface;
 use App\Services\Settings\SettingsResolverService;
+use App\Services\Settings\SystemSettingService;
 use App\Services\Storage\Contracts\StorageServiceInterface;
 use App\Services\Storage\SpacesStorageService;
 use App\Services\Students\Contracts\StudentNotificationServiceInterface;
@@ -90,6 +94,7 @@ class AppServiceProvider extends ServiceProvider
             JwtServiceInterface::class => JwtService::class,
             DeviceServiceInterface::class => DeviceService::class,
             DeviceChangeServiceInterface::class => DeviceChangeService::class,
+            DashboardServiceInterface::class => DashboardService::class,
             AdminAuthServiceInterface::class => AdminAuthService::class,
             InstructorServiceInterface::class => InstructorService::class,
             CourseInstructorServiceInterface::class => CourseInstructorService::class,
@@ -101,6 +106,7 @@ class AppServiceProvider extends ServiceProvider
             CenterScopeServiceInterface::class => CenterScopeService::class,
             CenterSettingsServiceInterface::class => CenterSettingsService::class,
             SettingsResolverServiceInterface::class => SettingsResolverService::class,
+            SystemSettingServiceInterface::class => SystemSettingService::class,
             ViewLimitServiceInterface::class => ViewLimitService::class,
             PdfServiceInterface::class => PdfService::class,
             PdfUploadSessionServiceInterface::class => PdfUploadSessionService::class,
