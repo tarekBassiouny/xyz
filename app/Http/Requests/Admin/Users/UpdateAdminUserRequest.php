@@ -29,11 +29,31 @@ class UpdateAdminUserRequest extends FormRequest
         return [
             'name' => ['sometimes', 'string', 'max:100'],
             'email' => ['sometimes', 'email', 'max:190', Rule::unique('users', 'email')->ignore($target?->id)],
-            'phone' => ['sometimes', 'string', 'max:30', Rule::unique('users', 'phone')->ignore($target?->id)],
+            'phone' => ['sometimes', 'string', 'regex:/^[1-9][0-9]{9}$/', Rule::unique('users', 'phone')->ignore($target?->id)],
+            'country_code' => ['sometimes', 'string', 'max:8', 'regex:/^(\+\d{1,6}|00\d{1,6})$/'],
             'password' => ['prohibited'],
             'status' => ['nullable', 'integer', 'in:0,1,2'],
             'center_id' => ['nullable', 'integer', 'exists:centers,id'],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $updates = [];
+
+        if ($this->has('phone')) {
+            $sanitizedPhone = preg_replace('/\D+/', '', (string) $this->input('phone'));
+            $updates['phone'] = trim((string) $sanitizedPhone);
+        }
+
+        if ($this->has('country_code')) {
+            $sanitizedCountry = preg_replace('/[^\d+]+/', '', (string) $this->input('country_code'));
+            $updates['country_code'] = trim((string) $sanitizedCountry);
+        }
+
+        if (count($updates) > 0) {
+            $this->merge($updates);
+        }
     }
 
     public function withValidator(Validator $validator): void
@@ -88,6 +108,10 @@ class UpdateAdminUserRequest extends FormRequest
             'phone' => [
                 'description' => 'Admin phone number.',
                 'example' => '19990000004',
+            ],
+            'country_code' => [
+                'description' => 'Admin country dialing code with + or 00 prefix.',
+                'example' => '+1',
             ],
             'password' => [
                 'description' => 'Not accepted. Use password reset/invite flow endpoints.',
