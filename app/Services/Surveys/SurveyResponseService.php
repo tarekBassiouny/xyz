@@ -14,6 +14,7 @@ use App\Models\SurveyAnswer;
 use App\Models\SurveyQuestion;
 use App\Models\SurveyResponse;
 use App\Models\User;
+use App\Services\AdminNotifications\AdminNotificationDispatcher;
 use App\Services\Audit\AuditLogService;
 use App\Services\Surveys\Contracts\SurveyResponseServiceInterface;
 use App\Support\AuditActions;
@@ -23,7 +24,8 @@ use Illuminate\Support\Facades\DB;
 class SurveyResponseService implements SurveyResponseServiceInterface
 {
     public function __construct(
-        private readonly AuditLogService $auditLogService
+        private readonly AuditLogService $auditLogService,
+        private readonly AdminNotificationDispatcher $adminNotificationDispatcher
     ) {}
 
     /**
@@ -128,7 +130,10 @@ class SurveyResponseService implements SurveyResponseServiceInterface
                 'survey_id' => $survey->id,
             ]);
 
-            return $response->fresh(['answers']) ?? $response;
+            $freshResponse = $response->fresh(['answers', 'survey', 'user']) ?? $response;
+            $this->adminNotificationDispatcher->dispatchSurveyResponse($freshResponse);
+
+            return $freshResponse;
         });
     }
 

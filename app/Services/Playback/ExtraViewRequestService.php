@@ -13,6 +13,7 @@ use App\Models\Video;
 use App\Services\Access\CourseAccessService;
 use App\Services\Access\EnrollmentAccessService;
 use App\Services\Access\StudentAccessService;
+use App\Services\AdminNotifications\AdminNotificationDispatcher;
 use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Support\AuditActions;
@@ -26,7 +27,8 @@ class ExtraViewRequestService
         private readonly StudentAccessService $studentAccessService,
         private readonly EnrollmentAccessService $enrollmentAccessService,
         private readonly CourseAccessService $courseAccessService,
-        private readonly AuditLogService $auditLogService
+        private readonly AuditLogService $auditLogService,
+        private readonly AdminNotificationDispatcher $notificationDispatcher
     ) {}
 
     public function create(User $student, Course $course, Video $video, ?string $reason = null): ExtraViewRequest
@@ -57,7 +59,10 @@ class ExtraViewRequestService
             'center_id' => $course->center_id,
         ], $request->id);
 
-        return $request->fresh() ?? $request;
+        $fresh = $request->fresh() ?? $request;
+        $this->notificationDispatcher->dispatchExtraViewRequest($fresh);
+
+        return $fresh;
     }
 
     public function approve(User $admin, ExtraViewRequest $request, int $grantedViews, ?string $decisionReason = null): ExtraViewRequest

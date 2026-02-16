@@ -11,6 +11,7 @@ use App\Models\Course;
 use App\Models\Enrollment;
 use App\Models\User;
 use App\Services\Access\StudentAccessService;
+use App\Services\AdminNotifications\AdminNotificationDispatcher;
 use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Enrollments\Contracts\EnrollmentServiceInterface;
@@ -27,7 +28,8 @@ class EnrollmentService implements EnrollmentServiceInterface
         private readonly CenterScopeService $centerScopeService,
         private readonly StudentNotificationServiceInterface $notificationService,
         private readonly StudentAccessService $studentAccessService,
-        private readonly AuditLogService $auditLogService
+        private readonly AuditLogService $auditLogService,
+        private readonly AdminNotificationDispatcher $adminNotificationDispatcher
     ) {}
 
     public function enroll(User $student, Course $course, string $status, ?User $actor = null): Enrollment
@@ -71,6 +73,9 @@ class EnrollmentService implements EnrollmentServiceInterface
 
         // Send enrollment notification (non-blocking)
         $this->notificationService->sendEnrollmentNotification($result);
+
+        // Notify admin of new enrollment
+        $this->adminNotificationDispatcher->dispatchNewEnrollment($result);
 
         return $result;
     }
