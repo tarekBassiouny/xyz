@@ -18,6 +18,8 @@ final class AuditActions
 
     public const ADMIN_LOGOUT = 'admin_logout';
 
+    public const ADMIN_PASSWORD_CHANGED = 'admin_password_changed';
+
     public const ADMIN_USER_DELETED = 'admin_user_deleted';
 
     public const ADMIN_USER_ROLES_SYNCED = 'admin_user_roles_synced';

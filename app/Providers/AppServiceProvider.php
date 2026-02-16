@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Services\AdminUsers\AdminUserService;
+use App\Services\AdminUsers\Contracts\AdminUserServiceInterface;
 use App\Services\Auth\AdminAuthService;
 use App\Services\Auth\Contracts\AdminAuthServiceInterface;
 use App\Services\Auth\Contracts\JwtServiceInterface;
@@ -89,6 +91,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $bindings = [
+            AdminUserServiceInterface::class => AdminUserService::class,
             OtpServiceInterface::class => OtpService::class,
             OtpSenderInterface::class => WhatsAppOtpSender::class,
             JwtServiceInterface::class => JwtService::class,
@@ -195,6 +198,12 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('admin-refresh', static function (Request $request): Limit {
             return Limit::perMinute(30)->by($request->ip());
+        });
+
+        RateLimiter::for('admin-forgot', static function (Request $request): Limit {
+            $email = (string) $request->input('email', '');
+
+            return Limit::perMinute(5)->by($request->ip().'|'.$email);
         });
     }
 }
