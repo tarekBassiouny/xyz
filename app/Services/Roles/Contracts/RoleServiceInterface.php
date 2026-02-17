@@ -32,4 +32,11 @@ interface RoleServiceInterface
      * @param  array<int, int>  $permissionIds
      */
     public function syncPermissions(Role $role, array $permissionIds, ?User $actor = null): Role;
+
+    /**
+     * @param  array<int, int>  $roleIds
+     * @param  array<int, int>  $permissionIds
+     * @return array{roles: array<int, int>, permission_ids: array<int, int>}
+     */
+    public function bulkSyncPermissions(array $roleIds, array $permissionIds, ?User $actor = null): array;
 }

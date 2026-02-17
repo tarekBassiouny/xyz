@@ -28,4 +28,12 @@ interface AdminAuthServiceInterface
      * Change the authenticated admin password.
      */
     public function changePassword(User $user, string $currentPassword, string $newPassword): bool;
+
+    /**
+     * Update the authenticated admin profile.
+     */
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    public function updateProfile(User $user, array $data): User;
 }

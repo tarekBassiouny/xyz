@@ -11,6 +11,7 @@ Route::post('/auth/refresh', [AdminAuthController::class, 'refresh'])->middlewar
 
 Route::middleware('jwt.admin')->group(function (): void {
     Route::get('/auth/me', [AdminAuthController::class, 'me']);
+    Route::patch('/auth/me', [AdminAuthController::class, 'updateProfile']);
     Route::post('/auth/change-password', [AdminAuthController::class, 'changePassword']);
     Route::post('/auth/logout', [AdminAuthController::class, 'logout']);
 });

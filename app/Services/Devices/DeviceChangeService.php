@@ -12,6 +12,7 @@ use App\Models\DeviceChangeRequest;
 use App\Models\User;
 use App\Models\UserDevice;
 use App\Services\Access\StudentAccessService;
+use App\Services\AdminNotifications\AdminNotificationDispatcher;
 use App\Services\Audit\AuditLogService;
 use App\Services\Centers\CenterScopeService;
 use App\Services\Devices\Contracts\DeviceChangeServiceInterface;
@@ -25,7 +26,8 @@ class DeviceChangeService implements DeviceChangeServiceInterface
     public function __construct(
         private readonly CenterScopeService $centerScopeService,
         private readonly StudentAccessService $studentAccessService,
-        private readonly AuditLogService $auditLogService
+        private readonly AuditLogService $auditLogService,
+        private readonly AdminNotificationDispatcher $notificationDispatcher
     ) {}
 
     public function create(User $student, string $newDeviceId, string $model, string $osVersion, ?string $reason = null): DeviceChangeRequest
@@ -76,7 +78,10 @@ class DeviceChangeService implements DeviceChangeServiceInterface
             'new_device_id' => $newDeviceId,
         ], $request->id);
 
-        return $request->fresh() ?? $request;
+        $freshRequest = $request->fresh() ?? $request;
+        $this->notificationDispatcher->dispatchDeviceChangeRequest($freshRequest);
+
+        return $freshRequest;
     }
 
     public function approve(
@@ -230,7 +235,10 @@ class DeviceChangeService implements DeviceChangeServiceInterface
             'new_device_id' => $newDeviceId,
         ], $request->id);
 
-        return $request->fresh() ?? $request;
+        $freshRequest = $request->fresh() ?? $request;
+        $this->notificationDispatcher->dispatchDeviceChangeRequest($freshRequest);
+
+        return $freshRequest;
     }
 
     public function createByAdmin(User $admin, User $student, ?string $reason = null): DeviceChangeRequest

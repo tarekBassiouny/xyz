@@ -51,6 +51,10 @@ class AdminUserService implements AdminUserServiceInterface
             });
         }
 
+        if ($filters->status !== null) {
+            $query->where('status', $filters->status);
+        }
+
         if ($filters->roleId !== null) {
             $query->whereHas('roles', function (Builder $builder) use ($filters): void {
                 $builder->where('roles.id', $filters->roleId);
@@ -77,6 +81,7 @@ class AdminUserService implements AdminUserServiceInterface
             'name' => (string) $data['name'],
             'email' => $data['email'] ?? null,
             'phone' => (string) $data['phone'],
+            'country_code' => $data['country_code'] ?? null,
             'password' => Str::random(32),
             'center_id' => $centerId,
             'is_student' => false,
@@ -131,6 +136,10 @@ class AdminUserService implements AdminUserServiceInterface
 
         if (array_key_exists('phone', $data)) {
             $payload['phone'] = $data['phone'];
+        }
+
+        if (array_key_exists('country_code', $data)) {
+            $payload['country_code'] = $data['country_code'];
         }
 
         if (array_key_exists('status', $data)) {

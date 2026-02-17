@@ -15,6 +15,7 @@ use App\Services\Roles\Contracts\RoleServiceInterface;
 use App\Support\AuditActions;
 use App\Support\ErrorCodes;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 
 class RoleService implements RoleServiceInterface
 {
@@ -35,10 +36,20 @@ class RoleService implements RoleServiceInterface
      */
     public function list(RoleFilters $filters): LengthAwarePaginator
     {
-        return Role::query()
+        $query = Role::query()
             ->where('is_admin_role', true)
-            ->with('permissions')
-            ->orderBy('id')
+            ->with('permissions');
+
+        if ($filters->search !== null) {
+            $term = '%'.strtolower($filters->search).'%';
+
+            $query->where(function ($sub) use ($term): void {
+                $sub->whereRaw('LOWER(slug) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(name) LIKE ?', [$term]);
+            });
+        }
+
+        return $query->orderBy('id')
             ->paginate(
                 $filters->perPage,
                 ['*'],
@@ -110,6 +121,40 @@ class RoleService implements RoleServiceInterface
         ]);
 
         return $role->fresh(['permissions']) ?? $role;
+    }
+
+    /**
+     * @param  array<int, int>  $roleIds
+     * @param  array<int, int>  $permissionIds
+     * @return array{roles: array<int, int>, permission_ids: array<int, int>}
+     */
+    public function bulkSyncPermissions(array $roleIds, array $permissionIds, ?User $actor = null): array
+    {
+        $this->assertSystemAdminScope($actor);
+
+        $uniqueRoleIds = array_values(array_unique(array_map('intval', $roleIds)));
+        $roles = Role::query()->whereIn('id', $uniqueRoleIds)->get();
+
+        if (count($uniqueRoleIds) !== $roles->count()) {
+            throw new DomainException('One or more roles were not found.', ErrorCodes::NOT_FOUND, 404);
+        }
+
+        $updatedRoles = [];
+
+        DB::transaction(function () use ($roles, $permissionIds, $actor, &$updatedRoles): void {
+            foreach ($roles as $role) {
+                $role->permissions()->sync($permissionIds);
+                $this->auditLogService->log($actor, $role, AuditActions::ROLE_PERMISSIONS_SYNCED, [
+                    'permission_ids' => $permissionIds,
+                ]);
+                $updatedRoles[] = $role->id;
+            }
+        });
+
+        return [
+            'roles' => $updatedRoles,
+            'permission_ids' => $permissionIds,
+        ];
     }
 
     /**

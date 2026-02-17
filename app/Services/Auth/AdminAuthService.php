@@ -40,10 +40,7 @@ class AdminAuthService implements AdminAuthServiceInterface
 
         $this->syncAdminMembership($user);
 
-        $hasSuperAdminRole = $user->hasRole('super_admin');
-        $centerAccessValid = $hasSuperAdminRole
-            ? ($user->center_id === null || is_numeric($user->center_id))
-            : is_numeric($user->center_id);
+        $centerAccessValid = $user->center_id === null || is_numeric($user->center_id);
         $apiScopeValid = $this->centerScopeService->matchesResolvedApiCenterScope($user, $resolvedCenterId);
 
         if (! $apiScopeValid) {
@@ -58,6 +55,8 @@ class AdminAuthService implements AdminAuthServiceInterface
         }
 
         if (! $user->force_password_reset && $centerAccessValid && $apiScopeValid) {
+            $user->last_login_at = now();
+            $user->save();
             $this->auditLogService->log($user, $user, AuditActions::ADMIN_LOGIN);
         }
 
@@ -95,6 +94,7 @@ class AdminAuthService implements AdminAuthServiceInterface
         }
 
         $token = Password::broker()->createToken($user);
+        $user->loadMissing('center');
         $user->notify(new AdminPasswordResetNotification($token, $isInvite));
 
         if ($isInvite && $user->invitation_sent_at === null) {
@@ -118,5 +118,33 @@ class AdminAuthService implements AdminAuthServiceInterface
         $this->auditLogService->log($user, $user, AuditActions::ADMIN_PASSWORD_CHANGED);
 
         return true;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    public function updateProfile(User $user, array $data): User
+    {
+        $updates = [];
+
+        if (array_key_exists('name', $data)) {
+            $updates['name'] = $data['name'];
+        }
+
+        if (array_key_exists('phone', $data)) {
+            $updates['phone'] = $data['phone'];
+        }
+
+        if (array_key_exists('country_code', $data)) {
+            $updates['country_code'] = $data['country_code'];
+        }
+
+        if (! empty($updates)) {
+            $user->update($updates);
+        }
+
+        $user->loadMissing(['roles.permissions', 'center']);
+
+        return $user;
     }
 }

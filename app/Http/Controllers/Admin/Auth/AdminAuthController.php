@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Auth\AdminChangePasswordRequest;
 use App\Http\Requests\Admin\Auth\AdminLoginRequest;
 use App\Http\Requests\Admin\Auth\AdminPasswordForgotRequest;
+use App\Http\Requests\Admin\Auth\UpdateAdminProfileRequest;
 use App\Http\Resources\Admin\Users\AdminUserResource;
 use App\Models\User;
 use App\Services\Audit\AuditLogService;
@@ -154,6 +155,35 @@ class AdminAuthController extends Controller
             'success' => true,
             'data' => [
                 'user' => new AdminUserResource($user),
+            ],
+        ]);
+    }
+
+    /**
+     * Update current admin profile.
+     */
+    public function updateProfile(UpdateAdminProfileRequest $request): JsonResponse
+    {
+        /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
+        $guard = Auth::guard('admin');
+        $user = $guard->user() ?? $guard->authenticate();
+
+        if (! $user instanceof User) {
+            return response()->json([
+                'success' => false,
+                'error' => [
+                    'code' => 'UNAUTHORIZED',
+                    'message' => 'Unauthorized.',
+                ],
+            ], 401);
+        }
+
+        $updated = $this->authService->updateProfile($user, $request->validated());
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'user' => new AdminUserResource($updated),
             ],
         ]);
     }

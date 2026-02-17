@@ -25,11 +25,23 @@ class StoreAdminUserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:100'],
             'email' => ['required', 'email', 'max:190', Rule::unique('users', 'email')],
-            'phone' => ['required', 'string', 'max:30', Rule::unique('users', 'phone')],
+            'phone' => ['required', 'string', 'regex:/^[1-9][0-9]{9}$/', Rule::unique('users', 'phone')],
+            'country_code' => ['required', 'string', 'max:8', 'regex:/^(\+\d{1,6}|00\d{1,6})$/'],
             'password' => ['prohibited'],
             'status' => ['nullable', 'integer', 'in:0,1,2'],
             'center_id' => ['nullable', 'integer', 'exists:centers,id'],
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $phone = preg_replace('/\D+/', '', (string) $this->input('phone'));
+        $countryCode = preg_replace('/[^\d+]+/', '', (string) $this->input('country_code'));
+
+        $this->merge([
+            'phone' => trim((string) $phone),
+            'country_code' => trim((string) $countryCode),
+        ]);
     }
 
     public function withValidator(Validator $validator): void
@@ -84,6 +96,10 @@ class StoreAdminUserRequest extends FormRequest
             'phone' => [
                 'description' => 'Admin phone number.',
                 'example' => '19990000003',
+            ],
+            'country_code' => [
+                'description' => 'Admin country dialing code with + or 00 prefix.',
+                'example' => '+1',
             ],
             'password' => [
                 'description' => 'Not accepted. Admin creation is invitation-only.',

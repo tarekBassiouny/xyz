@@ -20,7 +20,9 @@ class ListRolesRequest extends AdminListRequest
      */
     public function rules(): array
     {
-        return $this->listRules();
+        return array_merge($this->listRules(), [
+            'search' => ['sometimes', 'string', 'max:100'],
+        ]);
     }
 
     public function filters(): RoleFilters
@@ -30,7 +32,8 @@ class ListRolesRequest extends AdminListRequest
 
         return new RoleFilters(
             page: FilterInput::page($data),
-            perPage: FilterInput::perPage($data)
+            perPage: FilterInput::perPage($data),
+            search: FilterInput::stringOrNull($data, 'search')
         );
     }
 
@@ -47,6 +50,10 @@ class ListRolesRequest extends AdminListRequest
             'page' => [
                 'description' => 'Page number to retrieve.',
                 'example' => '1',
+            ],
+            'search' => [
+                'description' => 'Optional search term applied to role slug or name.',
+                'example' => 'support',
             ],
         ];
     }
