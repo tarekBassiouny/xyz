@@ -7,6 +7,8 @@ namespace Database\Seeders;
 use App\Models\Permission;
 use Illuminate\Database\Seeder;
 
+use Illuminate\Support\Facades\DB;
+
 class PermissionSeeder extends Seeder
 {
     public function run(): void
@@ -31,12 +33,21 @@ class PermissionSeeder extends Seeder
             'device_change.manage' => 'Manage device change requests',
             'extra_view.manage' => 'Manage extra view requests',
             'instructor.manage' => 'Manage instructors',
+            'agent.execute' => 'Run automated agents',
+            'agent.content_publishing' => 'Execute content publishing agents',
+            'agent.enrollment.bulk' => 'Execute bulk enrollment agents',
         ];
 
-        foreach ($permissions as $name => $description) {
-            Permission::updateOrCreate(['name' => $name], [
-                'description' => $description,
-            ]);
-        }
+        DB::transaction(function () use ($permissions): void {
+            DB::statement('SET FOREIGN_KEY_CHECKS=0');
+            Permission::query()->delete();
+            DB::statement('SET FOREIGN_KEY_CHECKS=1');
+
+            foreach ($permissions as $name => $description) {
+                Permission::updateOrCreate(['name' => $name], [
+                    'description' => $description,
+                ]);
+            }
+        });
     }
 }
