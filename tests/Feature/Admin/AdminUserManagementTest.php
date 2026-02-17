@@ -73,6 +73,7 @@ it('creates, updates, and deletes admin users', function (): void {
         'name' => 'Admin User',
         'email' => 'admin.user@example.com',
         'phone' => '19990000001',
+        'country_code' => '+20',
     ], $this->adminHeaders());
 
     $create->assertCreated()
@@ -107,6 +108,7 @@ it('enforces invite-only admin creation by rejecting password field', function (
         'name' => 'Admin User',
         'email' => 'admin.user.invite.only@example.com',
         'phone' => '19990000019',
+        'country_code' => '+20',
         'password' => 'secret123',
     ], $this->adminHeaders());
 
@@ -425,6 +427,7 @@ it('supports center-scoped admin CRUD via center routes', function (): void {
         'name' => 'Center Admin User',
         'email' => 'center.admin.user@example.com',
         'phone' => '19990000011',
+        'country_code' => '+20',
     ], $headers);
 
     $create->assertCreated()
@@ -460,6 +463,7 @@ it('blocks center-scoped admin CRUD on other center route', function (): void {
         'name' => 'Blocked Admin User',
         'email' => 'blocked.admin.user@example.com',
         'phone' => '19990000012',
+        'country_code' => '+20',
     ], $headers);
 
     $response->assertStatus(403)

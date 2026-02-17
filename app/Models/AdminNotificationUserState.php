@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Database\Factories\AdminNotificationUserStateFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,8 +23,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 class AdminNotificationUserState extends Model
 {
-    /** @use HasFactory<\Database\Factories\AdminNotificationUserStateFactory> */
+    /** @use HasFactory<AdminNotificationUserStateFactory> */
     use HasFactory;
+
     use SoftDeletes;
 
     protected $fillable = [

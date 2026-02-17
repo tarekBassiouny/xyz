@@ -13,6 +13,7 @@ use App\Services\AdminNotifications\Contracts\AdminNotificationServiceInterface;
 use App\Services\Centers\CenterScopeService;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 
 class AdminNotificationService implements AdminNotificationServiceInterface
 {
@@ -35,7 +36,7 @@ class AdminNotificationService implements AdminNotificationServiceInterface
         $this->excludeDeletedForActor($query, $actor);
 
         $query->with([
-            'userStates' => function (Builder $builder) use ($actor): void {
+            'userStates' => function (Relation $builder) use ($actor): void {
                 $builder->where('user_id', $actor->id)
                     ->whereNull('deleted_at');
             },
