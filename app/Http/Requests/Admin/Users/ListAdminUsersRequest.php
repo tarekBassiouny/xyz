@@ -24,6 +24,9 @@ class ListAdminUsersRequest extends AdminListRequest
     {
         return array_merge($this->listRules(), [
             'center_id' => ['sometimes', 'integer', 'exists:centers,id'],
+            'status' => ['sometimes', 'integer', 'in:0,1,2'],
+            'search' => ['sometimes', 'string'],
+            'role_id' => ['sometimes', 'integer', 'exists:roles,id'],
         ]);
     }
 
@@ -35,7 +38,10 @@ class ListAdminUsersRequest extends AdminListRequest
         return new AdminUserFilters(
             page: FilterInput::page($data),
             perPage: FilterInput::perPage($data),
-            centerId: FilterInput::intOrNull($data, 'center_id')
+            centerId: FilterInput::intOrNull($data, 'center_id'),
+            status: FilterInput::intOrNull($data, 'status'),
+            search: FilterInput::stringOrNull($data, 'search'),
+            roleId: FilterInput::intOrNull($data, 'role_id')
         );
     }
 
@@ -71,6 +77,18 @@ class ListAdminUsersRequest extends AdminListRequest
             'center_id' => [
                 'description' => 'Optional center filter on system route. On center route, if provided, it must match route center.',
                 'example' => '12',
+            ],
+            'search' => [
+                'description' => 'Optional search by admin email or phone.',
+                'example' => 'admin@example.com',
+            ],
+            'status' => [
+                'description' => 'Optional status filter (0 inactive, 1 active, 2 banned).',
+                'example' => '1',
+            ],
+            'role_id' => [
+                'description' => 'Optional role ID filter.',
+                'example' => '2',
             ],
             'per_page' => [
                 'description' => 'Items per page (max 100).',

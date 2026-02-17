@@ -8,6 +8,7 @@ class RoleFilters
 {
     public function __construct(
         public readonly int $page,
-        public readonly int $perPage
+        public readonly int $perPage,
+        public readonly ?string $search = null
     ) {}
 }

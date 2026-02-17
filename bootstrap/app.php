@@ -56,6 +56,7 @@ return Application::configure(basePath: dirname(__DIR__))
                         require __DIR__.'/../routes/api/v1/admin/settings.php';
                         require __DIR__.'/../routes/api/v1/admin/audit-logs.php';
                         require __DIR__.'/../routes/api/v1/admin/analytics.php';
+                        require __DIR__.'/../routes/api/v1/admin/dashboard.php';
                         require __DIR__.'/../routes/api/v1/admin/extra-view-requests.php';
                         require __DIR__.'/../routes/api/v1/admin/device-change-requests.php';
                         require __DIR__.'/../routes/api/v1/admin/agents.php';
@@ -63,6 +64,7 @@ return Application::configure(basePath: dirname(__DIR__))
                         require __DIR__.'/../routes/api/v1/admin/admin-users.php';
                         require __DIR__.'/../routes/api/v1/admin/students.php';
                         require __DIR__.'/../routes/api/v1/admin/surveys.php';
+                        require __DIR__.'/../routes/api/v1/admin/notifications.php';
                     });
                 });
         }

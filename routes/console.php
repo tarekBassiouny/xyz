@@ -12,6 +12,10 @@ Schedule::command('uploads:cleanup')
     ->withoutOverlapping()
     ->onOneServer()
     ->daily();
+Schedule::command('notifications:cleanup')
+    ->withoutOverlapping()
+    ->onOneServer()
+    ->daily();
 Schedule::command('playback:close-stale')
     ->withoutOverlapping()
     ->onOneServer()

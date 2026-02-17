@@ -5,11 +5,14 @@ declare(strict_types=1);
 namespace App\Services\Auth;
 
 use App\Models\User;
+use App\Notifications\AdminPasswordResetNotification;
 use App\Services\Audit\AuditLogService;
 use App\Services\Auth\Contracts\AdminAuthServiceInterface;
 use App\Services\Centers\CenterScopeService;
 use App\Support\AuditActions;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Password;
 
 class AdminAuthService implements AdminAuthServiceInterface
 {
@@ -37,10 +40,7 @@ class AdminAuthService implements AdminAuthServiceInterface
 
         $this->syncAdminMembership($user);
 
-        $hasSuperAdminRole = $user->hasRole('super_admin');
-        $centerAccessValid = $hasSuperAdminRole
-            ? ($user->center_id === null || is_numeric($user->center_id))
-            : is_numeric($user->center_id);
+        $centerAccessValid = $user->center_id === null || is_numeric($user->center_id);
         $apiScopeValid = $this->centerScopeService->matchesResolvedApiCenterScope($user, $resolvedCenterId);
 
         if (! $apiScopeValid) {
@@ -55,6 +55,8 @@ class AdminAuthService implements AdminAuthServiceInterface
         }
 
         if (! $user->force_password_reset && $centerAccessValid && $apiScopeValid) {
+            $user->last_login_at = now();
+            $user->save();
             $this->auditLogService->log($user, $user, AuditActions::ADMIN_LOGIN);
         }
 
@@ -80,5 +82,69 @@ class AdminAuthService implements AdminAuthServiceInterface
         $user->centers()->syncWithoutDetaching([
             (int) $user->center_id => ['type' => 'admin'],
         ]);
+    }
+
+    public function sendPasswordResetLink(string $email, bool $isInvite = false): bool
+    {
+        /** @var User|null $user */
+        $user = User::where('email', $email)->first();
+
+        if (! $user instanceof User || $user->is_student || $user->email === null) {
+            return false;
+        }
+
+        $token = Password::broker()->createToken($user);
+        $user->loadMissing('center');
+        $user->notify(new AdminPasswordResetNotification($token, $isInvite));
+
+        if ($isInvite && $user->invitation_sent_at === null) {
+            $user->invitation_sent_at = now();
+            $user->save();
+        }
+
+        return true;
+    }
+
+    public function changePassword(User $user, string $currentPassword, string $newPassword): bool
+    {
+        if (! Hash::check($currentPassword, (string) $user->password)) {
+            return false;
+        }
+
+        $user->password = $newPassword;
+        $user->force_password_reset = false;
+        $user->save();
+
+        $this->auditLogService->log($user, $user, AuditActions::ADMIN_PASSWORD_CHANGED);
+
+        return true;
+    }
+
+    /**
+     * @param  array<string, mixed>  $data
+     */
+    public function updateProfile(User $user, array $data): User
+    {
+        $updates = [];
+
+        if (array_key_exists('name', $data)) {
+            $updates['name'] = $data['name'];
+        }
+
+        if (array_key_exists('phone', $data)) {
+            $updates['phone'] = $data['phone'];
+        }
+
+        if (array_key_exists('country_code', $data)) {
+            $updates['country_code'] = $data['country_code'];
+        }
+
+        if (! empty($updates)) {
+            $user->update($updates);
+        }
+
+        $user->loadMissing(['roles.permissions', 'center']);
+
+        return $user;
     }
 }
