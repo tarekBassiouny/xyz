@@ -38,16 +38,14 @@ class PermissionSeeder extends Seeder
             'agent.enrollment.bulk' => 'Execute bulk enrollment agents',
         ];
 
-        DB::transaction(function () use ($permissions): void {
-            DB::statement('SET FOREIGN_KEY_CHECKS=0');
-            Permission::query()->delete();
-            DB::statement('SET FOREIGN_KEY_CHECKS=1');
+        DB::statement('SET FOREIGN_KEY_CHECKS=0');
+        Permission::truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
-            foreach ($permissions as $name => $description) {
-                Permission::updateOrCreate(['name' => $name], [
-                    'description' => $description,
-                ]);
-            }
-        });
+        foreach ($permissions as $name => $description) {
+            Permission::updateOrCreate(['name' => $name], [
+                'description' => $description,
+            ]);
+        }
     }
 }
