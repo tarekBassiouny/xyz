@@ -40,10 +40,7 @@ class AdminAuthService implements AdminAuthServiceInterface
 
         $this->syncAdminMembership($user);
 
-        $hasSuperAdminRole = $user->hasRole('super_admin');
-        $centerAccessValid = $hasSuperAdminRole
-            ? ($user->center_id === null || is_numeric($user->center_id))
-            : is_numeric($user->center_id);
+        $centerAccessValid = $user->center_id === null || is_numeric($user->center_id);
         $apiScopeValid = $this->centerScopeService->matchesResolvedApiCenterScope($user, $resolvedCenterId);
 
         if (! $apiScopeValid) {
@@ -119,5 +116,30 @@ class AdminAuthService implements AdminAuthServiceInterface
         $this->auditLogService->log($user, $user, AuditActions::ADMIN_PASSWORD_CHANGED);
 
         return true;
+    }
+
+    public function updateProfile(User $user, array $data): User
+    {
+        $updates = [];
+
+        if (array_key_exists('name', $data)) {
+            $updates['name'] = $data['name'];
+        }
+
+        if (array_key_exists('phone', $data)) {
+            $updates['phone'] = $data['phone'];
+        }
+
+        if (array_key_exists('country_code', $data)) {
+            $updates['country_code'] = $data['country_code'];
+        }
+
+        if (! empty($updates)) {
+            $user->update($updates);
+        }
+
+        $user->loadMissing(['roles.permissions', 'center']);
+
+        return $user;
     }
 }

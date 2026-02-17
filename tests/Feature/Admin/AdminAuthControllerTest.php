@@ -167,6 +167,39 @@ test('admin can fetch their profile', function () {
         ]);
 });
 
+test('admin can update their profile', function () {
+    $admin = $this->asAdmin();
+
+    $response = $this->patchJson('/api/v1/admin/auth/me', [
+        'name' => 'Updated Name',
+        'phone' => '19990000005',
+        'country_code' => '+1',
+    ], $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.user.name', 'Updated Name')
+        ->assertJsonPath('data.user.phone', '19990000005')
+        ->assertJsonPath('data.user.country_code', '+1');
+});
+
+test('profile update validates unique phone', function () {
+    $admin = $this->asAdmin();
+    User::factory()->create([
+        'phone' => '19990000006',
+        'is_student' => false,
+    ]);
+
+    $response = $this->patchJson('/api/v1/admin/auth/me', [
+        'phone' => '19990000006',
+    ], $this->adminHeaders());
+
+    $response->assertStatus(422)
+        ->assertJsonPath('success', false)
+        ->assertJsonPath('error.code', 'VALIDATION_ERROR')
+        ->assertJsonStructure(['error' => ['details' => ['phone']]]);
+});
+
 test('unauthenticated request to me fails', function () {
     $response = $this->getJson('/api/v1/admin/auth/me');
 
