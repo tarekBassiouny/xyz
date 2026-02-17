@@ -27,6 +27,34 @@ This page summarizes the backend contract for role/permission management so the 
 
 Each write endpoint must pass the system API key (`X-Api-Key`) tied to the system scope; center API keys are invalid because `scope.system_admin` enforces global access.
 
+## Permission catalog
+
+All modules share the same permission catalog whether the admin is system scoped or center scoped. These names are seeded via `PermissionSeeder` so you can seed/update them consistently:
+
+| Permission | Module | Description |
+|------------|--------|-------------|
+| `admin.manage` | Admin users | Manage creation/deletion of admin accounts |
+| `role.manage` | Roles | Create/update/delete roles and assign permissions |
+| `permission.view` | Roles | Read the full permission catalog |
+| `course.manage` | Courses | Manage course CRUD |
+| `course.publish` | Courses | Publish ready courses |
+| `section.manage` | Sections | CRUD sections inside a course |
+| `video.manage` | Videos | Manage videos |
+| `video.upload` | Videos | Authorize uploads |
+| `video.playback.override` | Playback | Override playback constraints (debug) |
+| `pdf.manage` | PDFs | Manage PDFs attached to courses/sections |
+| `enrollment.manage` | Enrollments | Manage student enrollments |
+| `center.manage` | Centers | Create and configure centers |
+| `settings.manage` | Settings | Manage system or center settings |
+| `student.manage` | Students | Manage student accounts |
+| `survey.manage` | Surveys | CRUD surveys and related metadata |
+| `audit.view` | Analytics | Read audit logs and analytics dashboards |
+| `device_change.manage` | Device change requests | Approve/reject device-change flows |
+| `extra_view.manage` | Extra views | Manage extra view requests |
+| `instructor.manage` | Instructors | Manage instructor profiles |
+
+Because the permissions behave identically for `scope.system_admin` and `scope.center_route`, reuse the same checkbox/grid for both contexts. Controls that mutate roles or permissions should remain hidden unless the system API key grants `scope.system_admin`.
+
 ## Request validation (frontend checklist)
 
 ### 1. Role create (`POST /roles`)
@@ -85,3 +113,4 @@ Each write endpoint must pass the system API key (`X-Api-Key`) tied to the syste
 1. If you need field-level hints in the UI (tooltip guidance on translations or slug), base them on the validation rules above.
 2. Align permission toggles with `/permissions` output; the backend enforces `distinct`+`exists`, so preventing duplicate IDs avoids extra API errors.
 3. Any additional front-end validation should focus on translation completeness and slug uniqueness; the backend already enforces permissions presence/enumeration.
+4. When verifying permissions for a module, cross-reference the catalog above (seeded in `PermissionSeeder`). The same names are valid for both system and center admins, so the frontend can re-use the same permission grid—just hide mutation buttons when the API key lacks `scope.system_admin`.

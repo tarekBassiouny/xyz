@@ -13,8 +13,8 @@ class PermissionSeeder extends Seeder
     {
         $permissions = [
             'admin.manage' => 'Manage admin users',
-            'role.manage' => 'Manage roles',
-            'permission.view' => 'View permissions',
+            'role.manage' => 'Manage roles and permissions',
+            'permission.view' => 'View permission catalog',
             'course.manage' => 'Manage courses',
             'course.publish' => 'Publish courses',
             'section.manage' => 'Manage sections',
@@ -25,7 +25,9 @@ class PermissionSeeder extends Seeder
             'enrollment.manage' => 'Manage enrollments',
             'center.manage' => 'Manage centers',
             'settings.manage' => 'Manage settings',
-            'audit.view' => 'View audit logs',
+            'student.manage' => 'Manage student accounts',
+            'survey.manage' => 'Manage surveys',
+            'audit.view' => 'View analytics and audit logs',
             'device_change.manage' => 'Manage device change requests',
             'extra_view.manage' => 'Manage extra view requests',
             'instructor.manage' => 'Manage instructors',
