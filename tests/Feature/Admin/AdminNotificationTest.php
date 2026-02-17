@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Enums\AdminNotificationType;
 use App\Models\AdminNotification;
+use App\Models\AdminNotificationUserState;
 use App\Models\Center;
 use App\Models\Role;
 use App\Models\User;
@@ -16,7 +17,13 @@ uses(RefreshDatabase::class)->group('admin-notifications');
 function adminNotificationHeaders(?User $admin = null): array
 {
     if ($admin === null) {
-        $role = Role::query()->where('slug', 'super_admin')->firstOrFail();
+        $role = Role::query()->firstOrCreate(
+            ['slug' => 'super_admin'],
+            [
+                'name' => 'Super Admin',
+                'name_translations' => ['en' => 'Super Admin'],
+            ]
+        );
         $admin = User::factory()->create([
             'password' => 'secret123',
             'is_student' => false,
@@ -38,17 +45,19 @@ function adminNotificationHeaders(?User $admin = null): array
     }
 
     return [
-        'Accept' => 'application/json',
-        'Authorization' => 'Bearer ' . $token,
-        'X-Api-Key' => $systemKey,
+        'headers' => [
+            'Accept' => 'application/json',
+            'Authorization' => 'Bearer '.$token,
+            'X-Api-Key' => $systemKey,
+        ],
+        'admin' => $admin,
     ];
 }
 
 it('lists notifications for system super admin', function (): void {
-    $headers = adminNotificationHeaders();
+    ['headers' => $headers] = adminNotificationHeaders();
 
-    AdminNotification::factory()->count(3)->create();
-    AdminNotification::factory()->read()->count(2)->create();
+    AdminNotification::factory()->count(5)->create();
 
     $response = $this->getJson('/api/v1/admin/notifications', $headers);
 
@@ -58,10 +67,17 @@ it('lists notifications for system super admin', function (): void {
 });
 
 it('filters unread notifications only', function (): void {
-    $headers = adminNotificationHeaders();
+    ['headers' => $headers, 'admin' => $admin] = adminNotificationHeaders();
 
-    AdminNotification::factory()->unread()->count(3)->create();
-    AdminNotification::factory()->read()->count(2)->create();
+    AdminNotification::factory()->count(3)->create();
+    $readNotifications = AdminNotification::factory()->count(2)->create();
+    foreach ($readNotifications as $notification) {
+        AdminNotificationUserState::create([
+            'admin_notification_id' => (int) $notification->id,
+            'user_id' => (int) $admin->id,
+            'read_at' => now(),
+        ]);
+    }
 
     $response = $this->getJson('/api/v1/admin/notifications?unread_only=1', $headers);
 
@@ -71,7 +87,7 @@ it('filters unread notifications only', function (): void {
 });
 
 it('filters notifications by type', function (): void {
-    $headers = adminNotificationHeaders();
+    ['headers' => $headers] = adminNotificationHeaders();
 
     AdminNotification::factory()->deviceChangeRequest()->count(2)->create();
     AdminNotification::factory()->extraViewRequest()->count(3)->create();
@@ -85,7 +101,7 @@ it('filters notifications by type', function (): void {
 });
 
 it('filters notifications by since timestamp for polling', function (): void {
-    $headers = adminNotificationHeaders();
+    ['headers' => $headers] = adminNotificationHeaders();
 
     $oldNotification = AdminNotification::factory()->create([
         'created_at' => now()->subHours(2),
@@ -104,10 +120,17 @@ it('filters notifications by since timestamp for polling', function (): void {
 });
 
 it('returns unread count for polling', function (): void {
-    $headers = adminNotificationHeaders();
+    ['headers' => $headers, 'admin' => $admin] = adminNotificationHeaders();
 
-    AdminNotification::factory()->unread()->count(5)->create();
-    AdminNotification::factory()->read()->count(3)->create();
+    AdminNotification::factory()->count(5)->create();
+    $readNotifications = AdminNotification::factory()->count(3)->create();
+    foreach ($readNotifications as $notification) {
+        AdminNotificationUserState::create([
+            'admin_notification_id' => (int) $notification->id,
+            'user_id' => (int) $admin->id,
+            'read_at' => now(),
+        ]);
+    }
 
     $response = $this->getJson('/api/v1/admin/notifications/count', $headers);
 
@@ -117,9 +140,9 @@ it('returns unread count for polling', function (): void {
 });
 
 it('marks a notification as read', function (): void {
-    $headers = adminNotificationHeaders();
+    ['headers' => $headers, 'admin' => $admin] = adminNotificationHeaders();
 
-    $notification = AdminNotification::factory()->unread()->create();
+    $notification = AdminNotification::factory()->create();
 
     $response = $this->putJson("/api/v1/admin/notifications/{$notification->id}/read", [], $headers);
 
@@ -127,16 +150,18 @@ it('marks a notification as read', function (): void {
         ->assertJsonPath('success', true)
         ->assertJsonPath('data.is_read', true);
 
-    $this->assertDatabaseMissing('admin_notifications', [
-        'id' => (int) $notification->id,
-        'read_at' => null,
-    ]);
+    $state = AdminNotificationUserState::query()
+        ->where('admin_notification_id', (int) $notification->id)
+        ->where('user_id', (int) $admin->id)
+        ->firstOrFail();
+
+    expect($state->read_at)->not->toBeNull();
 });
 
 it('marks all notifications as read', function (): void {
-    $headers = adminNotificationHeaders();
+    ['headers' => $headers, 'admin' => $admin] = adminNotificationHeaders();
 
-    AdminNotification::factory()->unread()->count(5)->create();
+    AdminNotification::factory()->count(5)->create();
 
     $response = $this->postJson('/api/v1/admin/notifications/read-all', [], $headers);
 
@@ -144,11 +169,14 @@ it('marks all notifications as read', function (): void {
         ->assertJsonPath('success', true)
         ->assertJsonPath('data.marked_count', 5);
 
-    expect(AdminNotification::query()->unread()->count())->toBe(0);
+    expect(AdminNotificationUserState::query()
+        ->where('user_id', (int) $admin->id)
+        ->whereNotNull('read_at')
+        ->count())->toBe(5);
 });
 
 it('deletes a notification', function (): void {
-    $headers = adminNotificationHeaders();
+    ['headers' => $headers, 'admin' => $admin] = adminNotificationHeaders();
 
     $notification = AdminNotification::factory()->create();
 
@@ -156,8 +184,9 @@ it('deletes a notification', function (): void {
 
     $response->assertNoContent();
 
-    $this->assertSoftDeleted('admin_notifications', [
-        'id' => (int) $notification->id,
+    $this->assertSoftDeleted('admin_notification_user_states', [
+        'admin_notification_id' => (int) $notification->id,
+        'user_id' => (int) $admin->id,
     ]);
 });
 
@@ -175,7 +204,7 @@ it('shows center-scoped notifications to center admin', function (): void {
         (int) $center->id => ['type' => 'admin'],
     ]);
 
-    $headers = adminNotificationHeaders($centerAdmin);
+    ['headers' => $headers] = adminNotificationHeaders($centerAdmin);
 
     $centerNotification = AdminNotification::factory()->forCenter($center)->create();
     $broadcastNotification = AdminNotification::factory()->create();
@@ -217,7 +246,7 @@ it('shows user-targeted notifications to specific admin', function (): void {
     $targetedNotification = AdminNotification::factory()->forUser($targetAdmin)->create();
     $otherNotification = AdminNotification::factory()->forUser($otherAdmin)->create();
 
-    $headers = adminNotificationHeaders($targetAdmin);
+    ['headers' => $headers] = adminNotificationHeaders($targetAdmin);
     $response = $this->getJson('/api/v1/admin/notifications', $headers);
 
     $response->assertOk();
@@ -233,7 +262,7 @@ it('shows user-targeted notifications to specific admin', function (): void {
 });
 
 it('returns notification with correct structure', function (): void {
-    $headers = adminNotificationHeaders();
+    ['headers' => $headers] = adminNotificationHeaders();
 
     AdminNotification::factory()->deviceChangeRequest()->create([
         'title' => 'Test Device Change',
