@@ -95,6 +95,7 @@ class AdminAuthService implements AdminAuthServiceInterface
         }
 
         $token = Password::broker()->createToken($user);
+        $user->loadMissing('center');
         $user->notify(new AdminPasswordResetNotification($token, $isInvite));
 
         if ($isInvite && $user->invitation_sent_at === null) {
