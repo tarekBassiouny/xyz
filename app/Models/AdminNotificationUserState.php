@@ -37,6 +37,7 @@ class AdminNotificationUserState extends Model
 
     protected $casts = [
         'read_at' => 'datetime',
+        'deleted_at' => 'datetime',
     ];
 
     /**

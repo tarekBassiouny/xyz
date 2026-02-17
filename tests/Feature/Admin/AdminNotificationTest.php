@@ -14,6 +14,17 @@ use Illuminate\Support\Facades\Config;
 
 uses(RefreshDatabase::class)->group('admin-notifications');
 
+beforeEach(function (): void {
+    Role::firstOrCreate(
+        ['slug' => 'super_admin'],
+        [
+            'name' => 'Super Admin',
+            'name_translations' => ['en' => 'Super Admin'],
+            'description_translations' => ['en' => 'Full system administrator'],
+        ]
+    );
+});
+
 function adminNotificationHeaders(?User $admin = null): array
 {
     if ($admin === null) {
