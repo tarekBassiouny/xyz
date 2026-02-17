@@ -36,10 +36,20 @@ class RoleService implements RoleServiceInterface
      */
     public function list(RoleFilters $filters): LengthAwarePaginator
     {
-        return Role::query()
+        $query = Role::query()
             ->where('is_admin_role', true)
-            ->with('permissions')
-            ->orderBy('id')
+            ->with('permissions');
+
+        if ($filters->search !== null) {
+            $term = '%'.strtolower($filters->search).'%';
+
+            $query->where(function ($sub) use ($term): void {
+                $sub->whereRaw('LOWER(slug) LIKE ?', [$term])
+                    ->orWhereRaw('LOWER(name) LIKE ?', [$term]);
+            });
+        }
+
+        return $query->orderBy('id')
             ->paginate(
                 $filters->perPage,
                 ['*'],

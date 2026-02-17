@@ -174,6 +174,24 @@ it('bulk assigns permissions to multiple roles', function (): void {
         ->assertJsonPath('data.permission_ids', [$permissionA->id, $permissionB->id]);
 });
 
+it('filters roles by search term', function (): void {
+    $this->asAdmin();
+    Role::factory()->create([
+        'slug' => 'unique_support',
+        'name' => 'Support Role',
+    ]);
+    Role::factory()->create([
+        'slug' => 'other_role',
+        'name' => 'Other Role',
+    ]);
+
+    $response = $this->getJson('/api/v1/admin/roles?search=support', $this->adminHeaders());
+
+    $response->assertOk()
+        ->assertJsonPath('meta.total', 1)
+        ->assertJsonPath('data.0.slug', 'unique_support');
+});
+
 it('validates bulk permission assignment inputs', function (): void {
     $this->asAdmin();
 
