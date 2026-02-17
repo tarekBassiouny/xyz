@@ -32,6 +32,7 @@ class AdminNotificationUserState extends Model
         'admin_notification_id',
         'user_id',
         'read_at',
+        'deleted_at',
     ];
 
     protected $casts = [

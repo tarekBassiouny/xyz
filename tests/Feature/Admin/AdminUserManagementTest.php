@@ -72,7 +72,7 @@ it('creates, updates, and deletes admin users', function (): void {
     $create = $this->postJson('/api/v1/admin/users', [
         'name' => 'Admin User',
         'email' => 'admin.user@example.com',
-        'phone' => '19990000001',
+        'phone' => '1999000001',
         'country_code' => '+20',
     ], $this->adminHeaders());
 
@@ -107,7 +107,7 @@ it('enforces invite-only admin creation by rejecting password field', function (
     $response = $this->postJson('/api/v1/admin/users', [
         'name' => 'Admin User',
         'email' => 'admin.user.invite.only@example.com',
-        'phone' => '19990000019',
+        'phone' => '1999000019',
         'country_code' => '+20',
         'password' => 'secret123',
     ], $this->adminHeaders());
@@ -174,7 +174,7 @@ it('syncs admin roles', function (): void {
     $admin = User::factory()->create([
         'password' => 'secret123',
         'is_student' => false,
-        'phone' => '19990000002',
+        'phone' => '1999000002',
         'email' => 'admin.role@example.com',
     ]);
 
@@ -426,7 +426,7 @@ it('supports center-scoped admin CRUD via center routes', function (): void {
     $create = $this->postJson('/api/v1/admin/centers/'.$center->id.'/users', [
         'name' => 'Center Admin User',
         'email' => 'center.admin.user@example.com',
-        'phone' => '19990000011',
+        'phone' => '1999000011',
         'country_code' => '+20',
     ], $headers);
 
@@ -462,7 +462,7 @@ it('blocks center-scoped admin CRUD on other center route', function (): void {
     $response = $this->postJson('/api/v1/admin/centers/'.$otherCenter->id.'/users', [
         'name' => 'Blocked Admin User',
         'email' => 'blocked.admin.user@example.com',
-        'phone' => '19990000012',
+        'phone' => '1999000012',
         'country_code' => '+20',
     ], $headers);
 
@@ -479,7 +479,7 @@ it('returns not found when center route admin target is outside route center', f
         'is_student' => false,
         'center_id' => $centerB->id,
         'email' => 'outside.route.center.admin@example.com',
-        'phone' => '19990000013',
+        'phone' => '1999000013',
     ]);
 
     $response = $this->putJson('/api/v1/admin/centers/'.$centerA->id.'/users/'.$targetAdmin->id, [
@@ -500,7 +500,7 @@ it('syncs admin roles via center route for center-scoped super admin', function 
         'is_student' => false,
         'center_id' => $center->id,
         'email' => 'center.route.role.admin@example.com',
-        'phone' => '19990000014',
+        'phone' => '1999000014',
     ]);
 
     $response = $this->putJson('/api/v1/admin/centers/'.$center->id.'/users/'.$targetAdmin->id.'/roles', [
@@ -623,7 +623,7 @@ it('assigns an admin user to a center via system route', function (): void {
         'is_student' => false,
         'center_id' => null,
         'email' => 'assign.single.admin@example.com',
-        'phone' => '19990000015',
+        'phone' => '1999000015',
     ]);
 
     $response = $this->putJson('/api/v1/admin/users/'.$admin->id.'/assign-center', [
@@ -654,18 +654,18 @@ it('bulk assigns admin users to centers and reports updated skipped and failed',
         'is_student' => false,
         'center_id' => null,
         'email' => 'bulk.assign.updatable@example.com',
-        'phone' => '19990000016',
+        'phone' => '1999000016',
     ]);
     $alreadyAssignedAdmin = User::factory()->create([
         'is_student' => false,
         'center_id' => (int) $centerA->id,
         'email' => 'bulk.assign.already@example.com',
-        'phone' => '19990000017',
+        'phone' => '1999000017',
     ]);
     $student = User::factory()->create([
         'is_student' => true,
         'email' => 'bulk.assign.student@example.com',
-        'phone' => '19990000018',
+        'phone' => '1999000018',
     ]);
 
     $response = $this->postJson('/api/v1/admin/users/assign-center/bulk', [

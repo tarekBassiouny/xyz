@@ -192,7 +192,14 @@ it('deletes a notification', function (): void {
 
 it('shows center-scoped notifications to center admin', function (): void {
     $center = Center::factory()->create();
-    $role = Role::query()->where('slug', 'super_admin')->firstOrFail();
+    $role = Role::firstOrCreate(
+        ['slug' => 'super_admin'],
+        [
+            'name' => 'Super Admin',
+            'name_translations' => ['en' => 'Super Admin'],
+            'description_translations' => ['en' => 'Full system administrator'],
+        ]
+    );
 
     $centerAdmin = User::factory()->create([
         'password' => 'secret123',
@@ -227,7 +234,14 @@ it('shows center-scoped notifications to center admin', function (): void {
 });
 
 it('shows user-targeted notifications to specific admin', function (): void {
-    $role = Role::query()->where('slug', 'super_admin')->firstOrFail();
+    $role = Role::firstOrCreate(
+        ['slug' => 'super_admin'],
+        [
+            'name' => 'Super Admin',
+            'name_translations' => ['en' => 'Super Admin'],
+            'description_translations' => ['en' => 'Full system administrator'],
+        ]
+    );
 
     $targetAdmin = User::factory()->create([
         'password' => 'secret123',
