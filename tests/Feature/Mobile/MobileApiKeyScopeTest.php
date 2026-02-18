@@ -82,6 +82,29 @@ it('rejects branded student requests made with a different center api key', func
         ->assertJsonPath('error.code', 'CENTER_MISMATCH');
 });
 
+it('rejects branded student requests when center api key belongs to an inactive center', function (): void {
+    $center = Center::factory()->create([
+        'type' => 1,
+        'api_key' => 'center-a-key',
+        'status' => Center::STATUS_INACTIVE,
+    ]);
+
+    $student = User::factory()->create([
+        'is_student' => true,
+        'center_id' => $center->id,
+    ]);
+    $student->centers()->syncWithoutDetaching([$center->id => ['type' => 'student']]);
+
+    $this->asApiUser($student);
+
+    $response = $this->apiGet('/api/v1/auth/me', [
+        'X-Api-Key' => $center->api_key,
+    ]);
+
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
+});
+
 it('allows system student requests with system api key', function (): void {
     $student = User::factory()->create([
         'is_student' => true,

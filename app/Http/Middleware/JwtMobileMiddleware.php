@@ -48,12 +48,13 @@ class JwtMobileMiddleware
             }
         } elseif (! is_numeric($user->center_id) || (int) $user->center_id !== $resolvedCenterId) {
             return $this->deny('CENTER_MISMATCH', 'Center mismatch.');
+        } elseif (! $this->isActiveCenter($resolvedCenterId)) {
+            return $this->deny('CENTER_MISMATCH', 'Center mismatch.');
         }
 
-        $requestedCenterId = $request->input('center_id');
+        $requestedCenterId = $this->resolveCenterId($request->input('center_id'));
 
-        if (is_numeric($requestedCenterId)) {
-            $requestedCenterId = (int) $requestedCenterId;
+        if ($requestedCenterId !== null) {
             if ($resolvedCenterId !== null && $requestedCenterId !== $resolvedCenterId) {
                 return $this->deny('CENTER_MISMATCH', 'Center mismatch.');
             }
@@ -136,12 +137,22 @@ class JwtMobileMiddleware
     private function studentCanAccessRequestedCenter(User $user, int $requestedCenterId): bool
     {
         if (is_numeric($user->center_id)) {
-            return (int) $user->center_id === $requestedCenterId;
+            return (int) $user->center_id === $requestedCenterId
+                && $this->isActiveCenter($requestedCenterId);
         }
 
         return Center::query()
             ->where('id', $requestedCenterId)
             ->where('type', 0)
+            ->where('status', Center::STATUS_ACTIVE->value)
+            ->exists();
+    }
+
+    private function isActiveCenter(int $centerId): bool
+    {
+        return Center::query()
+            ->where('id', $centerId)
+            ->where('status', Center::STATUS_ACTIVE->value)
             ->exists();
     }
 }

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services\Pdfs;
 
 use App\Enums\CenterType;
+use App\Models\Center;
 use App\Models\Course;
 use App\Models\Pdf;
 use App\Models\Pivots\CoursePdf;
@@ -104,11 +105,16 @@ class PdfAccessService implements PdfAccessServiceInterface
 
     private function enforceEnrollment(User $student, Course $course): void
     {
+        $center = $course->center;
+        if (! $center instanceof Center || $center->status !== Center::STATUS_ACTIVE) {
+            throw new AccessDeniedHttpException('Course does not belong to your center.');
+        }
+
         if (is_numeric($student->center_id) && (int) $student->center_id !== (int) $course->center_id) {
             throw new AccessDeniedHttpException('Course does not belong to your center.');
         }
 
-        if (! is_numeric($student->center_id) && ($course->center?->type ?? CenterType::Branded) !== CenterType::Unbranded) {
+        if (! is_numeric($student->center_id) && $center->type !== CenterType::Unbranded) {
             throw new AccessDeniedHttpException('Course does not belong to your center.');
         }
 

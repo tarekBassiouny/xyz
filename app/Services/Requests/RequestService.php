@@ -185,6 +185,10 @@ class RequestService
 
     private function assertCenterAccess(User $student, Center $center): void
     {
+        if ($center->status !== Center::STATUS_ACTIVE) {
+            $this->deny(ErrorCodes::CENTER_MISMATCH, 'Center mismatch.', 403);
+        }
+
         if (is_numeric($student->center_id)) {
             if ((int) $student->center_id !== (int) $center->id) {
                 $this->deny(ErrorCodes::CENTER_MISMATCH, 'Center mismatch.', 403);
