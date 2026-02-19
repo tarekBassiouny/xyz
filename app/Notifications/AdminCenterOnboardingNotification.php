@@ -29,10 +29,17 @@ class AdminCenterOnboardingNotification extends Notification
      */
     public function toMail($notifiable): MailMessage
     {
-        $appUrl = rtrim((string) config('app.url'), '/');
-        $email = urlencode((string) $notifiable->email);
-        $resetUrl = $appUrl.'/admin/reset-password?token='.$this->token.'&email='.$email;
-        $loginUrl = $appUrl.'/admin/login';
+        $email = (string) ($notifiable->email ?? '');
+        $centerSlug = trim((string) ($this->center->slug ?? ''));
+        if ($centerSlug === '') {
+            $centerSlug = null;
+        }
+
+        $resetUrl = $this->frontendLink('admin/reset-password', $centerSlug).'?'.http_build_query([
+            'token' => $this->token,
+            'email' => $email,
+        ]);
+        $loginUrl = $this->frontendLink('admin/login', $centerSlug);
 
         return (new MailMessage)
             ->subject('Center access granted')
@@ -41,5 +48,51 @@ class AdminCenterOnboardingNotification extends Notification
             ->line('Please set your password to access the admin portal.')
             ->action('Set your password', $resetUrl)
             ->line('Login URL: '.$loginUrl);
+    }
+
+    private function frontendLink(string $path, ?string $centerSlug = null): string
+    {
+        $baseUrl = $this->frontendBaseUrl($centerSlug);
+
+        if ($path === '') {
+            return $baseUrl;
+        }
+
+        return rtrim($baseUrl, '/').'/'.ltrim($path, '/');
+    }
+
+    private function frontendBaseUrl(?string $centerSlug = null): string
+    {
+        $frontendUrl = rtrim((string) config('app.frontend_url', config('app.url')), '/');
+
+        if ($centerSlug === null || $centerSlug === '') {
+            return $frontendUrl;
+        }
+
+        $parts = parse_url($frontendUrl);
+
+        if ($parts === false || empty($parts['host'])) {
+            return $frontendUrl;
+        }
+
+        $host = $parts['host'];
+
+        if (str_starts_with($host, $centerSlug.'.')) {
+            return $frontendUrl;
+        }
+
+        $newHost = $centerSlug.'.'.$host;
+        $scheme = $parts['scheme'] ?? 'https';
+        $port = isset($parts['port']) ? ':'.$parts['port'] : '';
+        $path = $parts['path'] ?? '';
+        $path = rtrim($path, '/');
+
+        $base = $scheme.'://'.$newHost.$port;
+
+        if ($path !== '') {
+            $base .= $path;
+        }
+
+        return $base;
     }
 }
