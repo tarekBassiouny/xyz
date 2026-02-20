@@ -142,7 +142,7 @@ it('blocks center admins from system-only analytics routes', function (): void {
     $response = $this->getJson("/api/v1/admin/analytics/overview?from={$from}&to={$to}", analyticsAdminHeadersFor($token));
 
     $response->assertForbidden()
-        ->assertJsonPath('error.code', 'PERMISSION_DENIED');
+        ->assertJsonPath('error.code', 'SYSTEM_SCOPE_REQUIRED');
 });
 
 it('rejects center admins requesting analytics regardless of center filter', function (): void {
@@ -162,7 +162,7 @@ it('rejects center admins requesting analytics regardless of center filter', fun
     );
 
     $response->assertForbidden()
-        ->assertJsonPath('error.code', 'PERMISSION_DENIED');
+        ->assertJsonPath('error.code', 'SYSTEM_SCOPE_REQUIRED');
 });
 
 it('returns approved and rejected enrollment counts in devices analytics', function (): void {

@@ -48,15 +48,18 @@ function getAdminToken(User $admin): string
     ]);
 }
 
-function adminHeadersFor(string $token): array
+function adminHeadersFor(string $token, ?string $apiKey = null): array
 {
-    $systemKey = (string) Config::get('services.system_api_key', 'system-test-key');
-    Config::set('services.system_api_key', $systemKey);
+    $resolvedApiKey = $apiKey;
+    if (! is_string($resolvedApiKey) || $resolvedApiKey === '') {
+        $resolvedApiKey = (string) Config::get('services.system_api_key', 'system-test-key');
+        Config::set('services.system_api_key', $resolvedApiKey);
+    }
 
     return [
         'Accept' => 'application/json',
         'Authorization' => 'Bearer '.$token,
-        'X-Api-Key' => $systemKey,
+        'X-Api-Key' => $resolvedApiKey,
     ];
 }
 
@@ -104,7 +107,7 @@ it('admin cannot approve device change request from another center', function ()
     $response = test()->postJson(
         "/api/v1/admin/centers/{$centerB->id}/device-change-requests/{$requestB->id}/approve",
         [],
-        adminHeadersFor($tokenA)
+        adminHeadersFor($tokenA, (string) $centerA->api_key)
     );
 
     $response->assertStatus(403)
@@ -140,7 +143,7 @@ it('admin cannot reject device change request from another center', function ():
     $response = test()->postJson(
         "/api/v1/admin/centers/{$centerB->id}/device-change-requests/{$requestB->id}/reject",
         ['decision_reason' => 'Unauthorized attempt'],
-        adminHeadersFor($tokenA)
+        adminHeadersFor($tokenA, (string) $centerA->api_key)
     );
 
     $response->assertStatus(403)
@@ -176,7 +179,7 @@ it('admin cannot pre-approve device change request from another center', functio
     $response = test()->postJson(
         "/api/v1/admin/centers/{$centerB->id}/device-change-requests/{$requestB->id}/pre-approve",
         [],
-        adminHeadersFor($tokenA)
+        adminHeadersFor($tokenA, (string) $centerA->api_key)
     );
 
     $response->assertStatus(403)
@@ -201,7 +204,7 @@ it('admin cannot create device change request for student in another center', fu
     $response = test()->postJson(
         "/api/v1/admin/centers/{$centerB->id}/students/{$studentB->id}/device-change-requests",
         ['reason' => 'Cross-center attempt'],
-        adminHeadersFor($tokenA)
+        adminHeadersFor($tokenA, (string) $centerA->api_key)
     );
 
     $response->assertStatus(403)
@@ -255,7 +258,7 @@ it('admin only sees device change requests from their center', function (): void
     // Admin A should only see Center A's requests via center route
     $response = test()->getJson(
         "/api/v1/admin/centers/{$centerA->id}/device-change-requests",
-        adminHeadersFor($tokenA)
+        adminHeadersFor($tokenA, (string) $centerA->api_key)
     );
 
     $response->assertOk()
@@ -291,7 +294,7 @@ it('admin cannot approve already approved request', function (): void {
     $response = test()->postJson(
         "/api/v1/admin/centers/{$center->id}/device-change-requests/{$request->id}/approve",
         [],
-        adminHeadersFor($token)
+        adminHeadersFor($token, (string) $center->api_key)
     );
 
     $response->assertStatus(409)
@@ -322,7 +325,7 @@ it('admin cannot reject already rejected request', function (): void {
     $response = test()->postJson(
         "/api/v1/admin/centers/{$center->id}/device-change-requests/{$request->id}/reject",
         ['decision_reason' => 'Double rejection attempt'],
-        adminHeadersFor($token)
+        adminHeadersFor($token, (string) $center->api_key)
     );
 
     $response->assertStatus(409)
@@ -358,7 +361,7 @@ it('admin without device_change.manage permission cannot access endpoints', func
     // Try to list device change requests via center route
     $response = test()->getJson(
         "/api/v1/admin/centers/{$center->id}/device-change-requests",
-        adminHeadersFor($token)
+        adminHeadersFor($token, (string) $center->api_key)
     );
 
     $response->assertStatus(403);
@@ -377,7 +380,7 @@ it('rejects device change request creation for non-existent student', function (
     $response = test()->postJson(
         "/api/v1/admin/centers/{$center->id}/students/999999/device-change-requests",
         ['reason' => 'Test'],
-        adminHeadersFor($token)
+        adminHeadersFor($token, (string) $center->api_key)
     );
 
     $response->assertStatus(404);

@@ -56,7 +56,7 @@ it('blocks branded students from listing centers', function (): void {
 
 it('lists unbranded centers for system students', function (): void {
     $unbranded = Center::factory()->create(['type' => 0]);
-    Center::factory()->create(['type' => 1]);
+    $branded = Center::factory()->create(['type' => 1]);
 
     CenterSetting::factory()->create([
         'center_id' => $unbranded->id,
@@ -72,14 +72,16 @@ it('lists unbranded centers for system students', function (): void {
 
     $response = $this->apiGet('/api/v1/centers');
 
-    $response->assertOk()
-        ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.id', $unbranded->id)
-        ->assertJsonPath('data.0.theme.primary', '#123456');
+    $response->assertOk();
+
+    $centers = collect($response->json('data'));
+    expect($centers->pluck('id')->all())->toContain($unbranded->id);
+    expect($centers->pluck('id')->all())->not->toContain($branded->id);
+    expect($centers->firstWhere('id', $unbranded->id)['theme']['primary'] ?? null)->toBe('#123456');
 });
 
 it('does not list inactive unbranded centers', function (): void {
-    Center::factory()->create([
+    $inactiveCenter = Center::factory()->create([
         'type' => 0,
         'status' => Center::STATUS_INACTIVE,
     ]);
@@ -97,9 +99,11 @@ it('does not list inactive unbranded centers', function (): void {
 
     $response = $this->apiGet('/api/v1/centers');
 
-    $response->assertOk()
-        ->assertJsonCount(1, 'data')
-        ->assertJsonPath('data.0.id', $activeCenter->id);
+    $response->assertOk();
+
+    $ids = collect($response->json('data'))->pluck('id')->all();
+    expect($ids)->toContain($activeCenter->id);
+    expect($ids)->not->toContain($inactiveCenter->id);
 });
 
 it('searches centers by name and description', function (): void {

@@ -12,16 +12,15 @@ use App\Models\Video;
 use App\Models\VideoUploadSession;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
+use Tests\Helpers\AdminTestHelper;
 
-uses(RefreshDatabase::class)->group('videos');
+uses(RefreshDatabase::class, AdminTestHelper::class)->group('videos');
 
 it('lists videos with upload sessions for admin center', function (): void {
     $center = Center::factory()->create();
     $otherCenter = Center::factory()->create();
 
-    $admin = $this->asAdmin();
-    $admin->update(['center_id' => $center->id]);
-    $admin->update(['center_id' => $center->id]);
+    $admin = $this->asCenterAdmin($center);
 
     /** @var VideoUploadSession $session */
     $session = VideoUploadSession::factory()->create([
@@ -68,8 +67,7 @@ it('lists videos with upload sessions for admin center', function (): void {
 
 it('filters videos by title search', function (): void {
     $center = Center::factory()->create();
-    $admin = $this->asAdmin();
-    $admin->update(['center_id' => $center->id]);
+    $admin = $this->asCenterAdmin($center);
     Video::factory()->create([
         'center_id' => $center->id,
         'title_translations' => ['en' => 'Alpha Intro'],
@@ -88,8 +86,7 @@ it('filters videos by title search', function (): void {
 
 it('filters videos by course', function (): void {
     $center = Center::factory()->create();
-    $admin = $this->asAdmin();
-    $admin->update(['center_id' => $center->id]);
+    $admin = $this->asCenterAdmin($center);
     $courseA = Course::factory()->create(['center_id' => $center->id]);
     $courseB = Course::factory()->create(['center_id' => $center->id]);
 
@@ -156,7 +153,7 @@ it('scopes videos to admin center for non super admins', function (): void {
     $response = $this->getJson("/api/v1/admin/centers/{$centerA->id}/videos", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
-        'X-Api-Key' => config('services.system_api_key'),
+        'X-Api-Key' => $centerA->api_key,
     ]);
 
     $response->assertOk()

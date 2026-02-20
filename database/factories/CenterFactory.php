@@ -6,6 +6,7 @@ namespace Database\Factories;
 
 use App\Models\Center;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 class CenterFactory extends Factory
 {
@@ -15,6 +16,7 @@ class CenterFactory extends Factory
     {
         return [
             'slug' => 'center-'.uniqid(),
+            'api_key' => 'ctr_'.Str::random(32),
             'type' => 0,
             'tier' => Center::TIER_STANDARD,
             'is_featured' => false,

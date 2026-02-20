@@ -3,7 +3,7 @@
 use App\Http\Controllers\Admin\DeviceChangeRequestController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['require.permission:device_change.manage', 'scope.system_centerless'])->group(function (): void {
+Route::middleware(['require.permission:device_change.manage', 'scope.system'])->group(function (): void {
     Route::get('/device-change-requests', [DeviceChangeRequestController::class, 'systemIndex']);
     Route::post('/device-change-requests/{deviceChangeRequest}/approve', [DeviceChangeRequestController::class, 'systemApprove'])
         ->whereNumber('deviceChangeRequest');
@@ -18,7 +18,7 @@ Route::middleware(['require.permission:device_change.manage', 'scope.system_cent
     Route::post('/device-change-requests/bulk-pre-approve', [DeviceChangeRequestController::class, 'systemBulkPreApprove']);
 });
 
-Route::middleware(['require.permission:device_change.manage', 'scope.center_route'])->group(function (): void {
+Route::middleware(['require.permission:device_change.manage', 'scope.center'])->group(function (): void {
     Route::get('/centers/{center}/device-change-requests', [DeviceChangeRequestController::class, 'centerIndex'])->whereNumber('center');
     Route::post('/centers/{center}/device-change-requests/{deviceChangeRequest}/approve', [DeviceChangeRequestController::class, 'centerApprove'])
         ->whereNumber('center')

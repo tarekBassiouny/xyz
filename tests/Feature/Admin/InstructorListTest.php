@@ -10,8 +10,9 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
+use Tests\Helpers\AdminTestHelper;
 
-uses(RefreshDatabase::class)->group('instructors', 'admin');
+uses(RefreshDatabase::class, AdminTestHelper::class)->group('instructors', 'admin');
 
 it('filters instructors by name search', function (): void {
     $this->asAdmin();
@@ -119,7 +120,7 @@ it('scopes instructors to admin center', function (): void {
     $response = $this->getJson("/api/v1/admin/centers/{$centerA->id}/instructors", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
-        'X-Api-Key' => config('services.system_api_key'),
+        'X-Api-Key' => $centerA->api_key,
     ]);
 
     $response->assertOk()

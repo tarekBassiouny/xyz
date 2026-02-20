@@ -3,7 +3,7 @@
 use App\Http\Controllers\Admin\AdminUserController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['require.permission:admin.manage', 'scope.system_admin'])->group(function (): void {
+Route::middleware(['require.permission:admin.manage', 'scope.system'])->group(function (): void {
     Route::get('/users', [AdminUserController::class, 'systemIndex']);
     Route::post('/users', [AdminUserController::class, 'systemStore']);
     Route::post('/users/bulk-status', [AdminUserController::class, 'systemBulkUpdateStatus']);
@@ -24,7 +24,7 @@ Route::middleware(['require.permission:admin.manage', 'scope.system_admin'])->gr
         ->middleware('require.role:super_admin');
 });
 
-Route::middleware(['require.permission:admin.manage', 'scope.center_route'])->group(function (): void {
+Route::middleware(['require.permission:admin.manage', 'scope.center'])->group(function (): void {
     Route::get('/centers/{center}/users', [AdminUserController::class, 'centerIndex'])->whereNumber('center');
     Route::post('/centers/{center}/users', [AdminUserController::class, 'centerStore'])->whereNumber('center');
     Route::put('/centers/{center}/users/{user}', [AdminUserController::class, 'centerUpdate'])->whereNumber('center')->whereNumber('user');

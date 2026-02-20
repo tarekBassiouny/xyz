@@ -11,8 +11,9 @@ use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
+use Tests\Helpers\AdminTestHelper;
 
-uses(RefreshDatabase::class)->group('admin', 'extra-view-requests');
+uses(RefreshDatabase::class, AdminTestHelper::class)->group('admin', 'extra-view-requests');
 
 it('allows super admin to list requests for specific center', function (): void {
     $super = $this->asAdmin();
@@ -60,7 +61,7 @@ it('scopes list to admin center', function (): void {
     $response = $this->getJson("/api/v1/admin/centers/{$centerA->id}/extra-view-requests", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
-        'X-Api-Key' => config('services.system_api_key'),
+        'X-Api-Key' => $centerA->api_key,
     ]);
 
     $response->assertOk()
@@ -71,7 +72,7 @@ it('scopes list to admin center', function (): void {
     $blocked = $this->getJson("/api/v1/admin/centers/{$centerB->id}/extra-view-requests", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
-        'X-Api-Key' => config('services.system_api_key'),
+        'X-Api-Key' => $centerA->api_key,
     ]);
 
     $blocked->assertForbidden();

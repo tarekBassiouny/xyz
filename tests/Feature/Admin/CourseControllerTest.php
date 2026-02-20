@@ -162,7 +162,7 @@ it('scopes courses to admin center when not super admin', function (): void {
     $response = $this->getJson("/api/v1/admin/centers/{$centerA->id}/courses", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
-        'X-Api-Key' => config('services.system_api_key'),
+        'X-Api-Key' => $centerA->api_key,
     ]);
 
     $response->assertOk()
@@ -173,7 +173,7 @@ it('scopes courses to admin center when not super admin', function (): void {
     $blocked = $this->getJson("/api/v1/admin/centers/{$centerB->id}/courses", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
-        'X-Api-Key' => config('services.system_api_key'),
+        'X-Api-Key' => $centerA->api_key,
     ]);
 
     $blocked->assertForbidden();
