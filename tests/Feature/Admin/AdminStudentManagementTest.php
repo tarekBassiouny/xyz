@@ -145,7 +145,7 @@ it('prevents non-super admins from creating students', function (): void {
         'X-Api-Key' => config('services.system_api_key'),
     ]);
 
-    $response->assertStatus(403)->assertJsonPath('error.code', 'PERMISSION_DENIED');
+    $response->assertStatus(403)->assertJsonPath('error.code', 'SYSTEM_SCOPE_REQUIRED');
 });
 
 it('filters students by center for super admins', function (): void {
@@ -215,7 +215,7 @@ it('scopes students to admin center', function (): void {
     $response = $this->getJson("/api/v1/admin/centers/{$centerA->id}/students", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
-        'X-Api-Key' => config('services.system_api_key'),
+        'X-Api-Key' => $centerA->api_key,
     ]);
 
     $response->assertOk()
@@ -226,7 +226,7 @@ it('scopes students to admin center', function (): void {
     $blockedResponse = $this->getJson("/api/v1/admin/centers/{$centerB->id}/students", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
-        'X-Api-Key' => config('services.system_api_key'),
+        'X-Api-Key' => $centerA->api_key,
     ]);
 
     $blockedResponse->assertForbidden();
@@ -422,7 +422,7 @@ it('updates students within the admin center only', function (): void {
     ], [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
-        'X-Api-Key' => config('services.system_api_key'),
+        'X-Api-Key' => $centerA->api_key,
     ]);
 
     $updated->assertOk()
@@ -435,7 +435,7 @@ it('updates students within the admin center only', function (): void {
     ], [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
-        'X-Api-Key' => config('services.system_api_key'),
+        'X-Api-Key' => $centerA->api_key,
     ]);
 
     $blocked->assertStatus(403)->assertJsonPath('error.code', 'CENTER_MISMATCH');

@@ -9,8 +9,9 @@ use App\Models\Pdf;
 use App\Models\PdfUploadSession;
 use App\Services\Storage\Contracts\StorageServiceInterface;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Helpers\AdminTestHelper;
 
-uses(RefreshDatabase::class)->group('pdfs', 'admin');
+uses(RefreshDatabase::class, AdminTestHelper::class)->group('pdfs', 'admin');
 
 afterEach(function (): void {
     \Mockery::close();
@@ -18,8 +19,7 @@ afterEach(function (): void {
 
 it('creates pdf from upload session', function (): void {
     $center = Center::factory()->create();
-    $admin = $this->asAdmin();
-    $admin->update(['center_id' => $center->id]);
+    $admin = $this->asCenterAdmin($center);
 
     $storage = \Mockery::mock(StorageServiceInterface::class);
     $storage->shouldReceive('temporaryUploadUrl')->once()->andReturn('https://signed.test/upload');
@@ -62,8 +62,7 @@ it('creates pdf from upload session', function (): void {
 
 it('fails finalize when uploaded object is missing', function (): void {
     $center = Center::factory()->create();
-    $admin = $this->asAdmin();
-    $admin->update(['center_id' => $center->id]);
+    $admin = $this->asCenterAdmin($center);
     $session = PdfUploadSession::factory()->create([
         'center_id' => $center->id,
         'created_by' => $admin->id,
@@ -91,8 +90,7 @@ it('fails finalize when uploaded object is missing', function (): void {
 
 it('finalizes upload session and creates pdf when object exists', function (): void {
     $center = Center::factory()->create();
-    $admin = $this->asAdmin();
-    $admin->update(['center_id' => $center->id]);
+    $admin = $this->asCenterAdmin($center);
     $session = PdfUploadSession::factory()->create([
         'center_id' => $center->id,
         'created_by' => $admin->id,

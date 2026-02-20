@@ -67,7 +67,7 @@ it('prevents admins from accessing other centers', function (): void {
     $response = $this->getJson("/api/v1/admin/centers/{$centerA->id}/courses/{$course->id}", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
-        'X-Api-Key' => config('services.system_api_key'),
+        'X-Api-Key' => $centerA->api_key,
     ]);
 
     $response->assertNotFound()
@@ -99,7 +99,7 @@ it('allows admins with permission and center access', function (): void {
     $response = $this->getJson("/api/v1/admin/centers/{$center->id}/courses/{$course->id}", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
-        'X-Api-Key' => config('services.system_api_key'),
+        'X-Api-Key' => $center->api_key,
     ]);
 
     $response->assertOk();
@@ -131,7 +131,7 @@ it('allows center management for system admins with permission and blocks center
     ]);
 
     $forbidden->assertForbidden()
-        ->assertJsonPath('error.code', 'PERMISSION_DENIED');
+        ->assertJsonPath('error.code', 'SYSTEM_SCOPE_REQUIRED');
 
     $systemAdmin = User::factory()->create([
         'password' => 'secret123',

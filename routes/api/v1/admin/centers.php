@@ -4,7 +4,7 @@ use App\Http\Controllers\Admin\Centers\CenterController;
 use App\Http\Controllers\Admin\Centers\CenterOperationsController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['require.permission:center.manage', 'scope.system_centerless'])->group(function (): void {
+Route::middleware(['require.permission:center.manage', 'scope.system'])->group(function (): void {
     Route::get('/centers/options', [CenterController::class, 'options']);
     Route::get('/centers', [CenterController::class, 'index']);
     Route::post('/centers', [CenterController::class, 'store']);
@@ -14,7 +14,6 @@ Route::middleware(['require.permission:center.manage', 'scope.system_centerless'
     Route::post('/centers/bulk-delete', [CenterController::class, 'bulkDestroy']);
     Route::post('/centers/bulk-restore', [CenterController::class, 'bulkRestore']);
     Route::post('/centers/bulk-onboarding-retry', [CenterOperationsController::class, 'bulkRetry']);
-    Route::get('/centers/{center}', [CenterController::class, 'show'])->whereNumber('center');
     Route::put('/centers/{center}', [CenterController::class, 'update'])->whereNumber('center');
     Route::put('/centers/{center}/status', [CenterController::class, 'updateStatus'])->whereNumber('center');
     Route::delete('/centers/{center}', [CenterController::class, 'destroy'])->whereNumber('center');
@@ -23,7 +22,11 @@ Route::middleware(['require.permission:center.manage', 'scope.system_centerless'
     Route::post('/centers/{center}/branding/logo', [CenterOperationsController::class, 'uploadLogo'])->whereNumber('center');
 });
 
-Route::middleware(['require.permission:settings.manage', 'scope.center_route'])->group(function (): void {
+Route::middleware(['require.permission:center.manage', 'scope.center'])->group(function (): void {
+    Route::get('/centers/{center}', [CenterController::class, 'show'])->whereNumber('center');
+});
+
+Route::middleware(['require.permission:settings.manage', 'scope.center'])->group(function (): void {
     Route::get('/centers/{center}/settings', [CenterOperationsController::class, 'show'])->whereNumber('center');
     Route::patch('/centers/{center}/settings', [CenterOperationsController::class, 'update'])->whereNumber('center');
 });

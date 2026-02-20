@@ -41,11 +41,11 @@ class AdminPasswordResetNotification extends Notification
             $centerSlug = null;
         }
 
-        $resetUrl = $this->frontendLink('admin/reset-password', $centerSlug).'?'.http_build_query([
+        $resetUrl = $this->frontendLink('reset-password', $centerSlug).'?'.http_build_query([
             'token' => $this->token,
             'email' => $email,
         ]);
-        $loginUrl = $this->frontendLink('admin/login', $centerSlug);
+        $loginUrl = $this->frontendLink('login', $centerSlug);
 
         if ($this->isInvite) {
             return (new MailMessage)

@@ -4,7 +4,7 @@ use App\Http\Controllers\Admin\SettingsPreviewController;
 use App\Http\Controllers\Admin\SystemSettingController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['require.permission:settings.manage', 'scope.system_admin'])->group(function (): void {
+Route::middleware(['require.permission:settings.manage', 'scope.system'])->group(function (): void {
     Route::get('/settings/preview', SettingsPreviewController::class);
     Route::get('/settings', [SystemSettingController::class, 'index']);
     Route::post('/settings', [SystemSettingController::class, 'store']);

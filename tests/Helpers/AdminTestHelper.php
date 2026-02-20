@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Helpers;
 
+use App\Models\Center;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
@@ -13,6 +14,8 @@ use Illuminate\Support\Facades\Config;
 trait AdminTestHelper
 {
     public ?string $adminToken;
+
+    public ?Center $adminCenter = null;
 
     private function ensureSuperAdminRole(): Role
     {
@@ -63,8 +66,15 @@ trait AdminTestHelper
         return $role;
     }
 
+    /**
+     * Create and authenticate a system admin (center_id = null).
+     *
+     * Sets up system API key header automatically.
+     */
     public function asAdmin(): User
     {
+        $this->ensureSystemApiKey();
+
         /** @var User $admin */
         $admin = User::factory()->create([
             'password' => 'secret123',
@@ -82,24 +92,79 @@ trait AdminTestHelper
         ]);
 
         if ($this->adminToken !== null && $this->adminToken !== '') {
-            $this->withHeader('Authorization', 'Bearer '.$this->adminToken);
+            $this->withHeaders([
+                'Authorization' => 'Bearer '.$this->adminToken,
+                'X-Api-Key' => Config::get('services.system_api_key'),
+            ]);
+        }
+
+        $this->adminCenter = null;
+
+        return $admin;
+    }
+
+    /**
+     * Create and authenticate a center admin.
+     *
+     * Sets up center API key header automatically.
+     */
+    public function asCenterAdmin(?Center $center = null): User
+    {
+        $center ??= Center::factory()->create();
+        $this->adminCenter = $center;
+
+        /** @var User $admin */
+        $admin = User::factory()->create([
+            'password' => 'secret123',
+            'is_student' => false,
+            'center_id' => $center->id,
+        ]);
+
+        $role = $this->ensureSuperAdminRole();
+        $admin->roles()->syncWithoutDetaching([$role->id]);
+
+        $this->adminToken = (string) Auth::guard('admin')->attempt([
+            'email' => $admin->email,
+            'password' => 'secret123',
+            'is_student' => false,
+        ]);
+
+        if ($this->adminToken !== null && $this->adminToken !== '') {
+            $this->withHeaders([
+                'Authorization' => 'Bearer '.$this->adminToken,
+                'X-Api-Key' => $center->api_key,
+            ]);
         }
 
         return $admin;
     }
 
-    public function adminHeaders(array $extra = []): array
+    private function ensureSystemApiKey(): void
     {
         $systemKey = (string) Config::get('services.system_api_key', '');
         if ($systemKey === '') {
-            $systemKey = 'system-test-key';
-            Config::set('services.system_api_key', $systemKey);
+            Config::set('services.system_api_key', 'system-test-key');
         }
+    }
+
+    /**
+     * Get admin headers with appropriate API key.
+     *
+     * Uses center API key if authenticated as center admin,
+     * otherwise uses system API key.
+     */
+    public function adminHeaders(array $extra = []): array
+    {
+        $this->ensureSystemApiKey();
+
+        $apiKey = $this->adminCenter !== null
+            ? $this->adminCenter->api_key
+            : Config::get('services.system_api_key');
 
         return array_merge([
             'Accept' => 'application/json',
             'Authorization' => 'Bearer '.$this->adminToken,
-            'X-Api-Key' => $systemKey,
+            'X-Api-Key' => $apiKey,
         ], $extra);
     }
 }

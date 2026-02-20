@@ -237,7 +237,7 @@ it('allows center admin to view their students profile', function (): void {
     $response = $this->getJson("/api/v1/admin/centers/{$center->id}/students/{$student->id}/profile", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
-        'X-Api-Key' => config('services.system_api_key'),
+        'X-Api-Key' => $center->api_key,
     ]);
 
     $response->assertOk()
@@ -308,7 +308,7 @@ it('enforces center api key scope for student profile', function (): void {
     );
 
     $response->assertStatus(403)
-        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
+        ->assertJsonPath('error.code', 'SYSTEM_API_KEY_REQUIRED');
 });
 
 it('allows super admin to access student profile via system route', function (): void {

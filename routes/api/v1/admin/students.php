@@ -4,7 +4,7 @@ use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\StudentProfileController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['require.permission:student.manage', 'scope.system_admin'])->group(function (): void {
+Route::middleware(['require.permission:student.manage', 'scope.system'])->group(function (): void {
     Route::get('/students', [StudentController::class, 'index']);
     Route::get('/students/{user}/profile', [StudentProfileController::class, 'show']);
     Route::post('/students', [StudentController::class, 'store']);
@@ -13,7 +13,7 @@ Route::middleware(['require.permission:student.manage', 'scope.system_admin'])->
     Route::post('/students/bulk-status', [StudentController::class, 'bulkUpdateStatus']);
 });
 
-Route::middleware(['require.permission:student.manage', 'scope.center_route'])
+Route::middleware(['require.permission:student.manage', 'scope.center'])
     ->prefix('/centers/{center}/students')
     ->whereNumber('center')
     ->group(function (): void {

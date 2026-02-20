@@ -1,57 +1,58 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
-use App\Exceptions\CenterMismatchException;
 use App\Models\User;
-use App\Services\Centers\CenterScopeService;
 use Closure;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
+/**
+ * Authenticates admin users via JWT.
+ *
+ * This middleware only handles authentication. Scope validation
+ * (system vs center) is handled by EnsureSystemScope and EnsureCenterScope.
+ */
 class JwtAdminMiddleware
 {
-    public function __construct(
-        private readonly CenterScopeService $centerScopeService
-    ) {}
-
     public function handle(Request $request, Closure $next): Response|JsonResponse
     {
         Auth::shouldUse('admin');
 
         /** @var \PHPOpenSourceSaver\JWTAuth\JWTGuard $guard */
         $guard = Auth::guard('admin');
-        $user = $guard->user() ?? $guard->authenticate();
-
-        if (! $user instanceof User) {
-            return response()->json(['success' => false, 'error' => 'Admin not found'], 401);
-        }
-
-        // must not allow students
-        if ($user->is_student) {
-            return response()->json(['success' => false, 'error' => 'Not an admin'], 401);
-        }
-
-        $resolvedCenterId = is_numeric($request->attributes->get('resolved_center_id'))
-            ? (int) $request->attributes->get('resolved_center_id')
-            : null;
 
         try {
-            $this->centerScopeService->assertResolvedApiCenterScope($user, $resolvedCenterId);
-        } catch (CenterMismatchException) {
-            return response()->json([
-                'success' => false,
-                'error' => [
-                    'code' => 'CENTER_MISMATCH',
-                    'message' => 'Center mismatch.',
-                ],
-            ], 403);
+            $user = $guard->user() ?? $guard->authenticate();
+        } catch (\Throwable) {
+            return $this->unauthorized('Authentication required.');
         }
 
-        $request->setUserResolver(fn (): \App\Models\User => $user);
+        if (! $user instanceof User) {
+            return $this->unauthorized('Admin not found.');
+        }
+
+        if ($user->is_student) {
+            return $this->unauthorized('Admin access required.');
+        }
+
+        $request->setUserResolver(fn (): User => $user);
 
         return $next($request);
+    }
+
+    private function unauthorized(string $message): JsonResponse
+    {
+        return response()->json([
+            'success' => false,
+            'error' => [
+                'code' => 'UNAUTHORIZED',
+                'message' => $message,
+            ],
+        ], 401);
     }
 }

@@ -4,7 +4,7 @@ use App\Http\Controllers\Admin\CourseInstructorController;
 use App\Http\Controllers\Admin\InstructorController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['require.permission:instructor.manage', 'scope.center_route'])->group(function (): void {
+Route::middleware(['require.permission:instructor.manage', 'scope.center'])->group(function (): void {
     Route::get('/centers/{center}/instructors', [InstructorController::class, 'index'])->whereNumber('center');
     Route::post('/centers/{center}/instructors', [InstructorController::class, 'store'])->whereNumber('center');
     Route::get('/centers/{center}/instructors/{instructor}', [InstructorController::class, 'show'])->whereNumber('center');

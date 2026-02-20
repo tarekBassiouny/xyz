@@ -17,14 +17,11 @@ use App\Models\Video;
 use App\Support\AuditActions;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Config;
 
-uses(RefreshDatabase::class)->group('dashboard', 'admin');
+uses(RefreshDatabase::class, \Tests\Helpers\AdminTestHelper::class)->group('dashboard', 'admin');
 
-function dashboardCenterScopedHeaders(int $centerId): array
+function dashboardCenterScopedHeaders(Center $center): array
 {
-    $center = Center::query()->findOrFail($centerId);
-
     $role = Role::query()->firstOrCreate(['slug' => 'super_admin'], [
         'name' => 'super admin',
         'name_translations' => [
@@ -52,16 +49,10 @@ function dashboardCenterScopedHeaders(int $centerId): array
         'is_student' => false,
     ]);
 
-    $systemKey = (string) Config::get('services.system_api_key', '');
-    if ($systemKey === '') {
-        $systemKey = 'system-test-key';
-        Config::set('services.system_api_key', $systemKey);
-    }
-
     return [
         'Accept' => 'application/json',
         'Authorization' => 'Bearer '.$token,
-        'X-Api-Key' => $systemKey,
+        'X-Api-Key' => $center->api_key,
     ];
 }
 
@@ -280,7 +271,7 @@ it('allows center-scoped super admin to access own center dashboard endpoint', f
     User::factory()->create(['is_student' => true, 'center_id' => $ownedCenter->id]);
     User::factory()->create(['is_student' => true, 'center_id' => $otherCenter->id]);
 
-    $headers = dashboardCenterScopedHeaders((int) $ownedCenter->id);
+    $headers = dashboardCenterScopedHeaders($ownedCenter);
 
     $response = $this->getJson('/api/v1/admin/centers/'.$ownedCenter->id.'/dashboard', $headers);
 
@@ -294,11 +285,11 @@ it('forbids center-scoped super admin from system dashboard endpoint', function 
     $this->asAdmin();
 
     $center = Center::factory()->create();
-    $headers = dashboardCenterScopedHeaders((int) $center->id);
+    $headers = dashboardCenterScopedHeaders($center);
 
     $this->getJson('/api/v1/admin/dashboard', $headers)
         ->assertStatus(403)
-        ->assertJsonPath('error.code', 'PERMISSION_DENIED');
+        ->assertJsonPath('error.code', 'SYSTEM_SCOPE_REQUIRED');
 });
 
 it('blocks center-scoped super admin from other center dashboard endpoint', function (): void {
@@ -306,7 +297,7 @@ it('blocks center-scoped super admin from other center dashboard endpoint', func
 
     $ownedCenter = Center::factory()->create();
     $otherCenter = Center::factory()->create();
-    $headers = dashboardCenterScopedHeaders((int) $ownedCenter->id);
+    $headers = dashboardCenterScopedHeaders($ownedCenter);
 
     $this->getJson('/api/v1/admin/centers/'.$otherCenter->id.'/dashboard', $headers)
         ->assertStatus(403)
