@@ -12,10 +12,24 @@ use Tests\Helpers\AdminTestHelper;
 
 uses(RefreshDatabase::class, AdminTestHelper::class)->group('admin', 'scope');
 
-function centerScopedSuperAdminHeaders(int $centerId): array
+function ensureSystemApiKey(): string
 {
-    $center = Center::query()->findOrFail($centerId);
-    $role = Role::query()->where('slug', 'super_admin')->firstOrFail();
+    $systemKey = (string) Config::get('services.system_api_key', '');
+    if ($systemKey === '') {
+        $systemKey = 'system-test-key';
+        Config::set('services.system_api_key', $systemKey);
+    }
+
+    return $systemKey;
+}
+
+function centerScopedSuperAdminHeaders(Center $center): array
+{
+    $role = Role::firstOrCreate(['slug' => 'super_admin'], [
+        'name' => 'super admin',
+        'name_translations' => ['en' => 'super admin', 'ar' => 'super admin'],
+        'description_translations' => ['en' => 'Admin', 'ar' => 'Admin'],
+    ]);
 
     /** @var User $admin */
     $admin = User::factory()->create([
@@ -25,9 +39,6 @@ function centerScopedSuperAdminHeaders(int $centerId): array
     ]);
 
     $admin->roles()->syncWithoutDetaching([$role->id]);
-    $admin->centers()->syncWithoutDetaching([
-        (int) $center->id => ['type' => 'admin'],
-    ]);
 
     $token = (string) Auth::guard('admin')->attempt([
         'email' => $admin->email,
@@ -35,38 +46,32 @@ function centerScopedSuperAdminHeaders(int $centerId): array
         'is_student' => false,
     ]);
 
-    $systemKey = (string) Config::get('services.system_api_key', '');
-    if ($systemKey === '') {
-        $systemKey = 'system-test-key';
-        Config::set('services.system_api_key', $systemKey);
-    }
-
+    // Center admin must use center API key
     return [
         'Accept' => 'application/json',
         'Authorization' => 'Bearer '.$token,
-        'X-Api-Key' => $systemKey,
+        'X-Api-Key' => $center->api_key,
     ];
 }
 
 it('forbids center-scoped super admin from system-only modules', function (): void {
-    $this->asAdmin();
-
+    ensureSystemApiKey();
     $center = Center::factory()->create();
-    $headers = centerScopedSuperAdminHeaders((int) $center->id);
+    $headers = centerScopedSuperAdminHeaders($center);
 
+    // Center admin cannot access system routes (analytics/overview is system-only)
     $this->getJson('/api/v1/admin/analytics/overview', $headers)
         ->assertStatus(403)
-        ->assertJsonPath('error.code', 'PERMISSION_DENIED');
+        ->assertJsonPath('error.code', 'SYSTEM_SCOPE_REQUIRED');
 });
 
 it('blocks center route mismatch for center-scoped super admin', function (): void {
-    $this->asAdmin();
-
     $ownedCenter = Center::factory()->create();
     $otherCenter = Center::factory()->create();
 
-    $headers = centerScopedSuperAdminHeaders((int) $ownedCenter->id);
+    $headers = centerScopedSuperAdminHeaders($ownedCenter);
 
+    // Center admin cannot access other center's routes
     $this->getJson('/api/v1/admin/centers/'.$otherCenter->id.'/courses', $headers)
         ->assertStatus(403)
         ->assertJsonPath('error.code', 'CENTER_MISMATCH');
@@ -82,10 +87,8 @@ it('allows system super admin to access center routes', function (): void {
 });
 
 it('allows center-scoped super admin to access own center audit logs', function (): void {
-    $this->asAdmin();
-
     $center = Center::factory()->create();
-    $headers = centerScopedSuperAdminHeaders((int) $center->id);
+    $headers = centerScopedSuperAdminHeaders($center);
 
     $this->getJson('/api/v1/admin/centers/'.$center->id.'/audit-logs', $headers)
         ->assertStatus(200)
@@ -93,61 +96,56 @@ it('allows center-scoped super admin to access own center audit logs', function 
 });
 
 it('blocks center-scoped super admin from other center audit logs', function (): void {
-    $this->asAdmin();
-
     $ownedCenter = Center::factory()->create();
     $otherCenter = Center::factory()->create();
-    $headers = centerScopedSuperAdminHeaders((int) $ownedCenter->id);
+    $headers = centerScopedSuperAdminHeaders($ownedCenter);
 
     $this->getJson('/api/v1/admin/centers/'.$otherCenter->id.'/audit-logs', $headers)
         ->assertStatus(403)
         ->assertJsonPath('error.code', 'CENTER_MISMATCH');
 });
 
-it('blocks system routes when request uses a center api key', function (): void {
+it('blocks system routes when system admin uses a center api key', function (): void {
     $this->asAdmin();
 
-    $center = Center::factory()->create([
-        'api_key' => 'center-scope-system-block-key',
-    ]);
+    $center = Center::factory()->create();
 
     $from = now()->subDays(7)->toDateString();
     $to = now()->toDateString();
 
+    // System admin using center API key should be blocked from system routes
     $this->getJson(
         "/api/v1/admin/analytics/overview?from={$from}&to={$to}",
         $this->adminHeaders(['X-Api-Key' => $center->api_key])
     )
         ->assertStatus(403)
-        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
+        ->assertJsonPath('error.code', 'SYSTEM_API_KEY_REQUIRED');
 });
 
-it('blocks center route access when api key center does not match route center', function (): void {
+it('blocks center route access when system admin uses wrong center api key', function (): void {
     $this->asAdmin();
 
-    $apiKeyCenter = Center::factory()->create([
-        'api_key' => 'center-scope-mismatch-key',
-    ]);
+    $apiKeyCenter = Center::factory()->create();
     $routeCenter = Center::factory()->create();
 
+    // System admin using center API key cannot access center routes
+    // (system admins must use system API key)
     $this->getJson(
         '/api/v1/admin/centers/'.$routeCenter->id.'/courses',
         $this->adminHeaders(['X-Api-Key' => $apiKeyCenter->api_key])
     )
         ->assertStatus(403)
-        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
+        ->assertJsonPath('error.code', 'SYSTEM_API_KEY_REQUIRED');
 });
 
-it('allows center route access when api key center matches route center', function (): void {
+it('allows system admin with system api key to access any center route', function (): void {
     $this->asAdmin();
 
-    $center = Center::factory()->create([
-        'api_key' => 'center-scope-match-key',
-    ]);
+    $center = Center::factory()->create();
 
     $this->getJson(
         '/api/v1/admin/centers/'.$center->id.'/courses',
-        $this->adminHeaders(['X-Api-Key' => $center->api_key])
+        $this->adminHeaders()
     )
         ->assertStatus(200)
         ->assertJsonPath('success', true);
@@ -164,7 +162,7 @@ it('returns explicit scope metadata in admin me response', function (): void {
         ->assertJsonPath('data.user.is_center_super_admin', false);
 
     $center = Center::factory()->create();
-    $centerHeaders = centerScopedSuperAdminHeaders((int) $center->id);
+    $centerHeaders = centerScopedSuperAdminHeaders($center);
 
     $centerResponse = $this->getJson('/api/v1/admin/auth/me', $centerHeaders);
     $centerResponse->assertStatus(200)

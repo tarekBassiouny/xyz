@@ -9,10 +9,9 @@ uses(RefreshDatabase::class)->group('videos', 'admin');
 
 it('rejects array title payload when creating video', function (): void {
     $center = Center::factory()->create();
-    $admin = $this->asAdmin();
-    $admin->update(['center_id' => $center->id]);
+    $this->asCenterAdmin($center);
 
-    $response = $this->actingAs($admin, 'admin')->postJson(
+    $response = $this->postJson(
         "/api/v1/admin/centers/{$center->id}/videos",
         [
             'title' => ['en' => 'Bad'],

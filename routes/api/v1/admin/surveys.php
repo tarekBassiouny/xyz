@@ -3,7 +3,7 @@
 use App\Http\Controllers\Admin\SurveyController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['require.permission:survey.manage', 'scope.system_admin'])->group(function (): void {
+Route::middleware(['require.permission:survey.manage', 'scope.system'])->group(function (): void {
     Route::get('/surveys/target-students', [SurveyController::class, 'systemTargetStudents']);
     Route::get('/surveys', [SurveyController::class, 'systemIndex']);
     Route::post('/surveys', [SurveyController::class, 'systemStore']);
@@ -19,7 +19,7 @@ Route::middleware(['require.permission:survey.manage', 'scope.system_admin'])->g
     Route::get('/surveys/{survey}/analytics', [SurveyController::class, 'systemAnalytics']);
 });
 
-Route::middleware(['require.permission:survey.manage', 'scope.center_route'])->group(function (): void {
+Route::middleware(['require.permission:survey.manage', 'scope.center'])->group(function (): void {
     Route::get('/centers/{center}/surveys/target-students', [SurveyController::class, 'centerTargetStudents'])->whereNumber('center');
     Route::get('/centers/{center}/surveys', [SurveyController::class, 'centerIndex'])->whereNumber('center');
     Route::post('/centers/{center}/surveys', [SurveyController::class, 'centerStore'])->whereNumber('center');

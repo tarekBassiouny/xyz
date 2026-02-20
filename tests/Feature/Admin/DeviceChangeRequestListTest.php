@@ -58,7 +58,7 @@ it('scopes list to admin center', function (): void {
     $response = $this->getJson("/api/v1/admin/centers/{$centerA->id}/device-change-requests", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
-        'X-Api-Key' => config('services.system_api_key'),
+        'X-Api-Key' => $centerA->api_key,
     ]);
 
     $response->assertOk()
@@ -69,7 +69,7 @@ it('scopes list to admin center', function (): void {
     $blocked = $this->getJson("/api/v1/admin/centers/{$centerB->id}/device-change-requests", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
-        'X-Api-Key' => config('services.system_api_key'),
+        'X-Api-Key' => $centerA->api_key,
     ]);
 
     $blocked->assertForbidden();
@@ -229,7 +229,7 @@ it('rejects access without permission', function (): void {
     $response = $this->getJson("/api/v1/admin/centers/{$center->id}/device-change-requests", [
         'Authorization' => 'Bearer '.$token,
         'Accept' => 'application/json',
-        'X-Api-Key' => config('services.system_api_key'),
+        'X-Api-Key' => $center->api_key,
     ]);
 
     $response->assertForbidden();

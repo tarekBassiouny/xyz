@@ -470,7 +470,90 @@ it('blocks center-scoped admin from system center management routes', function (
 
     $response = $this->deleteJson("/api/v1/admin/centers/{$center->id}", [], $headers);
     $response->assertStatus(403)
-        ->assertJsonPath('error.code', 'PERMISSION_DENIED');
+        ->assertJsonPath('error.code', 'SYSTEM_SCOPE_REQUIRED');
+});
+
+it('allows center-scoped admin to show own center', function (): void {
+    $this->withMiddleware();
+
+    $center = Center::factory()->create([
+        'api_key' => 'center-own-key',
+    ]);
+
+    $permission = Permission::firstOrCreate(['name' => 'center.manage'], [
+        'description' => 'Permission: center.manage',
+    ]);
+    $role = Role::factory()->create([
+        'slug' => 'center_owner_scope_show',
+        'name' => 'Center Owner Scope Show',
+    ]);
+    $role->permissions()->sync([$permission->id]);
+
+    $centerScopedAdmin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => $center->id,
+    ]);
+    $centerScopedAdmin->roles()->syncWithoutDetaching([$role->id]);
+
+    $token = Auth::guard('admin')->attempt([
+        'email' => $centerScopedAdmin->email,
+        'password' => 'secret123',
+        'is_student' => false,
+    ]);
+
+    $headers = $this->adminHeaders([
+        'Authorization' => 'Bearer '.$token,
+        'X-Api-Key' => 'center-own-key',
+    ]);
+
+    $response = $this->getJson("/api/v1/admin/centers/{$center->id}", $headers);
+
+    $response->assertOk()
+        ->assertJsonPath('success', true)
+        ->assertJsonPath('data.id', (int) $center->id);
+});
+
+it('blocks center-scoped admin from showing another center', function (): void {
+    $this->withMiddleware();
+
+    $centerA = Center::factory()->create([
+        'api_key' => 'center-a-key',
+    ]);
+    $centerB = Center::factory()->create([
+        'api_key' => 'center-b-key',
+    ]);
+
+    $permission = Permission::firstOrCreate(['name' => 'center.manage'], [
+        'description' => 'Permission: center.manage',
+    ]);
+    $role = Role::factory()->create([
+        'slug' => 'center_owner_scope_show_block',
+        'name' => 'Center Owner Scope Show Block',
+    ]);
+    $role->permissions()->sync([$permission->id]);
+
+    $centerScopedAdmin = User::factory()->create([
+        'password' => 'secret123',
+        'is_student' => false,
+        'center_id' => $centerA->id,
+    ]);
+    $centerScopedAdmin->roles()->syncWithoutDetaching([$role->id]);
+
+    $token = Auth::guard('admin')->attempt([
+        'email' => $centerScopedAdmin->email,
+        'password' => 'secret123',
+        'is_student' => false,
+    ]);
+
+    $headers = $this->adminHeaders([
+        'Authorization' => 'Bearer '.$token,
+        'X-Api-Key' => 'center-a-key',
+    ]);
+
+    $response = $this->getJson("/api/v1/admin/centers/{$centerB->id}", $headers);
+    $response->assertStatus(403)
+        ->assertJsonPath('error.code', 'CENTER_MISMATCH');
 });
 
 it('soft deletes and restores a center', function (): void {

@@ -4,9 +4,8 @@ declare(strict_types=1);
 
 use App\Exceptions\DomainException;
 use App\Http\Middleware\EnsureActiveEnrollment;
-use App\Http\Middleware\EnsureCenterlessSystemAdminScope;
-use App\Http\Middleware\EnsureCenterRouteScope;
-use App\Http\Middleware\EnsureSystemAdminScope;
+use App\Http\Middleware\EnsureCenterScope;
+use App\Http\Middleware\EnsureSystemScope;
 use App\Http\Middleware\EnsureUnbrandedStudent;
 use App\Http\Middleware\JwtAdminMiddleware;
 use App\Http\Middleware\JwtMobileMiddleware;
@@ -99,9 +98,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'ensure.unbranded.student' => EnsureUnbrandedStudent::class,
             'require.permission' => RequirePermission::class,
             'require.role' => RequireRole::class,
-            'scope.center_route' => EnsureCenterRouteScope::class,
-            'scope.system_admin' => EnsureSystemAdminScope::class,
-            'scope.system_centerless' => EnsureCenterlessSystemAdminScope::class,
+            'scope.system' => EnsureSystemScope::class,
+            'scope.center' => EnsureCenterScope::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

@@ -5,7 +5,7 @@ use App\Http\Controllers\Admin\Course\CourseOperationController;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('require.permission:course.manage')->group(function (): void {
-    Route::middleware('scope.center_route')->group(function (): void {
+    Route::middleware('scope.center')->group(function (): void {
         Route::get('/centers/{center}/courses', [CourseController::class, 'centerIndex'])->whereNumber('center');
         Route::post('/centers/{center}/courses', [CourseController::class, 'centerStore'])->whereNumber('center');
         Route::get('/centers/{center}/courses/{course}', [CourseController::class, 'centerShow'])->whereNumber('center');
@@ -20,5 +20,5 @@ Route::middleware('require.permission:course.manage')->group(function (): void {
 });
 
 Route::post('/centers/{center}/courses/{course}/publish', [CourseOperationController::class, 'publish'])
-    ->middleware(['require.permission:course.publish', 'scope.center_route'])
+    ->middleware(['require.permission:course.publish', 'scope.center'])
     ->whereNumber('center');

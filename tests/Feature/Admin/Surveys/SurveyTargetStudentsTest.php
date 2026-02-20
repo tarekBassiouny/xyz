@@ -147,7 +147,7 @@ it('forbids non-super admin from system survey target-students endpoint', functi
 
     $response->assertForbidden()
         ->assertJsonPath('success', false)
-        ->assertJsonPath('error.code', 'PERMISSION_DENIED');
+        ->assertJsonPath('error.code', 'SYSTEM_SCOPE_REQUIRED');
 });
 
 it('allows center admin to list only own center target students for center scope', function (): void {
@@ -195,7 +195,7 @@ it('allows center admin to list only own center target students for center scope
         [
             'Authorization' => 'Bearer '.$token,
             'Accept' => 'application/json',
-            'X-Api-Key' => $systemKey,
+            'X-Api-Key' => $center->api_key,
         ]
     );
 

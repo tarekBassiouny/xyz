@@ -3,7 +3,7 @@
 use App\Http\Controllers\Admin\EnrollmentController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['require.permission:enrollment.manage', 'scope.system_centerless'])->group(function (): void {
+Route::middleware(['require.permission:enrollment.manage', 'scope.system'])->group(function (): void {
     Route::get('/enrollments', [EnrollmentController::class, 'systemIndex']);
     Route::get('/enrollments/{enrollment}', [EnrollmentController::class, 'systemShow'])->whereNumber('enrollment');
     Route::post('/enrollments', [EnrollmentController::class, 'systemStore']);
@@ -13,7 +13,7 @@ Route::middleware(['require.permission:enrollment.manage', 'scope.system_centerl
     Route::delete('/enrollments/{enrollment}', [EnrollmentController::class, 'systemDestroy'])->whereNumber('enrollment');
 });
 
-Route::middleware(['require.permission:enrollment.manage', 'scope.center_route'])
+Route::middleware(['require.permission:enrollment.manage', 'scope.center'])
     ->prefix('/centers/{center}/enrollments')
     ->whereNumber('center')
     ->group(function (): void {

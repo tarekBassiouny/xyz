@@ -26,7 +26,7 @@ it('builds password reset links from frontend domain with center slug', function
     $mailMessage = $notification->toMail($admin);
 
     expect($mailMessage->actionUrl)
-        ->toStartWith('https://center-123.admin.najaah.me/admin/reset-password?');
+        ->toStartWith('https://center-123.admin.najaah.me/reset-password?');
 
     parse_str((string) parse_url((string) $mailMessage->actionUrl, PHP_URL_QUERY), $query);
 
@@ -50,7 +50,7 @@ it('builds onboarding links from frontend domain with center slug', function ():
     $mailMessage = $notification->toMail($admin);
 
     expect($mailMessage->actionUrl)
-        ->toStartWith('https://cairo.admin.najaah.me/admin/reset-password?');
+        ->toStartWith('https://cairo.admin.najaah.me/reset-password?');
 
     $outroLines = array_map(
         static fn ($line): string => (string) $line,
@@ -58,7 +58,7 @@ it('builds onboarding links from frontend domain with center slug', function ():
     );
 
     $loginLineFound = collect($outroLines)->contains(
-        static fn (string $line): bool => str_contains($line, 'https://cairo.admin.najaah.me/admin/login')
+        static fn (string $line): bool => str_contains($line, 'https://cairo.admin.najaah.me/login')
     );
 
     expect($loginLineFound)->toBeTrue();

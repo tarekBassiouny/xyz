@@ -35,11 +35,11 @@ class AdminCenterOnboardingNotification extends Notification
             $centerSlug = null;
         }
 
-        $resetUrl = $this->frontendLink('admin/reset-password', $centerSlug).'?'.http_build_query([
+        $resetUrl = $this->frontendLink('reset-password', $centerSlug).'?'.http_build_query([
             'token' => $this->token,
             'email' => $email,
         ]);
-        $loginUrl = $this->frontendLink('admin/login', $centerSlug);
+        $loginUrl = $this->frontendLink('login', $centerSlug);
 
         return (new MailMessage)
             ->subject('Center access granted')

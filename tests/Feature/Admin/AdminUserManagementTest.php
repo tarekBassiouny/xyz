@@ -45,7 +45,7 @@ function centerScopedAdminUserHeaders(int $centerId): array
     return [
         'Accept' => 'application/json',
         'Authorization' => 'Bearer '.$token,
-        'X-Api-Key' => $systemKey,
+        'X-Api-Key' => (string) $center->api_key,
     ];
 }
 
